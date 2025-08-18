@@ -1,7 +1,4 @@
 import React from "react";
-// import logo from "./logo.svg";
-// import './App.css';
-
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 
 function Home() {
@@ -68,7 +65,7 @@ function Layout({ children }) {
 
 function App() {
   return (
-    <Router>
+    <Router basename="">
       <Layout>
         <Routes>
           <Route path="/" element={<Home />} />
