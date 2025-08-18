@@ -1,10 +1,12 @@
 {
   "name": "burlibu.github.io",
+  "homepage": "https://burlibu.github.io",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
     "autoprefixer": "^10.4.14",
     "cra-template-pwa": "2.0.0",
+    "gh-pages": "^6.3.0",
     "html-webpack-plugin": "^5.6.4",
     "postcss": "^8.4.31",
     "react": "^19.1.1",
@@ -17,6 +19,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
