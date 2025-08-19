@@ -1,6 +1,8 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import Graph3D from "./Graph3D";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { byPrefixAndName } from "@awesome.me/kit-KIT_CODE/icons";
 
 function Home() {
   return (
@@ -12,6 +14,11 @@ function Home() {
         Questo è il sito personale di Burlibu. Scopri chi sono e come
         contattarmi.
       </p>
+      <div>
+        {/* Font Awesome Icon */}
+        <FontAwesomeIcon icon={byPrefixAndName.fas["house"]} />
+        <FontAwesomeIcon icon={byPrefixAndName.far["circle-user"]} />
+      </div>
     </main>
   );
 }
