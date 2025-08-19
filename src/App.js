@@ -1,40 +1,23 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
-import Graph3D from "./Graph3D";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCoffee } from "@fortawesome/free-solid-svg-icons";
+import Graph3D from "./Graph3D";
 
 function Home() {
   return (
     <main className="max-w-2xl mx-auto bg-white p-8 rounded-lg shadow mt-8">
-      <h1 className="text-3xl font-bold mb-4">
+      <h1 className="text-3xl font-bold mb-4 flex items-center gap-2">
+        <FontAwesomeIcon icon={faCoffee} className="text-brown-600" />
         Benvenuto nel sito di Burlibu!
       </h1>
       <p>
         Questo è il sito personale di Burlibu. Scopri chi sono e come
         contattarmi.
       </p>
-      <div>
-        {/* Font Awesome Icon */}
-        <FontAwesomeIcon icon={byPrefixAndName.fas["house"]} />
-        <FontAwesomeIcon icon={byPrefixAndName.far["circle-user"]} />
-      </div>
     </main>
   );
 }
-
-function About() {
-  return (
-    <main className="max-w-2xl mx-auto bg-white p-8 rounded-lg shadow mt-8">
-      <h1 className="text-3xl font-bold mb-4">Chi sono</h1>
-      <p>
-        Ciao! Sono Burlibu, appassionato di informatica, programmazione e
-        tecnologia. Questo sito è il mio spazio personale dove condivido idee e
-        progetti.
-      </p>
-    </main>
-  );
-}
-
 function Contact() {
   return (
     <main className="max-w-2xl mx-auto bg-white p-8 rounded-lg shadow mt-8">
@@ -124,7 +107,6 @@ function App() {
       <Layout>
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/resources" element={<Resources />} />
           <Route path="/graph3d" element={<Graph3D />} />

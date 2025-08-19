@@ -4,6 +4,9 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^7.0.0",
+    "@fortawesome/free-solid-svg-icons": "^7.0.0",
+    "@fortawesome/react-fontawesome": "^0.2.3",
     "@react-three/drei": "^10.7.3",
     "@react-three/fiber": "^9.3.0",
     "autoprefixer": "^10.4.14",
