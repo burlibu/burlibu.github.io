@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHouse } from "@awesome.me/kit-KIT_CODE/icons/classic/solid";
 import Graph3D from "./Graph3D";
+import "./App.css";
 
 function Home() {
   return (
@@ -25,7 +26,9 @@ function Contact() {
       <p>
         Puoi contattarmi via email:{" "}
         <a className="text-blue-600 underline" href="mailto:burlibu@email.com">
-          burlibu@email.com
+          <div id="mail" className="mail">
+            burlibu@email.com
+          </div>
         </a>
       </p>
     </main>

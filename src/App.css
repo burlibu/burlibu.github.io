@@ -1,0 +1,12 @@
+.mail {
+  color: red;
+  transition: color 0.3s ease;
+}
+.mail:hover {
+  color: blue;
+}
+mail {
+  transition-property: color;
+  transition-duration: 0.3s;
+  transition-timing-function: ease;
+}
