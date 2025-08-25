@@ -1,7 +1,8 @@
+// ...existing code from App.js...
 import React from "react";
-import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faHouse } from "@awesome.me/kit-KIT_CODE/icons/classic/solid";
+import { faHouse } from "@fortawesome/free-solid-svg-icons";
 import Graph3D from "./Graph3D";
 import "./App.css";
 
@@ -29,6 +30,7 @@ function Contact() {
           <div id="mail" className="mail">
             burlibu@email.com
           </div>
+          <div className="tooltip">Clicca per copiare</div>
         </a>
       </p>
     </main>
@@ -76,7 +78,13 @@ function Resources() {
   );
 }
 
-function Layout({ children }) {
+import { ReactNode } from "react";
+
+interface LayoutProps {
+  children: ReactNode;
+}
+
+function Layout({ children }: LayoutProps) {
   return (
     <div className="min-h-screen flex flex-col bg-gray-100">
       <nav className="bg-gray-800 text-white p-4 text-center">
@@ -104,7 +112,7 @@ function Layout({ children }) {
   );
 }
 
-function App() {
+function App(): JSX.Element {
   return (
     <Router basename="">
       <Layout>
