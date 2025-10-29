@@ -9,7 +9,7 @@ function Home() {
     <main className="max-w-2xl mx-auto bg-white p-8 rounded-lg shadow mt-8">
       <h1 className="text-3xl font-bold mb-4 flex items-center gap-2">
         <FontAwesomeIcon icon={faCoffee} className="text-brown-600" />
-        Benvenuto nel sito di Burlibu!
+        Benvenuto nel sito di Burlibu (WIP)!
       </h1>
       <p>
         Questo è il sito personale di Burlibu. Scopri chi sono e come
