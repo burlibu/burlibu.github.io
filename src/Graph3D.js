@@ -1,9 +1,8 @@
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls, Html } from "@react-three/drei";
 import { FaReact, FaGithub, FaNodeJs, FaDatabase } from "react-icons/fa";
 
-const icons = [FaReact, FaGithub, FaNodeJs, FaDatabase];
 const nodes = [
   { id: 0, icon: FaReact, position: [2, 0, 0] },
   { id: 1, icon: FaGithub, position: [-2, 0, 0] },

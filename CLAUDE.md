@@ -12,7 +12,7 @@ Personal site for Burlibu, published at https://burlibu.github.io. Create React 
 - `npm run build` — production build into `build/`
 - `npm run deploy` — manual deploy via `gh-pages` (normally not needed, see below)
 
-There's no lint script. ESLint runs inside `react-scripts` (`react-app` config) during start and build.
+There's no lint script. ESLint runs inside `react-scripts` (`react-app` config) during start and build. CI sets `CI=true`, which turns any ESLint warning into a build error and blocks the deploy, so run `CI=true npm run build` before pushing.
 
 There's no test setup: there is no `test` script, and CRA's Jest 27 can't resolve react-router 7's package exports. Verify changes by serving `build/` (e.g. `python3 -m http.server -d build`) and screenshotting it with headless Chrome.
 
