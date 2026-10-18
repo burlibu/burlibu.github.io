@@ -7,6 +7,9 @@ on:
 
 jobs:
   deploy:
+    # repo default token is read-only; publishing pushes to gh-pages
+    permissions:
+      contents: write
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
