@@ -1,126 +1,163 @@
 import React from "react";
-import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCoffee } from "@fortawesome/free-solid-svg-icons";
+// HashRouter: GitHub Pages has no SPA fallback, so BrowserRouter deep links break
+import { HashRouter as Router, Routes, Route, Link } from "react-router-dom";
+import { FaGithub, FaProjectDiagram, FaEnvelope, FaBook } from "react-icons/fa";
 import Graph3D from "./Graph3D";
+
+const design = (name) => `${process.env.PUBLIC_URL}/designs/${name}/index.html`;
+
+// Live preview of a standalone design; inert so clicks reach the tile link
+function Preview({ name }) {
+  return (
+    <iframe
+      className="bento-preview"
+      src={design(name)}
+      title={name}
+      loading="lazy"
+      scrolling="no"
+      tabIndex={-1}
+      aria-hidden="true"
+    />
+  );
+}
+
+// [col, row, route, label, preview]; external routes are plain links
+const tiles = [
+  [0, 0, "/wind", "Mediterranean Drift", <Preview name="wind" />],
+  [1, 0, "/contact", "Contatti", <FaEnvelope className="bento-icon" />],
+  [2, 0, "/sphere", "Sphere Marquee", <Preview name="sphere" />],
+  [0, 1, "/resources", "Resources", <FaBook className="bento-icon" />],
+  [2, 1, "/graph3d", "3D Graph", <FaProjectDiagram className="bento-icon" />],
+  [0, 2, null, "Prossimo design", null],
+  [1, 2, "https://github.com/burlibu/burlibu.github.io", "GitHub", <FaGithub className="bento-icon" />],
+  [2, 2, null, "Prossimo design", null],
+];
 
 function Home() {
   return (
-    <main className="max-w-2xl mx-auto bg-white p-8 rounded-lg shadow mt-8">
-      <h1 className="text-3xl font-bold mb-4 flex items-center gap-2">
-        <FontAwesomeIcon icon={faCoffee} className="text-brown-600" />
-        Benvenuto nel sito di Burlibu (WIP)!
-      </h1>
-      <p>
-        Questo è il sito personale di Burlibu. Scopri chi sono e come
-        contattarmi.
-      </p>
+    <main className="bento-page">
+      <div className="bento">
+        {tiles.map(([col, row, to, label, preview]) => {
+          const inner = (
+            <>
+              {preview}
+              <span className="bento-label">{label}</span>
+            </>
+          );
+          const props = { key: `${col}${row}`, "data-col": col, "data-row": row };
+          if (!to)
+            return (
+              <div {...props} className="bento-item is-empty" tabIndex={0}>
+                {inner}
+              </div>
+            );
+          if (to.startsWith("http"))
+            return (
+              <a {...props} className="bento-item" href={to} target="_blank" rel="noopener noreferrer">
+                {inner}
+              </a>
+            );
+          return (
+            <Link {...props} className="bento-item" to={to}>
+              {inner}
+            </Link>
+          );
+        })}
+        <div className="bento-item center-piece" data-col="1" data-row="1" tabIndex={0}>
+          <h1>Burlibu</h1>
+          <p>Una collezione di esperimenti di design. Scegli una tessera.</p>
+        </div>
+      </div>
     </main>
   );
 }
+
+function Back() {
+  return (
+    <Link to="/" className="back-link">
+      ← Bento
+    </Link>
+  );
+}
+
+// Full-screen standalone design from public/designs
+function DesignFrame({ name, title }) {
+  return (
+    <>
+      <Back />
+      <iframe className="design-frame" src={design(name)} title={title} />
+    </>
+  );
+}
+
+function Panel({ title, children }) {
+  return (
+    <main className="min-h-screen bg-neutral-950 text-neutral-100 p-8">
+      <Back />
+      <div className="max-w-2xl mx-auto mt-16 bg-neutral-900 border border-neutral-800 p-8 rounded-xl">
+        <h1 className="text-3xl font-bold mb-4">{title}</h1>
+        {children}
+      </div>
+    </main>
+  );
+}
+
 function Contact() {
   return (
-    <main className="max-w-2xl mx-auto bg-white p-8 rounded-lg shadow mt-8">
-      <h1 className="text-3xl font-bold mb-4">Contatti</h1>
+    <Panel title="Contatti">
       <p>
         Puoi contattarmi via email:{" "}
-        <a className="text-blue-600 underline" href="mailto:burlibu@email.com">
+        <a className="text-sky-400 underline" href="mailto:burlibu@email.com">
           burlibu@email.com
         </a>
       </p>
-    </main>
+    </Panel>
   );
 }
+
+const resources = [
+  ["React Docs", "https://react.dev/"],
+  ["Tailwind CSS Docs", "https://tailwindcss.com/docs"],
+  ["Repository GitHub", "https://github.com/burlibu/burlibu.github.io"],
+];
 
 function Resources() {
   return (
-    <main className="max-w-2xl mx-auto bg-white p-8 rounded-lg shadow mt-8">
-      <h1 className="text-3xl font-bold mb-4">Resources</h1>
+    <Panel title="Resources">
       <p>Qui troverai link utili, documentazione e risorse consigliate.</p>
       <ul className="list-disc ml-6 mt-4">
-        <li>
-          <a
-            className="text-blue-600 underline"
-            href="https://react.dev/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            React Docs
-          </a>
-        </li>
-        <li>
-          <a
-            className="text-blue-600 underline"
-            href="https://tailwindcss.com/docs"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Tailwind CSS Docs
-          </a>
-        </li>
-        <li>
-          <a
-            className="text-blue-600 underline"
-            href="https://github.com/burlibu/burlibu.github.io"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Repository GitHub
-          </a>
-        </li>
+        {resources.map(([label, href]) => (
+          <li key={href}>
+            <a className="text-sky-400 underline" href={href} target="_blank" rel="noopener noreferrer">
+              {label}
+            </a>
+          </li>
+        ))}
       </ul>
-    </main>
-  );
-}
-
-function Layout({ children }) {
-  return (
-    <div className="min-h-screen flex flex-col bg-gray-100">
-      <nav className="bg-gray-800 text-white p-4 text-center">
-        <Link className="mx-2 hover:underline" to="/">
-          Home
-        </Link>
-        <Link className="mx-2 hover:underline" to="/about">
-          Chi sono
-        </Link>
-        <Link className="mx-2 hover:underline" to="/contact">
-          Contatti
-        </Link>
-        <Link className="mx-2 hover:underline" to="/resources">
-          Resources
-        </Link>
-        <Link className="mx-2 hover:underline" to="/graph3d">
-          3D Graph
-        </Link>
-      </nav>
-      <div className="flex-1">{children}</div>
-      <footer className="bg-gray-800 text-white p-4 text-center mt-8">
-        &copy; 2025 Burlibu
-      </footer>
-    </div>
+    </Panel>
   );
 }
 
 function App() {
   return (
-    <Router basename="">
-      <Layout>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/contact" element={<Contact />} />
-          <Route path="/resources" element={<Resources />} />
-          <Route path="/graph3d" element={<Graph3D />} />
-        </Routes>
-      </Layout>
+    <Router>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/wind" element={<DesignFrame name="wind" title="Mediterranean Drift" />} />
+        <Route path="/sphere" element={<DesignFrame name="sphere" title="Sphere Marquee" />} />
+        <Route path="/contact" element={<Contact />} />
+        <Route path="/resources" element={<Resources />} />
+        <Route
+          path="/graph3d"
+          element={
+            <main className="min-h-screen bg-neutral-950">
+              <Back />
+              <Graph3D />
+            </main>
+          }
+        />
+      </Routes>
     </Router>
-  );
-}
-
-function Frame() {
-  return (
-    <main className="bg-[#ff2828] grid justify-items-center [align-items:start] w-screen min-h-screen">
-      <div className="bg-[#ff2828] w-[272px] h-[195px]" />
-    </main>
   );
 }
 
