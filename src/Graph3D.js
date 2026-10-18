@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Canvas } from "@react-three/fiber";
+import React, { useEffect, useState } from "react";
+import { Canvas, useThree } from "@react-three/fiber";
 import { OrbitControls, Html } from "@react-three/drei";
 import { FaReact, FaGithub, FaNodeJs, FaDatabase } from "react-icons/fa";
 
@@ -22,20 +22,31 @@ function Node({ icon: Icon, position }) {
       <sphereGeometry args={[0.5, 32, 32]} />
       <meshStandardMaterial color={hovered ? "#61dafb" : "#888"} />
       <Html center>
-        <Icon size={32} color={hovered ? "#61dafb" : "#222"} />
+        <Icon size={32} color={hovered ? "#61dafb" : "#ddd"} />
       </Html>
     </mesh>
   );
+}
+
+// Pull the camera back on narrow screens so the side nodes (x = ±2.5 with radius) stay in view
+function FitCamera() {
+  const { camera, size } = useThree();
+  useEffect(() => {
+    camera.position.z = Math.max(8, 6.5 / (size.width / size.height));
+    camera.updateProjectionMatrix();
+  }, [camera, size]);
+  return null;
 }
 
 export default function Graph3D() {
   return (
     <Canvas
       camera={{ position: [0, 0, 8], fov: 50 }}
-      style={{ height: "500px", width: "100%" }}
+      style={{ height: "100vh", width: "100%" }}
     >
       <ambientLight intensity={0.5} />
       <pointLight position={[10, 10, 10]} />
+      <FitCamera />
       {nodes.map((node) => (
         <Node key={node.id} icon={node.icon} position={node.position} />
       ))}

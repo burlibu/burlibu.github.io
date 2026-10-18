@@ -16,6 +16,8 @@ There's no lint script. ESLint runs inside `react-scripts` (`react-app` config) 
 
 There's no test setup: there is no `test` script, and CRA's Jest 27 can't resolve react-router 7's package exports. Verify changes by serving `build/` (e.g. `python3 -m http.server -d build`) and screenshotting it with headless Chrome.
 
+Responsive check: `scripts/responsive-test.html` loads every route in same-origin iframes at 8 viewports (360px phone to 2560px) and reports horizontal scroll, tiles that overflow, clipped labels and back-link placement. Run `npm run build && cp scripts/responsive-test.html build/`, serve `build/` on port 5055, then `google-chrome --headless=new --disable-gpu --virtual-time-budget=200000 --dump-dom http://localhost:5055/responsive-test.html | grep -E '^(FAIL|ok)'`. When you add a route, add it to `ROUTES` in that file. Headless WebGL screenshots of `/graph3d` can show stale frames, so check the 3D camera by reading its state rather than trusting the screenshot.
+
 ## Deployment
 
 Every push to `main` triggers `.github/workflows/deploy-gh-pages.yml`, which builds with Node 18 and publishes `build/` via `peaceiris/actions-gh-pages`. A second workflow (`setup-react-tailwind.yml`) rebuilds and checks that `src/index.css` still contains the three `@tailwind` directives. Don't remove them.
@@ -23,7 +25,7 @@ Every push to `main` triggers `.github/workflows/deploy-gh-pages.yml`, which bui
 ## Architecture
 
 - The home page (`/`) is a 3×3 bento grid in `src/App.js`. Each tile links to one section. The `tiles` array holds `[col, row, route, label, preview]`, and the center piece is rendered separately. A tile with no route is a "Prossimo design" placeholder slot.
-- The hover grow effect is pure CSS in `src/index.css`: `.bento:has([data-col|data-row]:hover)` swaps the `fr` tracks and transitions them. It's a no-JS port of the GSAP Flip demo in `inspiration/flilp-bento-hover-effect`. Below 641px the grid becomes a plain 2-column stack.
+- The hover grow effect is pure CSS in `src/index.css`: `.bento:has([data-col|data-row]:hover)` swaps the `fr` tracks and transitions them. It's a no-JS port of the GSAP Flip demo in `inspiration/flilp-bento-hover-effect`. At 900px and below the grid becomes a plain 2-column stack.
 - Standalone vanilla designs live in `public/designs/<name>/index.html`, copied from `inspiration/`. `DesignFrame` shows one full screen in an iframe. The tile shows a live preview iframe rendered at 4x and scaled to 0.25.
 - To add a design: copy it to `public/designs/<name>/`, add a `<Route>`, and replace a placeholder tile.
 - `src/Graph3D.js` (`/graph3d`) is a react-three-fiber scene.
