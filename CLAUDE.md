@@ -36,4 +36,4 @@ Every push to `main` triggers `.github/workflows/deploy-gh-pages.yml`, which bui
 
 ## Notes
 
-- `inspiration/` (untracked) holds third-party design references from CodePen. The author credits are kept in the copied files.
+- `inspiration/` holds third-party design references from CodePen. The author credits are kept in the copied files.

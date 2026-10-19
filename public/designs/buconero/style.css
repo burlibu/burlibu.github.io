@@ -1,0 +1,567 @@
+:root {
+  --void: #030306;
+  --ember: #f4a35c;
+  --flare: #ffe2b8;
+  --ice: #9fc8ff;
+  --ink: #f3ece2;
+  --dim: rgba(243, 236, 226, 0.6);
+  --glass: rgba(255, 255, 255, 0.055);
+  --edge: rgba(255, 255, 255, 0.14);
+  --ease: cubic-bezier(0.7, 0, 0.2, 1);
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  background: var(--void);
+  color: var(--ink);
+  font-family: "Space Grotesk", system-ui, sans-serif;
+}
+
+.mono {
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+}
+
+/* ---------- scene: photo + canvas share one transform (parallax, dive) ---------- */
+.scene {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  transform-origin: var(--cx, 50%) var(--cy, 40%);
+  transition: transform 1.8s var(--ease);
+  cursor: crosshair;
+}
+.photo {
+  position: absolute;
+  max-width: none;
+  user-select: none;
+  pointer-events: none;
+  animation: breathe 14s ease-in-out infinite alternate;
+  transform-origin: var(--cx, 50%) var(--cy, 40%);
+}
+canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+.vignette {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse at 50% 40%, transparent 35%, rgba(3, 3, 6, 0.75) 100%),
+    linear-gradient(to top, rgba(3, 3, 6, 0.85), transparent 35%);
+}
+@keyframes breathe {
+  to {
+    transform: scale(1.035);
+  }
+}
+
+/* ---------- glass ---------- */
+.glass {
+  position: relative;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.02) 60%), var(--glass);
+  border: 1px solid var(--edge);
+  backdrop-filter: blur(16px) saturate(150%);
+  -webkit-backdrop-filter: blur(16px) saturate(150%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.18),
+    0 20px 50px rgba(0, 0, 0, 0.45);
+  overflow: hidden;
+}
+/* light sweeping across the pane */
+.glass::after {
+  content: "";
+  position: absolute;
+  inset: -50% -20%;
+  pointer-events: none;
+  background: linear-gradient(105deg, transparent 42%, rgba(255, 226, 184, 0.13) 50%, transparent 58%);
+  transform: translateX(-60%);
+  animation: sheen 9s var(--ease) infinite;
+}
+.card.right::after {
+  animation-delay: 3s;
+}
+.bar::after {
+  animation-delay: 1.5s;
+}
+@keyframes sheen {
+  0%,
+  55% {
+    transform: translateX(-60%);
+  }
+  100% {
+    transform: translateX(60%);
+  }
+}
+
+/* ---------- top bar ---------- */
+.bar {
+  position: fixed;
+  top: 16px;
+  left: 24px;
+  right: 150px; /* room for the site's back link */
+  height: 52px;
+  padding: 0 20px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  animation: drop 1.2s 0.2s var(--ease) backwards;
+}
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 700;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  font-size: 13px;
+}
+.logo-mark {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #000;
+  box-shadow:
+    0 0 0 2px var(--flare),
+    0 0 12px 3px var(--ember);
+  animation: pulse 3s ease-in-out infinite;
+}
+nav {
+  display: flex;
+  gap: 4px;
+  margin-right: auto;
+}
+nav a {
+  color: var(--dim);
+  text-decoration: none;
+  font-size: 13px;
+  padding: 7px 14px;
+  border-radius: 999px;
+  transition:
+    color 0.3s,
+    background 0.3s;
+}
+nav a:hover,
+nav a.on {
+  color: var(--ink);
+  background: rgba(255, 255, 255, 0.08);
+}
+.clock {
+  font-size: 12px;
+  color: var(--ember);
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+}
+
+/* ---------- side cards ---------- */
+.card {
+  position: fixed;
+  top: 50%;
+  width: 250px;
+  padding: 20px 22px;
+  border-radius: 20px;
+  transition:
+    opacity 0.9s var(--ease),
+    translate 0.9s var(--ease);
+}
+.card.left {
+  left: 24px;
+  translate: 0 -62%;
+  animation: slide-l 1.4s 0.5s var(--ease) backwards;
+}
+.card.right {
+  right: 24px;
+  translate: 0 -62%;
+  animation: slide-r 1.4s 0.7s var(--ease) backwards;
+}
+.card-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 10px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--dim);
+}
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--ember);
+  box-shadow: 0 0 8px var(--ember);
+  animation: pulse 1.6s ease-in-out infinite;
+}
+.card h2 {
+  margin: 6px 0 14px;
+  font-family: "Italiana", serif;
+  font-weight: 400;
+  font-size: 34px;
+  letter-spacing: 0.04em;
+}
+.stats {
+  margin: 0 0 16px;
+  display: grid;
+  gap: 12px;
+}
+.stats div {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  row-gap: 5px;
+  font-size: 11px;
+}
+.stats dt {
+  color: var(--dim);
+}
+.stats dd {
+  margin: 0;
+}
+.stats b {
+  color: var(--flare);
+  font-weight: 600;
+}
+.stats i {
+  grid-column: 1 / -1;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+  position: relative;
+  overflow: hidden;
+}
+.stats i::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, var(--ember), var(--flare));
+  box-shadow: 0 0 6px var(--ember);
+  transform-origin: left;
+  transform: scaleX(var(--v));
+  transition: transform 0.8s var(--ease);
+  animation: fill 1.6s 1.2s var(--ease) backwards;
+}
+@keyframes fill {
+  from {
+    transform: scaleX(0);
+  }
+}
+.spark {
+  display: block;
+  width: 100%;
+  height: 40px;
+  margin-top: 8px;
+}
+.spark polyline {
+  stroke: var(--ice);
+  stroke-width: 1.4;
+  vector-effect: non-scaling-stroke;
+  filter: drop-shadow(0 0 3px var(--ice));
+}
+
+.log {
+  list-style: none;
+  margin: 12px 0 0;
+  padding: 0;
+  height: 230px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 10px;
+  font-size: 11px;
+  line-height: 1.5;
+  overflow: hidden;
+}
+.log li {
+  color: var(--ink);
+  transition: opacity 0.6s;
+}
+.log li:nth-last-child(n + 3) {
+  opacity: 0.45;
+}
+.log li:nth-last-child(n + 5) {
+  opacity: 0.2;
+}
+.log time {
+  display: block;
+  color: var(--ember);
+  font-size: 10px;
+}
+.log li.typing span::after {
+  content: "▍";
+  color: var(--ember);
+  animation: blink 0.8s steps(1) infinite;
+}
+
+/* ---------- hero ---------- */
+.hero {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 96px;
+  padding: 0 16px;
+  text-align: center;
+  pointer-events: none;
+}
+.kicker {
+  margin: 0 0 10px;
+  font-size: 11px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--ember);
+  animation: fade 1.2s 0.9s ease-out backwards;
+}
+.hero h1 {
+  margin: 0;
+  font-family: "Italiana", serif;
+  font-weight: 400;
+  font-size: clamp(34px, 6.2vw, 96px);
+  line-height: 1;
+  letter-spacing: 0.06em;
+  background: linear-gradient(100deg, #fff 0%, var(--flare) 35%, var(--ember) 55%, #fff 75%, var(--flare) 100%);
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 4px 24px rgba(0, 0, 0, 0.8));
+  animation:
+    focus 2.2s 0.4s var(--ease) backwards,
+    shimmer 8s linear infinite;
+}
+.hero h1 em {
+  font-style: normal;
+  font-size: 0.45em;
+  letter-spacing: 0.3em;
+  vertical-align: middle;
+}
+.sub {
+  margin: 10px 0 22px;
+  color: var(--dim);
+  font-size: 15px;
+  letter-spacing: 0.12em;
+  animation: fade 1.2s 1.4s ease-out backwards;
+}
+.hero h1,
+.kicker,
+.sub {
+  transition:
+    opacity 1s var(--ease),
+    transform 1s var(--ease);
+}
+.actions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  pointer-events: auto;
+  animation: fade 1.2s 1.7s ease-out backwards;
+}
+.btn {
+  font: 500 13px "Space Grotesk", sans-serif;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink);
+  padding: 13px 26px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition:
+    border-color 0.3s,
+    box-shadow 0.3s;
+}
+.btn:hover,
+.btn:focus-visible {
+  outline: none;
+  border-color: rgba(255, 226, 184, 0.6);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.25),
+    0 0 30px rgba(244, 163, 92, 0.35);
+}
+.btn.ghost {
+  background: rgba(0, 0, 0, 0.25);
+}
+
+/* ---------- ticker ---------- */
+.ticker {
+  position: fixed;
+  left: 24px;
+  right: 24px;
+  bottom: 20px;
+  height: 40px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  animation: rise 1.2s 1s var(--ease) backwards;
+}
+.ticker-track {
+  display: flex;
+  white-space: nowrap;
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--dim);
+  animation: marquee 40s linear infinite;
+}
+.ticker-track span::after {
+  content: "✦";
+  margin: 0 28px;
+  color: var(--ember);
+}
+
+/* ---------- cursor (fine pointers only) ---------- */
+.cursor {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 22px;
+  height: 22px;
+  margin: -11px 0 0 -11px;
+  border-radius: 50%;
+  background: #fff;
+  mix-blend-mode: difference;
+  pointer-events: none;
+  z-index: 10;
+  opacity: 0;
+  transition:
+    opacity 0.3s,
+    scale 0.25s var(--ease);
+}
+@media (pointer: fine) {
+  body.pointer,
+  body.pointer * {
+    cursor: none !important;
+  }
+  body.pointer .cursor {
+    opacity: 1;
+  }
+}
+.cursor.big {
+  scale: 2.4;
+}
+
+/* ---------- dive: zoom into the hole, interface steps aside ---------- */
+body.dive .scene {
+  transform: scale(2.4);
+}
+body.dive .card {
+  opacity: 0;
+  pointer-events: none;
+}
+body.dive .card.left {
+  translate: -60px -62%;
+}
+body.dive .card.right {
+  translate: 60px -62%;
+}
+body.dive .hero h1,
+body.dive .kicker,
+body.dive .sub {
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+@keyframes drop {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+}
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+}
+@keyframes slide-l {
+  from {
+    opacity: 0;
+    transform: translateX(-40px);
+  }
+}
+@keyframes slide-r {
+  from {
+    opacity: 0;
+    transform: translateX(40px);
+  }
+}
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes focus {
+  from {
+    opacity: 0;
+    letter-spacing: 0.5em;
+    filter: blur(12px);
+  }
+}
+@keyframes shimmer {
+  to {
+    background-position: -200% 0;
+  }
+}
+@keyframes marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+@keyframes pulse {
+  50% {
+    opacity: 0.45;
+  }
+}
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+/* ---------- smaller screens ---------- */
+@media (max-width: 1100px) {
+  .card {
+    display: none;
+  }
+}
+@media (max-width: 900px) {
+  /* the back link sits above the frame here */
+  .bar {
+    right: 16px;
+    left: 16px;
+  }
+}
+@media (max-width: 640px) {
+  nav {
+    display: none;
+  }
+  .bar {
+    justify-content: space-between;
+    padding: 0 16px;
+  }
+  .hero {
+    bottom: 80px;
+  }
+  .sub {
+    font-size: 13px;
+  }
+  .btn {
+    padding: 12px 18px;
+    font-size: 11px;
+  }
+  .ticker {
+    left: 16px;
+    right: 16px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}

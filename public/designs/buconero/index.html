@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="it">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Orizzonte degli eventi</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Italiana&family=JetBrains+Mono:wght@400;600&family=Space+Grotesk:wght@400;500;700&display=swap"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="scene" id="scene">
+      <img class="photo" id="photo" src="buconero.jpg" alt="" />
+      <canvas id="c"></canvas>
+    </div>
+    <div class="vignette"></div>
+
+    <header class="bar glass">
+      <div class="logo"><span class="logo-mark"></span>Orizzonte</div>
+      <nav>
+        <a href="#" class="on">Osserva</a>
+        <a href="#">Telemetria</a>
+        <a href="#">Diario</a>
+        <a href="#">Archivio</a>
+      </nav>
+      <div class="clock mono" id="clock">00:00:00 UTC</div>
+    </header>
+
+    <aside class="card left glass">
+      <div class="card-head"><span class="dot"></span>Bersaglio</div>
+      <h2>Gargantua</h2>
+      <dl class="stats mono">
+        <div><dt>Massa</dt><dd><b id="mass">1.00</b>×10⁸ M☉</dd><i style="--v: 0.82"></i></div>
+        <div><dt>Spin</dt><dd><b id="spin">0.998</b> a/M</dd><i style="--v: 0.998"></i></div>
+        <div><dt>Raggio</dt><dd><b>2.95</b>×10⁸ km</dd><i style="--v: 0.6"></i></div>
+        <div><dt>Dilatazione</dt><dd><b id="dil">61</b> min/h</dd><i id="dil-bar" style="--v: 0.61"></i></div>
+      </dl>
+      <div class="card-head">Segnale</div>
+      <svg class="spark" viewBox="0 0 200 40" preserveAspectRatio="none">
+        <polyline id="spark" fill="none" points="" />
+      </svg>
+    </aside>
+
+    <aside class="card right glass">
+      <div class="card-head"><span class="dot"></span>Diario di bordo</div>
+      <ol class="log mono" id="log"></ol>
+    </aside>
+
+    <main class="hero">
+      <p class="kicker mono">Missione Endurance · settore 7 · Miller</p>
+      <h1>Orizzonte <em>degli</em> eventi</h1>
+      <p class="sub">dove la luce smette di tornare indietro</p>
+      <div class="actions">
+        <button class="btn glass" id="dive">Avvicinati</button>
+        <button class="btn glass ghost" id="wave">Onda gravitazionale</button>
+      </div>
+    </main>
+
+    <footer class="ticker glass">
+      <div class="ticker-track mono" id="ticker">
+        <span>lente gravitazionale attiva</span><span>disco di accrescimento 10⁷ K</span
+        ><span>sfera di fotoni r = 1.5 rₛ</span><span>effetto doppler relativistico</span
+        ><span>nessun segnale oltre l'orizzonte</span><span>un'ora qui · sette anni sulla Terra</span>
+      </div>
+    </footer>
+
+    <div class="cursor" id="cursor"></div>
+    <script src="../preview.js"></script>
+    <script src="script.js"></script>
+  </body>
+</html>

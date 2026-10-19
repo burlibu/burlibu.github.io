@@ -1,0 +1,375 @@
+@font-face {
+  font-family: "Radwave";
+  src: url("https://files.jcink.net/uploads2/leaptesting/RadwaveFont_Demo.otf");
+}
+@font-face {
+  font-family: "Highrise";
+  src: url("https://files.jcink.net/uploads2/leaptesting/HighriseFont_Demo_Regular.otf");
+}
+@font-face {
+  font-family: "Highrise";
+  src: url("https://files.jcink.net/uploads2/leaptesting/HighriseFont_Bold_Demo.otf");
+  font-weight: bold;
+}
+@font-face {
+  font-family: "Highrise Condensed";
+  src: url("https://files.jcink.net/uploads2/leaptesting/HighriseFont_Condensed_Demo.otf");
+}
+
+body {
+  margin: 0px;
+  overflow-x: hidden;
+
+  --title1: "Radwave", sans-serif;
+  --title2: "Highrise", sans-serif;
+  --body: "Inter";
+  --gray: #777;
+
+  /* RED -> YELLOW */
+  --accent1: #ff3d5f;
+  --accent2: #f2bb13;
+
+  /* BLUE -> GREEN
+  --accent1: #4866DB;
+  --accent2: #03EAAA; */
+
+  /* PINK -> BLUE
+  --accent1: #E300CC;
+  --accent2: #3DF5FF; */
+
+  /* GREEN -> LIME
+  --accent1: #009CAD;
+  --accent2: #8DF00C; */
+
+  /* PURPLE -> ORANGE
+  --accent1: #B622C9;
+  --accent2: #FF8521; */
+
+  --transition: 0.1s;
+  --transitionQuick: 0.1s;
+
+  --grit1: url();
+}
+
+a {
+  cursor: none;
+  text-decoration: none;
+  color: #000;
+}
+label {
+  cursor: none;
+}
+.btu-body {
+  min-height: 200vh;
+  background-color: #fff;
+}
+
+/* CUSTOM CURSOR */
+.cursor {
+  position: fixed;
+  width: 25px;
+  height: 25px;
+  background: #fff;
+  border-radius: 100%;
+  pointer-events: none;
+  z-index: 999999999999999999999;
+  transform: translate(-50%, -50%);
+  transition:
+    transform 0.1s ease,
+    width 0.2s,
+    height 0.2s;
+  mix-blend-mode: difference;
+  display: none;
+}
+.cursor.visible {
+  display: block;
+}
+.cursor.big {
+  width: 50px;
+  height: 50px;
+}
+
+/* LAPPLAND SIDE BANNER */
+.btu-lapp {
+  position: fixed;
+  top: 0px;
+  z-index: 100000000;
+  pointer-events: none;
+  left: -10vh;
+}
+.btu-lapp::before {
+  content: "";
+  display: block;
+  position: absolute;
+  height: 95vh;
+  width: 41vh;
+  background: linear-gradient(to top, var(--accent1), var(--accent2) 165%);
+  margin-left: 150px;
+  margin-left: calc(17.5vh - 40px);
+  margin-top: 0vh;
+}
+.btu-lapp::after {
+  content: "";
+  display: block;
+  position: absolute;
+  height: 100vh;
+  width: 41vh;
+  background-color: #000;
+  margin-left: 150px;
+  margin-left: calc(17.5vh);
+  transition: width var(--transitionQuick);
+}
+.btu-lapp-texture {
+  position: absolute;
+  z-index: 1;
+  height: 100vh;
+  width: 100vw;
+  mask-image: url(https://i.ibb.co/PZD8DkLF/Grunge-Text.png);
+  mask-size: auto 100%;
+  mask-repeat: no-repeat;
+  mask-position: center;
+  -webkit-mask-image: url(https://i.ibb.co/PZD8DkLF/Grunge-Text.png);
+  -webkit-mask-size: auto 100%;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: top left;
+  margin-left: -2vh;
+  margin-top: -10vh;
+}
+.btu-lapp-texture::before {
+  content: "";
+  display: block;
+  background-color: #fff;
+  height: 100%;
+  width: 100%;
+}
+.btu-lapp-back,
+.btu-lapp-front {
+  height: calc(100vh + 3px);
+  width: 100vh;
+  position: absolute;
+  left: 0px;
+  transition: left var(--transitionQuick);
+  z-index: 1;
+}
+.btu-lapp-lyric {
+  position: fixed;
+  font: 20px / 15px var(--title1);
+  text-transform: uppercase;
+  white-space: nowrap;
+  transform: rotate(-90deg);
+  transform-origin: top left;
+  bottom: 2.5vh;
+  left: calc(7.5vh - 16px);
+  color: #fff;
+}
+.btu-lapp-back {
+  mask-image: url(https://i.ibb.co/sJNRGR3L/Lappland-Render-Color.png);
+  mask-size: auto 100%;
+  mask-repeat: no-repeat;
+  mask-position: center;
+  -webkit-mask-image: url(https://i.ibb.co/sJNRGR3L/Lappland-Render-Color.png);
+  -webkit-mask-size: auto 100%;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: top left;
+}
+.btu-lapp-back::before {
+  content: "";
+  display: block;
+  height: 100%;
+  width: 100%;
+  background: linear-gradient(135deg, var(--accent1) 35%, var(--accent2) 80%);
+}
+.btu-lapp-front {
+  background: url(https://i.ibb.co/zT54PZr5/Lappland-Render-Colorless.png);
+  background-size: auto 100%;
+  background-repeat: no-repeat;
+}
+
+/* TOGGLE MENU */
+
+#btu-tog {
+  position: fixed;
+}
+.btu-tog-but {
+  position: fixed;
+  z-index: 999999999;
+  left: 12.5vh;
+  top: 35px;
+  color: #fff;
+}
+.btu-tog-but::before {
+  content: "open";
+  display: block;
+  font: 17px / 15px var(--title1);
+}
+.btu-tog-but div {
+  font: 30px / 25px var(--title1);
+  background-color: #fff;
+  color: #000;
+  padding: 1px 20px 5px 1px;
+  margin-top: 2px;
+}
+#btu-tog:checked ~ .btu-lapp .btu-lapp-back,
+#btu-tog:checked ~ .btu-lapp .btu-lapp-front {
+  left: calc(100vw - 80vh);
+  left: 50vh;
+}
+#btu-tog:checked ~ .btu-lapp::after {
+  width: calc(100vw - 38vh);
+  width: 92vh;
+}
+#btu-tog:checked ~ .btu-tog-but::before {
+  content: "close";
+}
+
+/* TOP MENU */
+.btu-menu {
+  padding: 35px 35px 30px 15vh;
+  margin-left: 50vh;
+  box-shadow: -51vh 0px 0px #fff;
+  box-sizing: border-box;
+  display: flex;
+  font: 17px / 15px var(--title1);
+  text-transform: uppercase;
+  gap: 20px;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  background-color: #fff;
+  position: sticky;
+  top: 0px;
+  right: 0px;
+  z-index: 10;
+}
+.btu-menu-links {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+}
+.btu-menu a {
+  text-decoration: none;
+  color: #000;
+  position: relative;
+  background-color: #fff;
+  padding: 0px 20px 10px 0px;
+}
+.btu-menu a::before {
+  content: "";
+  display: block;
+  height: calc(100% - 7px);
+  width: 0px;
+  background-color: #fff;
+  position: absolute;
+  margin: -1px;
+  padding: 0px 0px 5px 0px;
+  mix-blend-mode: difference;
+  transition: width var(--transition);
+}
+.btu-menu a:hover::before,
+.btu-menu a:first-of-type::before {
+  width: calc(100% + 0px);
+}
+.btu-menu:hover a:first-of-type::before {
+  width: 0px;
+}
+.btu-menu:hover a:first-of-type:hover::before {
+  width: 100%;
+}
+.btu-topright {
+  position: fixed;
+  z-index: 100;
+  top: 0px;
+  right: 0px;
+  height: 65vh;
+  width: 50vw;
+  background-image: url(https://i.ibb.co/4n6cDJQ4/grittopleft.png);
+  background-size: auto 100%;
+  background-position: top right;
+  background-repeat: no-repeat;
+  pointer-events: none;
+  mix-blend-mode: difference;
+  filter: invert(1);
+}
+.btu-topleft {
+  position: fixed;
+  z-index: 100;
+  bottom: 0px;
+  left: 49vh;
+  height: 65vh;
+  width: 50vw;
+  background-image: url(https://i.ibb.co/4n6cDJQ4/grittopleft.png);
+  background-size: auto 100%;
+  background-position: top left;
+  background-repeat: no-repeat;
+  pointer-events: none;
+  mix-blend-mode: difference;
+  filter: invert(1);
+  background-image: url(https://i.ibb.co/N6yfbCWR/grittopright.png);
+}
+
+/* MAIN BANNER */
+.btu-banner {
+  margin-left: 20vh;
+  background-color: #000;
+  padding-left: 60vh;
+  color: #fff;
+  padding-top: 175px;
+  text-transform: uppercase;
+  white-space: nowrap;
+  letter-spacing: 1px;
+  position: relative;
+  height: 16px;
+  position: relative;
+}
+.btu-banner-name::before {
+  content: "";
+  display: block;
+  position: absolute;
+  height: 10px;
+  left: 0px;
+  right: 0px;
+  bottom: -10px;
+  background: linear-gradient(-135deg, var(--accent1) 15%, var(--accent2) 125%);
+}
+.btu-banner-name {
+  font: 400 15px / 15px var(--title1);
+  background-color: #000;
+  max-width: fit-content;
+  position: relative;
+  z-index: 1;
+  padding: 0px 50px 0px 200px;
+  margin-left: -200px;
+}
+.btu-banner-name b {
+  display: block;
+  font: 65px / 46px var(--title1);
+  margin-top: 5px;
+  color: #fff;
+  mix-blend-mode: difference;
+  letter-spacing: 0px;
+}
+.btu-banner-texture {
+  position: absolute;
+  z-index: 1;
+  height: 100vh;
+  width: 100vw;
+  mask-image: url(https://i.ibb.co/PZD8DkLF/Grunge-Text.png);
+  mask-size: auto 100%;
+  mask-repeat: no-repeat;
+  mask-position: top right;
+  -webkit-mask-image: url(https://i.ibb.co/PZD8DkLF/Grunge-Text.png);
+  -webkit-mask-size: auto 100%;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: top right;
+  left: 40vh;
+  top: -65vh;
+  transform: scaleX(-1);
+}
+.btu-banner-texture::before {
+  content: "";
+  display: block;
+  background-color: #fff;
+  height: 100%;
+  width: 100%;
+}
+
+/* GUIDEBOOK */

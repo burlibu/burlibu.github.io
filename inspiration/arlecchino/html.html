@@ -1,0 +1,569 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Arlecchino // Crimson Ember Interface</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Quicksand:wght@400;700&family=Italiana&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      :root {
+        --c-void: #050505; /* Negro casi absoluto */
+        --c-smoke: #121212; /* Negro grisáceo muy oscuro */
+        --c-ash: #2a2a2a; /* Gris ceniza oscuro */
+        --c-crimson: #8b0000; /* Rojo carmesí intenso (Fatui) */
+        --c-crimson-dim: #4a0000; /* Rojo carmesí apagado */
+        --c-gold: #b39b6c; /* Dorado pálido/ceniza */
+        --c-white: #ffffff; /* Blanco puro para texto principal */
+        --c-grey: #999999; /* Gris para texto secundario */
+        --glass: rgba(8, 8, 8, 0.96);
+        --border: 1px solid rgba(139, 0, 0, 0.3); /* Borde carmesí sutil */
+      }
+
+      @keyframes float {
+        0% {
+          transform: translateY(0px) rotate(0deg);
+        }
+        50% {
+          transform: translateY(-10px) rotate(0.1deg);
+        }
+        100% {
+          transform: translateY(0px) rotate(0deg);
+        }
+      }
+
+      @keyframes breathe-pyro {
+        0%,
+        100% {
+          filter: drop-shadow(0 0 10px rgba(139, 0, 0, 0.3));
+          transform: scale(1);
+        }
+        50% {
+          filter: drop-shadow(0 0 30px rgba(139, 0, 0, 0.6));
+          transform: scale(1.01);
+        }
+      }
+
+      @keyframes pulse-heat {
+        0%,
+        100% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.03);
+        }
+      }
+
+      body {
+        background-color: var(--c-void);
+        background-image: radial-gradient(
+          var(--c-crimson-dim) 1px,
+          transparent 1px
+        );
+        background-size: 40px 40px;
+        margin: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        font-family: "Quicksand", sans-serif;
+        overflow: hidden;
+        color: var(--c-white);
+        position: relative;
+      }
+
+      /* --- CANVAS PARA LAS ASCUAS --- */
+      #canvas-bg {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 1;
+      }
+
+      .main-deck {
+        width: 1350px;
+        height: 85vh;
+        display: grid;
+        grid-template-columns: 320px 1fr 380px;
+        gap: 25px;
+        padding: 20px;
+        z-index: 10;
+        position: relative;
+      }
+
+      /* --- COLUMNAS ANIMADAS --- */
+      .col-left {
+        animation: float 6s ease-in-out infinite;
+      }
+      .col-center {
+        animation: float 8s ease-in-out infinite;
+        animation-delay: 1s;
+      }
+      .col-right {
+        animation: float 7s ease-in-out infinite;
+        animation-delay: 0.5s;
+      }
+
+      .profile-area {
+        position: relative;
+        height: 380px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-end;
+      }
+
+      .render-float {
+        position: absolute;
+        top: 0;
+        width: 100%;
+        height: 320px;
+        background: url("https://i.ibb.co/Cs5h7SMN/arle.png") center bottom
+          no-repeat;
+        background-size: contain;
+        z-index: 1;
+        animation: breathe-pyro 5s ease-in-out infinite;
+        -webkit-mask-image: linear-gradient(
+          to bottom,
+          black 85%,
+          transparent 100%
+        );
+      }
+
+      .profile-text {
+        z-index: 2;
+        text-align: center;
+        width: 100%;
+      }
+      .profile-text h2 {
+        font-family: "Cinzel";
+        font-size: 38px;
+        font-weight: 900;
+        margin: 0;
+        color: var(--c-white);
+        letter-spacing: 3px;
+        text-shadow: 0 0 15px rgba(139, 0, 0, 0.7);
+      }
+      .profile-text p {
+        font-size: 10px;
+        letter-spacing: 2px;
+        opacity: 0.8;
+        color: var(--c-grey);
+        text-transform: uppercase;
+        margin-bottom: 15px;
+      }
+
+      .box {
+        background: var(--glass);
+        border: var(--border);
+        border-radius: 10px; /* Bordes más afilados, menos redondeados */
+        padding: 20px;
+        box-shadow:
+          0 0 15px rgba(0, 0, 0, 0.8),
+          inset 0 0 10px rgba(139, 0, 0, 0.1);
+        position: relative;
+        margin-bottom: 20px;
+        transition: 0.4s;
+      }
+      .box:hover {
+        border-color: var(--c-crimson);
+        filter: drop-shadow(0 0 10px rgba(139, 0, 0, 0.4));
+      }
+
+      .label {
+        position: absolute;
+        top: -10px;
+        left: 20px;
+        background: var(--c-crimson);
+        color: var(--c-white);
+        padding: 3px 15px;
+        border-radius: 0px; /* Etiqueta rectangular, más agresiva */
+        font-family: "Cinzel";
+        font-size: 9px;
+        font-weight: bold;
+        text-transform: uppercase;
+      }
+
+      .col-center {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: 1fr 1fr;
+        gap: 15px;
+      }
+
+      .gif-bubble {
+        background: var(--c-smoke);
+        border: var(--border);
+        border-radius: 10px;
+        padding: 6px;
+        overflow: hidden;
+        transition: 0.5s;
+      }
+      .gif-bubble:hover {
+        transform: scale(1.02);
+        border-color: var(--c-crimson);
+        animation: pulse-heat 1s ease-in-out infinite;
+      }
+      .gif-bubble img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 5px;
+        opacity: 0.8;
+        filter: contrast(1.1) brightness(0.9);
+      }
+
+      /* --- REPRODUCTOR Pyro --- */
+      .fem-player {
+        background: rgba(10, 10, 10, 0.9);
+        border: 1px solid var(--c-ash);
+        border-radius: 10px;
+        padding: 20px;
+        text-align: center;
+        margin-bottom: 15px;
+        position: relative;
+      }
+      .fem-player::after {
+        /* Efecto de calor en la base */
+        content: "";
+        position: absolute;
+        bottom: -2px;
+        left: 10%;
+        width: 80%;
+        height: 2px;
+        background: var(--c-crimson);
+        filter: blur(3px);
+        opacity: 0.7;
+      }
+
+      .btn-ctrl {
+        background: none;
+        border: 1px solid var(--c-ash);
+        color: var(--c-white);
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        cursor: pointer;
+        transition: 0.3s;
+      }
+      .btn-ctrl:hover {
+        background: var(--c-crimson);
+        color: var(--c-white);
+        border-color: var(--c-crimson);
+        box-shadow: 0 0 20px var(--c-crimson);
+      }
+
+      .track-list {
+        overflow-y: auto;
+        flex: 1;
+        max-height: 200px;
+        padding-right: 5px;
+      }
+      .track-item {
+        background: rgba(255, 255, 255, 0.01);
+        border-radius: 5px;
+        padding: 10px;
+        cursor: pointer;
+        font-size: 11px;
+        margin-bottom: 5px;
+        transition: 0.3s;
+        display: flex;
+        gap: 10px;
+        border: 1px solid transparent;
+        color: var(--c-grey);
+      }
+      .track-item:hover {
+        background: rgba(139, 0, 0, 0.05);
+        color: var(--c-white);
+        padding-left: 15px;
+      }
+      .track-item.active {
+        border-color: var(--c-crimson);
+        background: rgba(139, 0, 0, 0.1);
+        color: var(--c-white);
+        font-weight: bold;
+        border-left-width: 3px;
+      }
+
+      .track-list::-webkit-scrollbar {
+        width: 3px;
+      }
+      .track-list::-webkit-scrollbar-thumb {
+        background: var(--c-crimson-dim);
+      }
+
+      .footer-log {
+        padding: 15px;
+        font-size: 11px;
+        line-height: 1.5;
+        border: var(--border);
+        border-radius: 10px;
+        background: var(--glass);
+        color: var(--c-grey);
+        border-top: 2px solid var(--c-crimson); /* Línea carmesí arriba */
+      }
+    </style>
+  </head>
+
+  <body>
+    <canvas id="canvas-bg"></canvas>
+
+    <div class="main-deck">
+      <div class="col-left">
+        <div class="profile-area">
+          <div class="render-float"></div>
+          <div class="profile-text">
+            <h2>Arlecchino</h2>
+            <p>The Fourth Fatui Harbinger</p>
+          </div>
+        </div>
+        <div class="box">
+          <span class="label">Affiliation</span>
+          <div
+            style="
+              text-align: center;
+              font-size: 12px;
+              font-family: &quot;Cinzel&quot;;
+              color: var(--c-white);
+            "
+          >
+            House of the Hearth
+          </div>
+        </div>
+        <div class="box">
+          <span class="label">decree</span>
+          <div
+            style="
+              font-size: 10px;
+              text-align: center;
+              font-style: italic;
+              color: var(--c-grey);
+            "
+          >
+            "Children are like embers. If you tend to them with care, they light
+            the way. If you ignore them, they burn the house down."
+          </div>
+        </div>
+      </div>
+
+      <div class="col-center">
+        <div class="gif-bubble">
+          <img src="https://i.ibb.co/9kZWjsrd/arle.gif" />
+        </div>
+        <div class="gif-bubble">
+          <img src="https://i.ibb.co/bg2YKDg6/arle1.gif" />
+        </div>
+        <div class="gif-bubble">
+          <img src="https://i.ibb.co/jPBn9jV9/arle2.gif" />
+        </div>
+        <div class="gif-bubble">
+          <img src="https://i.ibb.co/XZ1zyC4W/arle3.gif" />
+        </div>
+      </div>
+
+      <div class="col-right">
+        <div
+          class="box"
+          style="height: 480px; display: flex; flex-direction: column"
+        >
+          <span class="label">Crimson Melodies</span>
+          <div class="fem-player">
+            <div
+              id="track-name"
+              style="
+                font-family: &quot;Cinzel&quot;;
+                font-size: 12px;
+                margin-bottom: 15px;
+                color: var(--c-white);
+                text-transform: uppercase;
+                letter-spacing: 1px;
+              "
+            >
+              Select a Melody
+            </div>
+            <div
+              style="
+                display: flex;
+                justify-content: center;
+                gap: 10px;
+                margin-bottom: 15px;
+              "
+            >
+              <button class="btn-ctrl" onclick="prevTrack()">❮</button>
+              <button
+                class="btn-ctrl"
+                id="play-btn"
+                onclick="togglePlay()"
+                style="
+                  width: 45px;
+                  height: 45px;
+                  border-color: var(--c-crimson);
+                  color: var(--c-crimson);
+                "
+              >
+                ▶
+              </button>
+              <button class="btn-ctrl" onclick="nextTrack()">❯</button>
+            </div>
+            <div
+              style="
+                width: 100%;
+                height: 2px;
+                background: var(--c-ash);
+                cursor: pointer;
+              "
+              onclick="seek(event)"
+            >
+              <div
+                id="p-bar"
+                style="
+                  width: 0%;
+                  height: 100%;
+                  background: var(--c-crimson);
+                  box-shadow: 0 0 10px var(--c-crimson);
+                "
+              ></div>
+            </div>
+          </div>
+          <div class="track-list">
+            <div
+              class="track-item"
+              onclick="selectTrack(0)"
+              data-url="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"
+            >
+              I. The Knave's Aria
+            </div>
+            <div
+              class="track-item"
+              onclick="selectTrack(1)"
+              data-url="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3"
+            >
+              II. Hearth's Shadow
+            </div>
+            <div
+              class="track-item"
+              onclick="selectTrack(2)"
+              data-url="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3"
+            >
+              III. Children of Ash
+            </div>
+            <div
+              class="track-item"
+              onclick="selectTrack(3)"
+              data-url="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3"
+            >
+              IV. Crimson Moon
+            </div>
+          </div>
+        </div>
+        <div class="footer-log">
+          <b
+            style="
+              color: var(--c-white);
+              font-family: &quot;Cinzel&quot;;
+              font-size: 9px;
+            "
+            >FATHER'S LOG</b
+          ><br />
+          "Weakness is a slow-burning fire. It consumes you from within until
+          nothing remains but ash. In my house, we are the flame, not the fuel."
+        </div>
+      </div>
+    </div>
+
+    <audio id="audio-engine"></audio>
+
+    <script>
+      const audio = document.getElementById("audio-engine");
+      const playBtn = document.getElementById("play-btn");
+      const pBar = document.getElementById("p-bar");
+      const nameDisp = document.getElementById("track-name");
+      const items = document.querySelectorAll(".track-item");
+      let currentIdx = -1;
+
+      function selectTrack(idx) {
+        currentIdx = idx;
+        items.forEach((i) => i.classList.remove("active"));
+        items[idx].classList.add("active");
+        audio.src = items[idx].getAttribute("data-url");
+        nameDisp.innerText = items[idx].innerText;
+        audio.play().then(() => (playBtn.innerText = "||"));
+      }
+
+      function togglePlay() {
+        if (currentIdx === -1) {
+          selectTrack(0);
+          return;
+        }
+        audio.paused
+          ? (audio.play(), (playBtn.innerText = "||"))
+          : (audio.pause(), (playBtn.innerText = "▶"));
+      }
+
+      function nextTrack() {
+        selectTrack((currentIdx + 1) % items.length);
+      }
+      function prevTrack() {
+        selectTrack((currentIdx - 1 + items.length) % items.length);
+      }
+      audio.ontimeupdate = () =>
+        (pBar.style.width = (audio.currentTime / audio.duration) * 100 + "%");
+      function seek(e) {
+        audio.currentTime =
+          (e.offsetX / e.currentTarget.clientWidth) * audio.duration;
+      }
+
+      // --- SISTEMA DE ASCUAS (Pyro Embers) ---
+      const canvas = document.getElementById("canvas-bg");
+      const ctx = canvas.getContext("2d");
+      let pts = [];
+      function init() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        pts = [];
+        for (let i = 0; i < 80; i++)
+          pts.push({
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height + canvas.height, // Empiezan abajo
+            s: Math.random() * 2 + 1, // Tamaño
+            spY: Math.random() * -1.5 - 0.5, // Velocidad subir (Pyro)
+            spX: Math.random() * 1 - 0.5, // Movimiento lateral
+            o: Math.random() * 5, // Oscilación lateral
+            c: Math.random() > 0.4 ? "#8b0000" : "#b39b6c", // Rojo carmesí o Dorado ceniza
+            a: Math.random() * 0.5 + 0.2, // Opacidad
+          });
+      }
+      function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.globalCompositeOperation = "lighter"; // Efecto de brillo acumulativo
+        pts.forEach((p) => {
+          ctx.fillStyle = p.c;
+          ctx.globalAlpha = p.a;
+          ctx.shadowBlur = 5;
+          ctx.shadowColor = p.c; // Brillo Pyro
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.s, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.shadowBlur = 0; // Reset blur
+
+          p.y += p.spY;
+          p.x += p.spX + Math.sin((p.o += 0.02)) * 0.4;
+          if (p.y < -20) {
+            // Reset al llegar arriba
+            p.y = canvas.height + 20;
+            p.x = Math.random() * canvas.width;
+          }
+        });
+        requestAnimationFrame(draw);
+      }
+      window.addEventListener("resize", init);
+      init();
+      draw();
+    </script>
+  </body>
+</html>
