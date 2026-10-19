@@ -1,0 +1,200 @@
+:root {
+  --ink: #eef1f5;
+  --lime: #d4ff3a;
+  --violet: #7a5cff;
+  --bg: #05060a;
+  --rx: 0deg;
+  --ry: 0deg;
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  cursor: crosshair;
+  color: var(--ink);
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  background: radial-gradient(circle at 50% 50%, #0d1020 0%, var(--bg) 60%),
+    var(--bg);
+}
+
+/* dotted layout grid behind everything */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-image: radial-gradient(rgba(238, 241, 245, 0.12) 1px, transparent 1.2px);
+  background-size: 32px 32px;
+  mask-image: radial-gradient(circle at 50% 50%, #000 20%, transparent 75%);
+  -webkit-mask-image: radial-gradient(circle at 50% 50%, #000 20%, transparent 75%);
+}
+
+canvas {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.stage {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  perspective: 900px;
+  pointer-events: none;
+}
+
+.hud {
+  position: absolute;
+  width: min(84vmin, 94vw);
+  overflow: visible;
+  transform: rotateX(var(--rx)) rotateY(var(--ry));
+  transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.hud * {
+  fill: none;
+  transform-box: view-box;
+  transform-origin: 0 0;
+}
+.r1 {
+  stroke: rgba(238, 241, 245, 0.35);
+  stroke-width: 0.8;
+  stroke-dasharray: 1 5;
+  animation: spin 50s linear infinite;
+}
+.r2 {
+  stroke: rgba(238, 241, 245, 0.18);
+  stroke-width: 0.6;
+  stroke-dasharray: 70 14 4 14;
+  animation: spin 32s linear infinite reverse;
+}
+.ticks {
+  stroke: rgba(238, 241, 245, 0.5);
+  stroke-width: 0.8;
+  animation: spin 90s linear infinite;
+}
+.arc {
+  stroke: var(--lime);
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-dasharray: 14 86;
+  animation: spin 7s cubic-bezier(0.7, 0, 0.3, 1) infinite;
+}
+.arc2 {
+  stroke: var(--violet);
+  stroke-width: 1.4;
+  stroke-dasharray: 30 70;
+  animation-duration: 11s;
+  animation-direction: reverse;
+}
+.cross {
+  stroke: rgba(238, 241, 245, 0.4);
+  stroke-width: 0.8;
+}
+.pulse .hud {
+  animation: pulse 0.9s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.center {
+  position: relative;
+  text-align: center;
+}
+
+.word {
+  margin: 0;
+  font-family: "Unbounded", "Arial Black", sans-serif;
+  font-weight: 800;
+  font-size: min(12vmin, 12.5vw);
+  line-height: 1;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+  text-shadow: 0 0 4vmin rgba(212, 255, 58, 0.15);
+}
+.word.shift {
+  text-shadow: 0.35vmin 0 rgba(122, 92, 255, 0.9), -0.35vmin 0 rgba(212, 255, 58, 0.8);
+}
+
+.kicker {
+  margin: 1.6vmin 0;
+  font-size: max(10px, 1.5vmin);
+  letter-spacing: 0.45em;
+  padding-left: 0.45em;
+  text-transform: uppercase;
+  color: var(--lime);
+}
+.kicker.dim {
+  color: rgba(238, 241, 245, 0.55);
+}
+
+.corner {
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  color: rgba(238, 241, 245, 0.6);
+  pointer-events: none;
+}
+.corner span:first-child {
+  color: var(--ink);
+}
+
+/* Crossing ticker tapes; JS fills .track with two identical halves */
+.tape {
+  position: fixed;
+  left: -10%;
+  width: 120%;
+  overflow: hidden;
+  white-space: nowrap;
+  font-family: "Unbounded", "Arial Black", sans-serif;
+  font-weight: 600;
+  font-size: max(11px, 1.8vmin);
+  letter-spacing: 0.08em;
+  padding: max(6px, 1vmin) 0;
+  pointer-events: none;
+}
+.tape.a {
+  bottom: max(66px, 13vmin);
+  background: var(--lime);
+  color: var(--bg);
+  transform: rotate(-3deg);
+}
+.tape.b {
+  bottom: max(20px, 4vmin);
+  color: var(--ink);
+  background: rgba(5, 6, 10, 0.75);
+  border-block: 1px solid rgba(238, 241, 245, 0.35);
+  transform: rotate(2deg);
+}
+.track {
+  display: inline-block;
+  animation: tape 28s linear infinite;
+}
+.tape.b .track {
+  animation-direction: reverse;
+  animation-duration: 36s;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+@keyframes tape {
+  to { transform: translateX(-50%); }
+}
+@keyframes pulse {
+  30% { transform: rotateX(var(--rx)) rotateY(var(--ry)) scale(1.08); filter: brightness(1.8); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hud *,
+  .track,
+  .pulse .hud {
+    animation: none;
+  }
+}

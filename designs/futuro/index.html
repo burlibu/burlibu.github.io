@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="it">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Futuro</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;800&family=JetBrains+Mono:wght@500&display=swap"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <canvas id="c"></canvas>
+
+    <div class="stage" id="stage">
+      <svg class="hud" viewBox="-200 -200 400 400" aria-hidden="true">
+        <circle class="r1" r="186" />
+        <circle class="r2" r="168" />
+        <g class="ticks" id="ticks"></g>
+        <circle class="arc" r="178" pathLength="100" />
+        <circle class="arc arc2" r="132" pathLength="100" />
+        <path class="cross" d="M-200 0h40M160 0h40M0 -200v40M0 160v40" />
+      </svg>
+      <div class="center">
+        <p class="kicker">Motion Lab — MMXXVI</p>
+        <h1 class="word" id="word" aria-label="Futuro">FUTURO</h1>
+        <p class="kicker dim" id="index">01 / 05</p>
+      </div>
+    </div>
+
+    <div class="corner">
+      <span>BURLIBU // MOTION</span>
+      <span id="tc">TC 00:00:00:00</span>
+    </div>
+
+    <div class="tape a"><div class="track"></div></div>
+    <div class="tape b"><div class="track"></div></div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
