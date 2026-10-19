@@ -28,7 +28,7 @@ const tiles = [
   [2, 0, "/sphere", "Sphere Marquee", <Preview name="sphere" />],
   [0, 1, "/resources", "Resources", <FaBook className="bento-icon" />],
   [2, 1, "/graph3d", "3D Graph", <FaProjectDiagram className="bento-icon" />],
-  [0, 2, null, "Prossimo design", null],
+  [0, 2, "/baroque", "Barocco", <Preview name="baroque" />],
   [1, 2, "https://github.com/burlibu/burlibu.github.io", "GitHub", <FaGithub className="bento-icon" />],
   [2, 2, null, "Prossimo design", null],
 ];
@@ -145,6 +145,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/wind" element={<DesignFrame name="wind" title="Mediterranean Drift" />} />
         <Route path="/sphere" element={<DesignFrame name="sphere" title="Sphere Marquee" />} />
+        <Route path="/baroque" element={<DesignFrame name="baroque" title="Barocco" />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/resources" element={<Resources />} />
         <Route
