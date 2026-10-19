@@ -1,0 +1,84 @@
+html,
+body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  background: #14030a;
+  cursor: pointer;
+  font-family: "Cormorant Garamond", "Didot", "Bodoni MT", Georgia, serif;
+}
+
+canvas {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.title {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  pointer-events: none;
+  opacity: 0;
+  animation: rise 2.4s 0.6s ease-out forwards;
+}
+
+.title h1 {
+  margin: 0;
+  font-style: italic;
+  font-weight: 600;
+  font-size: 9vmin;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  background: linear-gradient(170deg, #fff4c4 0%, #e8c25a 30%, #8a5a14 55%, #f3d67a 75%, #9b6a1c 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 0.3vmin 0.4vmin rgba(20, 2, 6, 0.9));
+}
+
+.title p {
+  margin: 1.2vmin 0 0;
+  font-size: 2.2vmin;
+  letter-spacing: 0.6em;
+  padding-left: 0.6em;
+  color: #d9b45a;
+  opacity: 0.8;
+}
+
+.hint {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: max(40px, 7vmin);
+  padding: 0 16px;
+  text-align: center;
+  font-size: max(12px, 1.8vmin);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(240, 210, 130, 0.85);
+  text-shadow: 0 0 4px #14030a, 0 0 10px #14030a, 0 0 18px #14030a;
+  pointer-events: none;
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -42%);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .title {
+    animation: none;
+    opacity: 1;
+  }
+}
