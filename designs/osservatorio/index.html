@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="it">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Osservatorio</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@500;700&display=swap"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="app">
+      <header class="top">
+        <div class="brand"><span class="mark"></span>OSSERVATORIO <em>// global asset monitor</em></div>
+        <div class="banner">Simulazione · dati fittizi</div>
+        <div class="clock"><span id="utc">--:--:--Z</span><span id="date"></span></div>
+      </header>
+
+      <aside class="panel nodes">
+        <h2>Nodi <span id="count"></span></h2>
+        <div class="tabs" role="group" aria-label="Filtro nodi">
+          <button type="button" data-filter="all" aria-pressed="true">Tutti</button>
+          <button type="button" data-filter="online" aria-pressed="false">Online</button>
+          <button type="button" data-filter="alert" aria-pressed="false">Allerta</button>
+        </div>
+        <ul id="list"></ul>
+      </aside>
+
+      <section class="globe-wrap" id="wrap" aria-label="Globo interattivo: trascina per ruotare, rotella per lo zoom">
+        <canvas id="globe"></canvas>
+        <div class="hud tl">Proiezione ortografica<br /><span id="view"></span></div>
+        <div class="hud bl" id="cursor">Cursore —</div>
+        <div class="hud br">
+          <span><i class="dot ok"></i>Online</span>
+          <span><i class="dot warn"></i>Degradato</span>
+          <span><i class="dot bad"></i>Allerta</span>
+          <span><i class="tri"></i>Satellite</span>
+        </div>
+        <div class="zoom">
+          <button type="button" id="zin" aria-label="Zoom avanti">+</button>
+          <button type="button" id="zout" aria-label="Zoom indietro">−</button>
+          <button type="button" id="rot" aria-pressed="true">Auto</button>
+        </div>
+        <div class="tip" id="tip" hidden></div>
+      </section>
+
+      <aside class="panel detail" aria-live="polite">
+        <h2>Nodo selezionato</h2>
+        <div class="ident">
+          <span class="code" id="d-code"></span>
+          <span class="city" id="d-city"></span>
+        </div>
+        <dl>
+          <dt>Coordinate</dt><dd id="d-coord"></dd>
+          <dt>Ruolo</dt><dd id="d-role"></dd>
+          <dt>Stato</dt><dd id="d-status"></dd>
+          <dt>Latenza</dt><dd id="d-lat"></dd>
+          <dt>Ora solare</dt><dd id="d-time"></dd>
+          <dt>Uptime</dt><dd id="d-up"></dd>
+        </dl>
+        <h3>Throughput <small>Mb/s</small></h3>
+        <canvas id="spark"></canvas>
+        <h3>Collegamenti</h3>
+        <ul id="links"></ul>
+      </aside>
+
+      <footer class="panel bottom">
+        <div class="log">
+          <h2>Registro eventi</h2>
+          <ol id="log"></ol>
+        </div>
+        <div class="stats">
+          <div><b id="s-links">0</b><span>Link attivi</span></div>
+          <div><b id="s-pps">0</b><span>Pacchetti/s</span></div>
+          <div><b id="s-sat">0</b><span>Satelliti</span></div>
+          <div><b id="s-alert">0</b><span>Allerte</span></div>
+        </div>
+      </footer>
+    </div>
+
+    <script src="../preview.js"></script>
+    <script src="land.js"></script>
+    <script src="script.js"></script>
+  </body>
+</html>
