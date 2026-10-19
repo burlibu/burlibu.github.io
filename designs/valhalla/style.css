@@ -1,0 +1,215 @@
+:root {
+  --teal: #3fd0b6;
+  --carve: #1b2c30;
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  background: #1d2e33;
+  cursor: pointer;
+  font-family: "Cinzel", "Trajan Pro", Georgia, serif;
+}
+
+.stone,
+.shade,
+#motes {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  pointer-events: none;
+}
+
+.shade {
+  background: radial-gradient(ellipse at 50% 40%, transparent 35%, rgba(0, 0, 0, 0.55) 100%),
+    linear-gradient(to top, rgba(80, 48, 24, 0.4), transparent 30%);
+}
+
+#cracks path {
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.corner {
+  position: fixed;
+  width: max(44px, 11vmin);
+  height: max(44px, 11vmin);
+  fill: none;
+  stroke: var(--teal);
+  stroke-width: 4;
+  opacity: 0.9;
+}
+.tl { left: 2.5vmin; top: 2.5vmin; }
+.tr { right: 2.5vmin; top: 2.5vmin; transform: scaleX(-1); }
+.bl { left: 2.5vmin; bottom: 2.5vmin; transform: scaleY(-1); }
+.br { right: 2.5vmin; bottom: 2.5vmin; transform: scale(-1); }
+
+.cover {
+  position: relative;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0 16px;
+  box-sizing: border-box;
+}
+
+.raven {
+  height: min(56vh, 84vw);
+  overflow: visible;
+  filter: drop-shadow(0 0 1.4vmin rgba(63, 208, 182, 0.18));
+}
+
+.engraving {
+  fill: none;
+  stroke: var(--teal);
+  stroke-width: 1.2;
+  opacity: 0.17;
+}
+.engraving text {
+  fill: var(--teal);
+  stroke: none;
+  font: 15px "Noto Sans Runic", "Segoe UI Historic", sans-serif;
+}
+.ring {
+  transform-box: view-box;
+  transform-origin: 250px 200px;
+  animation: spin 240s linear infinite;
+}
+
+.bird {
+  fill: var(--teal);
+}
+.bird .leg {
+  fill: none;
+  stroke: var(--teal);
+  stroke-width: 9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.bird .carve {
+  fill: none;
+  stroke: var(--carve);
+  stroke-width: 3.2;
+  stroke-linecap: round;
+}
+.bird .shaft {
+  stroke-width: 2.2;
+}
+.bird .hole {
+  fill: var(--carve);
+}
+#wing {
+  transform-box: view-box;
+  transform-origin: 200px 175px;
+}
+
+.title {
+  text-align: center;
+  color: #f1f4f2;
+  filter: url(#worn);
+  margin-top: 1vmin;
+}
+
+.title h1 {
+  margin: 0;
+  font-weight: 700;
+  font-size: 6.4vmin;
+  line-height: 1;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  text-shadow: 0 0.3vmin 0.6vmin rgba(0, 0, 0, 0.6);
+}
+
+.ruled {
+  display: flex;
+  align-items: center;
+  gap: 1.6vmin;
+  margin: 0.4vmin 0 0;
+  font-weight: 500;
+  font-size: 4.4vmin;
+  line-height: 1;
+  text-transform: uppercase;
+}
+.ruled::before,
+.ruled::after {
+  content: "";
+  flex: 1;
+  min-width: 6vmin;
+  height: 1px;
+  background: rgba(241, 244, 242, 0.75);
+}
+
+.title h2 {
+  margin: 1.4vmin 0 1.6vmin;
+  font-weight: 500;
+  font-size: 8.4vmin;
+  line-height: 1;
+  letter-spacing: 0.36em;
+  padding-left: 0.36em;
+  text-transform: uppercase;
+  color: var(--teal);
+  text-shadow: 0 0 2vmin rgba(63, 208, 182, 0.25);
+}
+
+.rule {
+  position: relative;
+  height: 1px;
+  margin: 0 auto;
+  width: 100%;
+  background: rgba(241, 244, 242, 0.55);
+}
+.rule::before,
+.rule::after {
+  content: "";
+  position: absolute;
+  top: -3px;
+  width: 6px;
+  height: 6px;
+  background: #f1f4f2;
+  transform: rotate(45deg);
+}
+.rule::before { left: 50%; margin-left: -12px; }
+.rule::after { left: 50%; margin-left: 6px; }
+
+.sub {
+  margin: 1.4vmin 0;
+  font-size: max(11px, 1.9vmin);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--teal);
+}
+
+/* Click: the raven beats its wing and the carving lights up */
+.call .raven {
+  animation: glow 1.6s ease-out;
+}
+.call #wing {
+  animation: flap 1.1s ease-in-out;
+}
+
+@keyframes glow {
+  30% { filter: drop-shadow(0 0 3vmin rgba(90, 255, 225, 0.75)); }
+}
+@keyframes flap {
+  25% { transform: rotate(-9deg); }
+  55% { transform: rotate(5deg); }
+  80% { transform: rotate(-3deg); }
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ring,
+  .call .raven,
+  .call #wing {
+    animation: none;
+  }
+}
