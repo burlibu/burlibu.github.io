@@ -125,3 +125,226 @@ body { background: #0b0b0d; }
   .design-frame { top: 56px; height: calc(100% - 56px); }
   .back-link { top: 10px; left: 16px; right: auto; }
 }
+
+/* ---------- /graph3d knowledge base: luminous "memory simulation" look ---------- */
+.kb,
+.kb-page {
+  --kb-ink: #dff7ff;
+  --kb-cyan: #8fe9ff;
+  --kb-line: rgba(143, 233, 255, 0.35);
+  color: var(--kb-ink);
+  font-family: "Rajdhani", "Segoe UI", system-ui, sans-serif;
+  background:
+    radial-gradient(ellipse at 74% -4%, rgba(235, 252, 255, 0.55), transparent 42%),
+    radial-gradient(ellipse at 50% 125%, rgba(60, 170, 200, 0.35), transparent 60%),
+    linear-gradient(180deg, #0d3b4d 0%, #062331 45%, #020c13 100%);
+}
+.kb { position: fixed; inset: 0; overflow: hidden; }
+.kb canvas { touch-action: none; }
+.kb-scan {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    repeating-linear-gradient(to bottom, rgba(255, 255, 255, 0.025) 0 1px, transparent 1px 4px),
+    radial-gradient(ellipse at 50% 50%, transparent 55%, rgba(0, 8, 14, 0.65) 100%);
+}
+
+.kb-head {
+  position: absolute;
+  top: 20px;
+  left: 24px;
+  right: 140px;
+  display: flex;
+  align-items: flex-start;
+  gap: 32px;
+  pointer-events: none;
+}
+.kb-head > * { pointer-events: auto; }
+.kb-brand { display: flex; gap: 14px; align-items: center; }
+.kb-sigil {
+  width: 22px;
+  height: 22px;
+  border: 1.5px solid var(--kb-cyan);
+  transform: rotate(45deg);
+  box-shadow: 0 0 12px var(--kb-cyan), inset 0 0 8px rgba(143, 233, 255, 0.6);
+}
+.kb-brand h1 { font-size: 22px; font-weight: 300; letter-spacing: 0.4em; text-transform: uppercase; text-shadow: 0 0 12px rgba(143, 233, 255, 0.7); }
+.kb-brand p { font-size: 13px; letter-spacing: 0.12em; text-transform: uppercase; opacity: 0.7; }
+
+.kb-search { position: relative; width: 260px; }
+.kb-search input {
+  width: 100%;
+  padding: 8px 12px;
+  background: rgba(4, 25, 35, 0.55);
+  border: 1px solid var(--kb-line);
+  border-radius: 2px;
+  color: var(--kb-ink);
+  font: 500 15px "Rajdhani", sans-serif;
+  letter-spacing: 0.06em;
+  outline: none;
+  backdrop-filter: blur(4px);
+}
+.kb-search input:focus { border-color: var(--kb-cyan); box-shadow: 0 0 12px rgba(143, 233, 255, 0.35); }
+.kb-search ul {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  margin-top: 4px;
+  background: rgba(4, 25, 35, 0.85);
+  border: 1px solid var(--kb-line);
+  backdrop-filter: blur(6px);
+}
+.kb-search button {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  padding: 7px 12px;
+  text-align: left;
+  font-size: 15px;
+}
+.kb-search button:hover,
+.kb-search button:focus-visible { background: rgba(143, 233, 255, 0.12); outline: none; }
+.kb-search small { opacity: 0.55; font-size: 12px; text-transform: uppercase; letter-spacing: 0.1em; }
+
+.kb-legend {
+  position: absolute;
+  left: 24px;
+  bottom: 52px;
+  display: grid;
+  gap: 4px;
+  font-size: 13px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  pointer-events: none;
+}
+.kb-legend li { display: flex; align-items: center; gap: 10px; opacity: 0.8; }
+.kb-legend i { width: 7px; height: 7px; border-radius: 50%; }
+
+.kb-card {
+  position: absolute;
+  right: 24px;
+  bottom: 52px;
+  width: 260px;
+  padding: 14px 16px;
+  background: rgba(4, 25, 35, 0.6);
+  border: 1px solid var(--kb-line);
+  border-left: 2px solid var(--kb-cyan);
+  backdrop-filter: blur(6px);
+  animation: kb-in 0.3s ease-out;
+}
+.kb-card small { font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase; opacity: 0.65; }
+.kb-card h2 { margin: 2px 0 4px; font-size: 24px; font-weight: 500; letter-spacing: 0.04em; text-shadow: 0 0 10px rgba(143, 233, 255, 0.6); }
+.kb-card p { font-size: 14px; opacity: 0.75; }
+.kb-card a { display: inline-block; margin-top: 8px; color: var(--kb-cyan); letter-spacing: 0.12em; text-transform: uppercase; font-size: 14px; }
+.kb-card a:hover { text-shadow: 0 0 8px var(--kb-cyan); }
+
+.kb-hint {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 16px;
+  text-align: center;
+  font-size: 13px;
+  letter-spacing: 0.1em;
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.kb-label {
+  display: block;
+  transform: translateY(-150%);
+  white-space: nowrap;
+  font: 500 12px "Rajdhani", sans-serif;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #eafcff;
+  text-shadow: 0 0 6px rgba(143, 233, 255, 0.9);
+  user-select: none;
+}
+.kb-label.hub { font-size: 16px; font-weight: 600; letter-spacing: 0.22em; }
+.kb-label.lead { color: #fff; animation: kb-glitch 0.9s steps(1) infinite; }
+
+@keyframes kb-in { from { opacity: 0; transform: translateY(6px); } }
+@keyframes kb-glitch {
+  0%, 100% { text-shadow: 0 0 8px rgba(143, 233, 255, 1); }
+  20% { text-shadow: -2px 0 rgba(255, 70, 70, 0.8), 2px 0 rgba(143, 233, 255, 0.9); }
+  24% { text-shadow: 0 0 8px rgba(143, 233, 255, 1); }
+  60% { text-shadow: 1px 0 rgba(255, 70, 70, 0.7), -1px 0 rgba(143, 233, 255, 0.9); }
+  63% { text-shadow: 0 0 8px rgba(143, 233, 255, 1); }
+}
+
+/* note pages */
+.kb-page { position: relative; min-height: 100vh; padding: 24px 24px 64px; overflow: hidden; }
+.kb-dust {
+  position: fixed;
+  inset: -50% 0 0;
+  pointer-events: none;
+  /* layered tiles with co-prime sizes so the dots never line up into a grid */
+  background-image:
+    radial-gradient(circle at 23% 31%, rgba(200, 245, 255, 0.6) 0 1.2px, transparent 2.5px),
+    radial-gradient(circle at 71% 64%, rgba(200, 245, 255, 0.45) 0 1px, transparent 2px),
+    radial-gradient(circle at 42% 78%, rgba(200, 245, 255, 0.22) 0 4px, transparent 10px),
+    radial-gradient(circle at 85% 17%, rgba(200, 245, 255, 0.14) 0 9px, transparent 18px);
+  background-size: 131px 157px, 97px 113px, 311px 277px, 523px 467px;
+  animation: kb-rise 40s linear infinite;
+}
+.kb-crumbs {
+  position: relative;
+  display: flex;
+  gap: 10px;
+  font-size: 14px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  opacity: 0.8;
+}
+.kb-crumbs a { color: var(--kb-cyan); }
+.kb-note { position: relative; max-width: 720px; margin: 8vh auto 0; }
+.kb-kicker { color: var(--tint); font-size: 14px; letter-spacing: 0.24em; text-transform: uppercase; text-shadow: 0 0 8px var(--tint); }
+.kb-note h1 {
+  margin: 6px 0 14px;
+  font-size: clamp(34px, 6vw, 64px);
+  font-weight: 300;
+  line-height: 1.05;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  text-shadow: 0 0 18px rgba(143, 233, 255, 0.55);
+  overflow-wrap: anywhere;
+}
+.kb-sync { display: flex; align-items: center; gap: 12px; margin-bottom: 28px; font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; opacity: 0.8; }
+.kb-sync b { display: block; height: 2px; max-width: 220px; flex: 1; background: linear-gradient(90deg, var(--kb-cyan), transparent); box-shadow: 0 0 8px var(--kb-cyan); }
+.kb-note > p { margin-bottom: 14px; font-size: 19px; font-weight: 500; line-height: 1.6; opacity: 0.9; }
+.kb-note > p a { color: var(--kb-cyan); }
+.kb-note h2 { margin: 32px 0 10px; font-size: 13px; font-weight: 600; letter-spacing: 0.3em; text-transform: uppercase; opacity: 0.7; }
+.kb-links { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 8px; }
+.kb-links a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 12px;
+  border: 1px solid var(--kb-line);
+  background: rgba(4, 25, 35, 0.45);
+  font-size: 16px;
+  font-weight: 500;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.kb-links a:hover,
+.kb-links a:focus-visible { border-color: var(--kb-cyan); box-shadow: 0 0 12px rgba(143, 233, 255, 0.3); outline: none; }
+.kb-links i { flex: none; width: 7px; height: 7px; border-radius: 50%; }
+.kb-links small { margin-left: auto; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; opacity: 0.5; }
+@keyframes kb-rise { to { transform: translateY(50%); } }
+
+/* at 900px and below the back link moves to the top-left corner */
+@media (max-width: 900px) {
+  .kb-head { top: 56px; left: 16px; right: 16px; flex-direction: column; gap: 12px; }
+  .kb-search { width: 100%; }
+  .kb-legend { display: none; }
+  .kb-card { left: 16px; right: 16px; width: auto; bottom: 44px; }
+  .kb-hint { font-size: 11px; padding: 0 16px; }
+  .kb-page { padding-top: 60px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .kb-dust, .kb-label.lead { animation: none; }
+}

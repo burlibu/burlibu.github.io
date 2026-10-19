@@ -4,6 +4,7 @@ import { HashRouter as Router, Routes, Route, Link } from "react-router-dom";
 import { FaGithub, FaProjectDiagram, FaEnvelope, FaBook } from "react-icons/fa";
 // three.js is ~1 MB: load it only when /graph3d is opened
 const Graph3D = lazy(() => import("./Graph3D"));
+const NotePage = lazy(() => import("./NotePage"));
 
 const design = (name) => `${process.env.PUBLIC_URL}/designs/${name}/index.html`;
 
@@ -177,12 +178,23 @@ function App() {
         <Route
           path="/graph3d"
           element={
-            <main className="min-h-screen bg-neutral-950">
-              <Back />
-              <Suspense fallback={null}>
+            <>
+              <Suspense fallback={<div className="kb" />}>
                 <Graph3D />
               </Suspense>
-            </main>
+              <Back />
+            </>
+          }
+        />
+        <Route
+          path="/graph3d/nodo/:slug"
+          element={
+            <>
+              <Suspense fallback={<div className="kb-page" />}>
+                <NotePage />
+              </Suspense>
+              <Back />
+            </>
           }
         />
       </Routes>

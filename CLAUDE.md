@@ -30,7 +30,7 @@ Every push to `main` triggers `.github/workflows/deploy-gh-pages.yml`, which bui
 - Tile previews load the design with `?preview`. Each design includes `public/designs/preview.js` before its own script. In preview mode that script quarters `devicePixelRatio`, debounces `resize` listeners (so a tile's hover grow doesn't rebuild the scene every frame), and holds `requestAnimationFrame` while the tile is off-screen. Size canvases from `devicePixelRatio` and set them up in a `resize` listener so they benefit from this.
 - Avoid per-frame style recalc over many elements in a design, such as animating an inherited custom property that hundreds of nodes read. That's what made the home lag. Animate a transform on a container instead.
 - To add a design: copy it to `public/designs/<name>/`, add `<script src="../preview.js"></script>` before its scripts, add a `<Route>`, and replace a placeholder tile (or add one to `more`).
-- `src/Graph3D.js` (`/graph3d`) is a react-three-fiber scene.
+- `src/Graph3D.js` (`/graph3d`) is a react-three-fiber knowledge-base graph in the style of Obsidian. It loads lazily because three.js is about 1 MB. Its notes are dummy data generated deterministically in `src/knowledge.js`, about 100 of them with links and backlinks. Each node opens `/graph3d/nodo/<slug>`, which `src/NotePage.js` renders. The layout is a 3D force simulation computed once and scaled to `GRAPH_RADIUS`. The background (particles, wave grid, frequency lines) is drawn in shaders.
 - Routing uses `HashRouter` (URLs look like `/#/wind`) because GitHub Pages has no SPA fallback.
 - Styling uses Tailwind utilities plus the bento/frame classes in `src/index.css`. The service worker is `unregister()`ed in `src/index.js`.
 
