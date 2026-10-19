@@ -1,0 +1,217 @@
+:root {
+  --ink: #f2f2f2;
+  --dim: #8a8a8a;
+  --red: #ff4b4b;
+  --line: #2b2b2b;
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  background: #000;
+  color: var(--ink);
+  font-family: "Inter", system-ui, sans-serif;
+  cursor: pointer;
+}
+
+canvas {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+header {
+  position: fixed;
+  top: 20px;
+  left: 24px;
+  display: flex;
+  align-items: center;
+  gap: 40px;
+}
+
+.logo {
+  font-weight: 800;
+  font-style: italic;
+  font-size: 22px;
+  letter-spacing: -0.04em;
+}
+.logo i {
+  font-weight: 500;
+  font-style: normal;
+  position: relative;
+  margin-left: 1px;
+}
+.logo i::after {
+  content: "";
+  position: absolute;
+  right: -7px;
+  top: 1px;
+  width: 4px;
+  height: 4px;
+  background: var(--red);
+}
+
+.deco {
+  display: flex;
+  gap: 24px;
+  font: 500 12px "IBM Plex Mono", ui-monospace, monospace;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #c8c8c8;
+}
+.deco span {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.ic {
+  display: inline-block;
+  width: 12px;
+  height: 10px;
+  border: 1.5px solid currentColor;
+  border-radius: 2px;
+}
+.ic.curve {
+  border-width: 0 0 1.5px 1.5px;
+  border-radius: 0 0 0 10px;
+  transform: scaleX(-1);
+}
+.ic.play {
+  border-radius: 3px;
+  background: linear-gradient(currentColor, currentColor) 50% 50% / 3px 3px no-repeat;
+}
+
+/* Letters rise one after another; JS sets --i on each span */
+.headline {
+  position: fixed;
+  left: 64px;
+  top: 50%;
+  transform: translateY(-50%);
+  margin: 0;
+  font-weight: 800;
+  font-size: clamp(40px, 5.6vw, 96px);
+  line-height: 0.95;
+  letter-spacing: -0.05em;
+  pointer-events: none;
+}
+.headline span {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(60%);
+  animation: rise 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation-delay: calc(var(--i) * 45ms + 300ms);
+}
+
+.caption {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: calc(50% + min(36vmin, 40vw, 50vh - 115px) + 16px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  font: 500 12px "IBM Plex Mono", ui-monospace, monospace;
+  pointer-events: none;
+}
+#label {
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--ink);
+}
+#code {
+  color: var(--dim);
+  padding: 0 16px;
+  text-align: center;
+}
+#code b {
+  color: var(--red);
+  font-weight: 500;
+}
+
+footer {
+  position: fixed;
+  left: 24px;
+  right: 24px;
+  bottom: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  font: 500 12px "IBM Plex Mono", ui-monospace, monospace;
+}
+
+.modes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.modes button {
+  padding: 10px 14px;
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  background: transparent;
+  color: #c8c8c8;
+  font: inherit;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s, background 0.2s;
+}
+.modes button:hover {
+  border-color: #6a6a6a;
+  color: var(--ink);
+}
+.modes button[aria-pressed="true"] {
+  background: #222;
+  border-color: #222;
+  color: var(--ink);
+}
+.modes button:focus-visible {
+  outline: 2px solid var(--red);
+  outline-offset: 2px;
+}
+
+.chip {
+  color: var(--dim);
+  white-space: nowrap;
+}
+
+@keyframes rise {
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Narrow screens: the ring takes the middle, so the headline and deco nav step aside */
+@media (max-width: 1100px) {
+  .headline,
+  .deco {
+    display: none;
+  }
+}
+@media (max-width: 640px) {
+  footer {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .modes button {
+    padding: 8px 10px;
+  }
+  .chip {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .headline span {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+}

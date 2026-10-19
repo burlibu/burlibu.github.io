@@ -1,11 +1,5 @@
 @layer reset, base, sphere, controls, responsive, accessibility;
 
-@property --angle {
-  syntax: "<angle>";
-  inherits: true;
-  initial-value: 24deg;
-}
-
 @layer reset {
   *, *::before, *::after { box-sizing: border-box; }
   body { margin: 0; }
@@ -78,6 +72,18 @@
     overflow: clip;
     transform: scale(1);
     animation: big-bang var(--bang-duration) var(--bang-ease) both;
+    /* Limb fade, fixed in screen space: alpha = sqrt(1 - (d/R)^2), floored at the rear opacity */
+    --fade: radial-gradient(circle,
+      #000 0,
+      rgb(0 0 0 / .87) calc(var(--radius) * .5),
+      rgb(0 0 0 / .71) calc(var(--radius) * .7),
+      rgb(0 0 0 / .53) calc(var(--radius) * .85),
+      rgb(0 0 0 / .31) calc(var(--radius) * .95),
+      rgb(0 0 0 / var(--rear-opacity)) var(--radius),
+      rgb(0 0 0 / var(--rear-opacity)) calc(var(--radius) * 1.2),
+      transparent calc(var(--radius) * 1.25));
+    -webkit-mask-image: var(--fade);
+    mask-image: var(--fade);
   }
 
   .scene::before {
@@ -92,7 +98,10 @@
     --time-scale: 1;
     position: absolute;
     inset: 0;
-    transform: rotateZ(-8deg);
+    /* Spinning the whole sphere (instead of animating an inherited --angle that every
+       glyph reads) keeps glyph styles static: one composited transform per frame,
+       not a style recalc of ~1300 pseudo-elements. */
+    transform: rotateZ(-8deg) rotateY(-24deg);
     transform-style: preserve-3d;
     animation: circulate calc(24s * var(--time-scale)) linear infinite;
   }
@@ -116,7 +125,7 @@
   .sphere:has(.phrase:focus-visible) { animation-play-state: paused; }
 
   .orbit {
-    --phase: calc(var(--angle) + var(--longitude));
+    --phase: var(--longitude);
     --orbit-radius: calc(var(--radius) * cos(var(--latitude)));
     --x: calc(var(--orbit-radius) * cos(var(--phase)));
     --z: calc(var(--orbit-radius) * sin(var(--phase)));
@@ -145,7 +154,6 @@
     text-decoration-skip-ink: none;
     transition: text-decoration-color .16s ease;
     backface-visibility: hidden;
-    opacity: calc(var(--rear-opacity) + (1 - var(--rear-opacity)) * max(0, sin(var(--glyph-phase))));
     transform:
       translate(-50%, -50%)
       translate3d(var(--glyph-x), 0, var(--glyph-z))
@@ -171,7 +179,7 @@
   }
 
 
-  @keyframes circulate { to { --angle: 384deg; } }
+  @keyframes circulate { to { transform: rotateZ(-8deg) rotateY(-384deg); } }
 
   @keyframes big-bang {
     from { transform: scale(.1); }
