@@ -33,40 +33,56 @@ const tiles = [
   [2, 2, "/valhalla", "Valhalla", <Preview name="valhalla" />],
 ];
 
+// [route, label, preview]; overflow tiles once the 3x3 bento is full, shown below it
+const more = [
+  ["/futuro", "Futuro", <Preview name="futuro" />],
+  [null, "Prossimo design", null],
+  [null, "Prossimo design", null],
+];
+
+function Tile({ to, label, preview, ...props }) {
+  const inner = (
+    <>
+      {preview}
+      <span className="bento-label">{label}</span>
+    </>
+  );
+  if (!to)
+    return (
+      <div {...props} className="bento-item is-empty" tabIndex={0}>
+        {inner}
+      </div>
+    );
+  if (to.startsWith("http"))
+    return (
+      <a {...props} className="bento-item" href={to} target="_blank" rel="noopener noreferrer">
+        {inner}
+      </a>
+    );
+  return (
+    <Link {...props} className="bento-item" to={to}>
+      {inner}
+    </Link>
+  );
+}
+
 function Home() {
   return (
     <main className="bento-page">
       <div className="bento">
-        {tiles.map(([col, row, to, label, preview]) => {
-          const inner = (
-            <>
-              {preview}
-              <span className="bento-label">{label}</span>
-            </>
-          );
-          const props = { key: `${col}${row}`, "data-col": col, "data-row": row };
-          if (!to)
-            return (
-              <div {...props} className="bento-item is-empty" tabIndex={0}>
-                {inner}
-              </div>
-            );
-          if (to.startsWith("http"))
-            return (
-              <a {...props} className="bento-item" href={to} target="_blank" rel="noopener noreferrer">
-                {inner}
-              </a>
-            );
-          return (
-            <Link {...props} className="bento-item" to={to}>
-              {inner}
-            </Link>
-          );
-        })}
+        {tiles.map(([col, row, to, label, preview]) => (
+          <Tile key={`${col}${row}`} data-col={col} data-row={row} to={to} label={label} preview={preview} />
+        ))}
         <div className="bento-item center-piece" data-col="1" data-row="1" tabIndex={0}>
           <h1>Burlibu</h1>
           <p>Una collezione di esperimenti di design. Scegli una tessera.</p>
         </div>
+      </div>
+      <p className="more-hint">Scorri per altri design ↓</p>
+      <div className="bento-more">
+        {more.map(([to, label, preview], i) => (
+          <Tile key={i} to={to} label={label} preview={preview} />
+        ))}
       </div>
     </main>
   );
@@ -147,6 +163,7 @@ function App() {
         <Route path="/sphere" element={<DesignFrame name="sphere" title="Sphere Marquee" />} />
         <Route path="/baroque" element={<DesignFrame name="baroque" title="Barocco" />} />
         <Route path="/valhalla" element={<DesignFrame name="valhalla" title="Valhalla" />} />
+        <Route path="/futuro" element={<DesignFrame name="futuro" title="Futuro" />} />
         <Route path="/contact"element={<Contact />} />
         <Route path="/resources" element={<Resources />} />
         <Route
