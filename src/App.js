@@ -40,7 +40,7 @@ const more = [
   ["/stagger", "Stagger", <Preview name="stagger" />],
   ["/osservatorio", "Osservatorio", <Preview name="osservatorio" />],
   ["/caramelle", "Caramelle", <Preview name="caramelle" />],
-  [null, "Prossimo design", null],
+  ["/deco", "Art Deco", <Preview name="deco" />],
   [null, "Prossimo design", null],
 ];
 
@@ -171,6 +171,7 @@ function App() {
         <Route path="/stagger" element={<DesignFrame name="stagger" title="Stagger" />} />
         <Route path="/osservatorio" element={<DesignFrame name="osservatorio" title="Osservatorio" />} />
         <Route path="/caramelle" element={<DesignFrame name="caramelle" title="Caramelle" />} />
+        <Route path="/deco" element={<DesignFrame name="deco" title="Art Deco" />} />
         <Route path="/contact"element={<Contact />} />
         <Route path="/resources" element={<Resources />} />
         <Route

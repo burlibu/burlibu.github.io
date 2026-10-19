@@ -1,0 +1,630 @@
+/* "Art Deco Buttons" by Olivier (ol-ivier) — https://codepen.io/ol-ivier/pen/azBqZgG */
+  @import url('https://fonts.googleapis.com/css2?family=Faculty+Glyphic&display=swap');
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    .background-fixed {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 0;
+      background-image: url('https://images.unsplash.com/photo-1722715917815-8225d585122c?q=80');
+      background-size: contain;
+      background-position: left;
+      background-attachment: fixed;
+      background-repeat: no-repeat;
+      min-height: 100vh;
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      font-family: 'Segoe UI', 'Roboto', system-ui, -apple-system, sans-serif;
+      padding: 2rem;
+      overflow: hidden;
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      font-family: 'Segoe UI', 'Roboto', system-ui, -apple-system, sans-serif;
+      padding: 2rem;
+      position: relative;
+      background: #b95636;
+      z-index: 1;
+    }
+
+    .hint {
+    position: fixed;
+    left: 12px;
+    bottom: 12px;
+    z-index: 10;
+    background: rgb(0 0 0 / .8);
+    padding: 8px;
+    border-radius: 8px;
+    opacity: .85;
+    font-size: 13px;
+    color: #fff;
+    pointer-events: none
+}
+
+.hint a {
+    color: tomato;
+    text-decoration: none;
+    pointer-events: auto
+}
+
+    .button-container {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      justify-content: center;
+      align-items: stretch;
+      padding: 40px 30px;
+      background: rgba(255, 248, 235, 0.92);
+      backdrop-filter: blur(3px);
+      border-radius: 32px;
+      box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.6);
+      max-width: 380px;
+      width: 100%;
+      margin-right: 2rem;
+      border: 1px solid rgba(255, 215, 150, 0.6);
+    }
+
+    .btn-deco {
+      background: transparent;
+      border: none;
+      color: #000000;
+      padding: 14px 24px;
+      font-family: 'Arial Black', 'Impact', 'Franklin Gothic Heavy', sans-serif;
+      font-size: 13px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      position: relative;
+      cursor: pointer;
+      transition: all 0.35s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+      outline: none;
+      z-index: 2;
+      background-clip: padding-box;
+      width: 100%;
+      text-align: center;
+      margin: 10px 0
+    }
+
+    .btn-deco::before,
+    .btn-deco::after {
+      pointer-events: none;
+    }
+
+    /* STYLE 1 */
+    .style-1::before {
+      content: '';
+      position: absolute;
+      top: -6px;
+      bottom: -6px;
+      left: 0;
+      right: 0;
+      border-left: 2px solid #000;
+      border-right: 2px solid #000;
+      transition: all 0.32s ease-out;
+    }
+    .style-1::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: -6px;
+      right: -6px;
+      border-top: 2px solid #000;
+      border-bottom: 2px solid #000;
+      transition: all 0.32s ease-out;
+    }
+    .style-1:hover {
+      background-color: #000;
+      color: #fff;
+      letter-spacing: 4px;
+      transform: scale(0.98);
+    }
+    .style-1:hover::before {
+      top: 0;
+      bottom: 0;
+      border-left-color: #fff;
+      border-right-color: #fff;
+    }
+    .style-1:hover::after {
+      left: 0;
+      right: 0;
+      border-top-color: #fff;
+      border-bottom-color: #fff;
+    }
+
+    /* STYLE 2 */
+    .style-2 {
+      border: 1px solid #000;
+      box-shadow: 0 0 0 3px #fff, 0 0 0 5px #000, 0 0 0 8px #fff, 0 0 0 9px #000;
+      transition: box-shadow 0.3s ease, background-color 0.25s, color 0.2s, transform 0.2s;
+    }
+    .style-2:hover {
+      background-color: #000;
+      color: #fff;
+      transform: scale(0.97);
+      box-shadow: 0 0 0 3px #000, 0 0 0 5px #fff, 0 0 0 8px #000, 0 0 0 10px #fff;
+      letter-spacing: 4.2px;
+    }
+
+    /* STYLE 3 */
+    .style-3 {
+      border: 2px solid #000;
+      transition: background-color 0.25s, color 0.25s, border-color 0.2s;
+    }
+    .style-3::before {
+      content: '';
+      position: absolute;
+      top: 6px;
+      bottom: 6px;
+      left: -7px;
+      width: 3px;
+      background-color: #000;
+      transition: all 0.25s ease;
+    }
+    .style-3::after {
+      content: '';
+      position: absolute;
+      top: 6px;
+      bottom: 6px;
+      right: -7px;
+      width: 3px;
+      background-color: #000;
+      transition: all 0.25s ease;
+    }
+    .style-3:hover {
+      background-color: #000;
+      color: #fff;
+      border-color: #fff;
+      transform: translateY(-2px);
+      box-shadow: 0 10px 18px -8px rgba(0, 0, 0, 0.4);
+    }
+    .style-3:hover::before,
+    .style-3:hover::after {
+      background-color: #63351d;
+      width: 4px;
+      top: 2px;
+      bottom: 2px;
+    }
+    .style-3:hover::before { left: -9px; }
+    .style-3:hover::after { right: -9px; }
+
+    /* STYLE 4 */
+    .style-4 {
+      border: 1px solid #000;
+    }
+    .style-4::before {
+      content: '';
+      position: absolute;
+      top: -6px; bottom: -6px; left: -6px; right: -6px;
+      background-image:
+        linear-gradient(to right, #000 2px, transparent 2px),
+        linear-gradient(to bottom, #000 2px, transparent 2px),
+        linear-gradient(to left, #000 2px, transparent 2px),
+        linear-gradient(to bottom, #000 2px, transparent 2px),
+        linear-gradient(to right, #000 2px, transparent 2px),
+        linear-gradient(to top, #000 2px, transparent 2px),
+        linear-gradient(to left, #000 2px, transparent 2px),
+        linear-gradient(to top, #000 2px, transparent 2px);
+      background-position:
+        top left, top left,
+        top right, top right,
+        bottom left, bottom left,
+        bottom right, bottom right;
+      background-size: 12px 12px;
+      background-repeat: no-repeat;
+      transition: transform 0.3s ease;
+    }
+    .style-4:hover::before { transform: scale(1.01); }
+    .style-4:hover {
+      background-color: #000;
+      color: #fff;
+      border-color: #fff;
+    }
+
+    /* STYLE 5 */
+    .style-5 {
+      border-left: 2px solid #000;
+      border-right: 2px solid #000;
+    }
+    .style-5::before, .style-5::after {
+      content: '';
+      position: absolute;
+      left: -4px; right: -4px;
+      height: 6px;
+      border-top: 2px solid #000;
+      border-bottom: 2px solid #000;
+    }
+    .style-5::before { top: -4px; }
+    .style-5::after { bottom: -4px; }
+    .style-5:hover {
+      background-color: #000;
+      color: #fff;
+      border-left-color: #fff;
+      border-right-color: #fff;
+    }
+    .style-5:hover::before,
+    .style-5:hover::after {
+      border-top-color: #fff;
+      border-bottom-color: #fff;
+    }
+
+    /* STYLE 6 */
+    .style-6 {
+      border: 3px solid #000;
+    }
+    .style-6::before {
+      content: '';
+      position: absolute;
+      top: 4px; bottom: 4px; left: 4px; right: 4px;
+      border: 1px solid #000;
+    }
+    .style-6::after {
+      content: '';
+      position: absolute;
+      top: -3px; bottom: -3px; left: -3px; right: -3px;
+      background-image:
+        linear-gradient(#000, #000),
+        linear-gradient(#000, #000),
+        linear-gradient(#000, #000),
+        linear-gradient(#000, #000);
+      background-position: top left, top right, bottom left, bottom right;
+      background-size: 8px 8px;
+      background-repeat: no-repeat;
+    }
+    .style-6:hover {
+      background-color: #000;
+      color: #fff;
+      border-color: #fff;
+    }
+    .style-6:hover::before { border-color: #fff; }
+    .style-6:hover::after {
+      background-image:
+        linear-gradient(#fff, #fff),
+        linear-gradient(#fff, #fff),
+        linear-gradient(#fff, #fff),
+        linear-gradient(#fff, #fff);
+    }
+
+    /* STYLE 7 */
+    .style-7 {
+      border: 3px solid #000;
+      background: #fff;
+    }
+    .style-7::before {
+      content: '';
+      position: absolute;
+      top: 4px; bottom: 4px; left: 4px; right: 4px;
+      border: 1px solid #000;
+      transition: border-color 0.3s ease;
+    }
+    .style-7::after {
+      content: '';
+      position: absolute;
+      top: -3px; bottom: -3px; left: 16px; right: 16px;
+      border-top: 3px solid #000;
+      border-bottom: 3px solid #000;
+      background-color: #f9f9f9;
+      z-index: -1;
+      transition: all 0.3s ease;
+    }
+    .style-7 { z-index: 2; }
+    .style-7:hover {
+      background-color: #000;
+      color: #fff;
+    }
+    .style-7:hover::before { border-color: #fff; }
+    .style-7:hover::after {
+      background-color: #000;
+      border-top-color: #fff;
+      border-bottom-color: #fff;
+    }
+
+    /* STYLE 8 */
+    .style-8 {
+      border: 2px solid #000;
+    }
+    .style-8::before {
+      content: ''; position: absolute;
+      top: -5px; bottom: -5px; left: 5px; right: 5px;
+      border-left: 2px solid #000; border-right: 2px solid #000;
+      transition: all 0.3s ease;
+    }
+    .style-8::after {
+      content: ''; position: absolute;
+      top: 5px; bottom: 5px; left: -5px; right: -5px;
+      border-top: 2px solid #000; border-bottom: 2px solid #000;
+      transition: all 0.3s ease;
+    }
+    .style-8:hover { background: #000; color: #fff; border-color: #fff; }
+    .style-8:hover::before { border-left-color: #fff; border-right-color: #fff; }
+    .style-8:hover::after { border-top-color: #fff; border-bottom-color: #fff; }
+
+    /* STYLE 9 */
+    .style-9 {
+      border: 2px solid #000;
+    }
+    .style-9::before, .style-9::after {
+      content: ''; position: absolute;
+      width: 6px; height: 6px;
+      border-style: solid; border-color: #000;
+      transition: all 0.3s ease;
+    }
+    .style-9::before {
+      top: -4px; left: -4px; border-width: 2px 0 0 2px;
+      box-shadow: -2px -2px 0 #fff;
+    }
+    .style-9::after {
+      bottom: -4px; right: -4px; border-width: 0 2px 2px 0;
+      box-shadow: 2px 2px 0 #fff;
+    }
+    .style-9:hover { background: #000; color: #fff; border-color: #fff; }
+    .style-9:hover::before { border-color: #fff; }
+    .style-9:hover::after { border-color: #fff; }
+
+    /* STYLE 10 */
+    .style-10 {
+      border: 2px solid #000;
+    }
+    .style-10::before {
+      content: ''; position: absolute;
+      top: 4px; left: 4px; right: 4px; bottom: 4px;
+      border: 1px solid #000;
+      transition: all 0.3s ease;
+    }
+    .style-10::after {
+      content: ''; position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-image:
+        linear-gradient(45deg, #000 25%, transparent 25%),
+        linear-gradient(-45deg, #000 25%, transparent 25%),
+        linear-gradient(135deg, #000 25%, transparent 25%),
+        linear-gradient(-135deg, #000 25%, transparent 25%);
+      background-size: 8px 8px;
+      background-repeat: no-repeat;
+      background-position: bottom left, bottom right, top left, top right;
+      transition: all 0.3s ease;
+    }
+    .style-10:hover { background: #000; color: #fff; border-color: #fff; }
+    .style-10:hover::before { border-color: #fff; }
+    .style-10:hover::after {
+      background-image:
+        linear-gradient(45deg, #fff 25%, transparent 25%),
+        linear-gradient(-45deg, #fff 25%, transparent 25%),
+        linear-gradient(135deg, #fff 25%, transparent 25%),
+        linear-gradient(-135deg, #fff 25%, transparent 25%);
+    }
+
+    /* STYLE 11 */
+    .style-11 {
+      border: 2px solid #000;
+      outline: 4px solid #000;
+      outline-offset: -8px;
+    }
+    .style-11:hover {
+      background-color: #000;
+      color: #fff;
+      outline-color: #fff;
+      border-color: #fff;
+    }
+
+    /* STYLE 12 */
+    .style-12 {
+      border: 2px solid #000;
+    }
+    .style-12::before, .style-12::after {
+      content: '';
+      position: absolute;
+      left: 10px; right: 10px;
+      border-top: 2px solid #000;
+      border-bottom: 2px solid #000;
+    }
+    .style-12::before { top: -6px; bottom: -6px; margin: 0 10px; }
+    .style-12::after { top: -12px; bottom: -12px; margin: 0 20px; }
+    .style-12:hover {
+      background-color: #000;
+      color: #fff;
+      border-color: #fff;
+    }
+    .style-12:hover::before,
+    .style-12:hover::after { border-color: #fff; }
+
+    /* STYLE 13 */
+    .style-13 {
+      border: 2px solid #000;
+      outline: 1px solid #000;
+      outline-offset: 4px;
+    }
+    .style-13::before, .style-13::after {
+      content: '';
+      position: absolute;
+      left: 50%; transform: translateX(-50%);
+      width: 0; height: 0;
+      border-left: 10px solid transparent;
+      border-right: 10px solid transparent;
+    }
+    .style-13::before { top: -12px; border-bottom: 10px solid #000; }
+    .style-13::after { bottom: -12px; border-top: 10px solid #000; }
+    .style-13:hover {
+      background-color: #000;
+      color: #fff;
+      border-color: #fff;
+      outline-color: #fff;
+    }
+    .style-13:hover::before { border-bottom-color: #fff; }
+    .style-13:hover::after { border-top-color: #fff; }
+
+    /* STYLE 14 */
+    .style-14 {
+      clip-path: polygon(15% 0%, 85% 0%, 100% 50%, 85% 100%, 15% 100%, 0% 50%);
+      background: repeating-linear-gradient(0deg, #000, #000 2px, transparent 2px, transparent 4px);
+      padding: 20px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .style-14 span {
+      display: flex; width: 100%; height: 100%;
+      background: #fff; align-items: center; justify-content: center;
+      clip-path: polygon(14% 0%, 86% 0%, 98% 50%, 86% 100%, 14% 100%, 2% 50%);
+      transition: background 0.2s;
+      font-family: 'Arial Black', 'Impact', 'Franklin Gothic Heavy', sans-serif;
+      font-size: 13px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+    }
+    .style-14:hover {
+      background: repeating-linear-gradient(0deg, #fff, #fff 2px, #333 2px, #333 4px);
+    }
+    .style-14:hover span {
+      background: #000;
+      color: #fff;
+    }
+
+    /* STYLE 15 */
+    .style-15 {
+      border: 2px solid #000;
+      clip-path: polygon(10% 0, 90% 0, 100% 50%, 90% 100%, 10% 100%, 0 50%);
+    }
+    .style-15::before {
+      content: ''; position: absolute; inset: 4px;
+      border: 1px solid #000;
+      clip-path: polygon(10% 0, 90% 0, 100% 50%, 90% 100%, 10% 100%, 0 50%);
+      background: transparent;
+    }
+    .style-15:hover {
+      background-color: #000;
+      color: #fff;
+      border-color: #fff;
+    }
+    .style-15:hover::before { border-color: #fff; }
+
+    /* STYLE 16 */
+    .style-16 {
+      border: 2px solid #000;
+      border-radius: 0;
+      clip-path: polygon(5% 0, 95% 0, 100% 20%, 100% 80%, 95% 100%, 5% 100%, 0 80%, 0 20%);
+    }
+    .style-16::before {
+      content: ''; position: absolute; inset: 6px;
+      border: 1px solid #000;
+    }
+    .style-16:hover {
+      background-color: #000;
+      color: #fff;
+      border-color: #fff;
+    }
+    .style-16:hover::before { border-color: #fff; }
+
+    /* STYLE 17 */
+    .style-17 {
+      border: 2px solid #000;
+    }
+    .style-17::before {
+      content: ''; position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
+      width: 80px; height: 10px;
+      background: repeating-linear-gradient(90deg, #000, #000 4px, transparent 4px, transparent 8px);
+    }
+    .style-17::after {
+      content: ''; position: absolute; bottom: -12px; left: 50%; transform: translateX(-50%);
+      width: 80px; height: 10px;
+      background: repeating-linear-gradient(90deg, #000, #000 4px, transparent 4px, transparent 8px);
+    }
+    .style-17:hover {
+      background-color: #000;
+      color: #fff;
+      border-color: #fff;
+    }
+    .style-17:hover::before,
+    .style-17:hover::after {
+      background: repeating-linear-gradient(90deg, #fff, #fff 4px, #aaa 4px, #aaa 8px);
+    }
+
+    /* STYLE 18 */
+    .style-18 {
+      border-top: 2px solid #000;
+      border-bottom: 2px solid #000;
+      border-radius: 20px / 10px;
+    }
+    .style-18::before, .style-18::after {
+      content: ''; position: absolute; top: 10px; bottom: 10px; width: 12px;
+    }
+    .style-18::before {
+      left: -4px; border-radius: 50% 0 0 50%;
+      background: repeating-linear-gradient(0deg, #000, #000 2px, transparent 2px, transparent 4px);
+    }
+    .style-18::after {
+      right: -4px; border-radius: 0 50% 50% 0;
+      background: repeating-linear-gradient(0deg, #000, #000 2px, transparent 2px, transparent 4px);
+    }
+    .style-18:hover {
+      background-color: #000;
+      color: #fff;
+      border-color: #fff;
+    }
+    .style-18:hover::before,
+    .style-18:hover::after {
+      background: repeating-linear-gradient(0deg, #fff, #fff 2px, #aaa 2px, #aaa 4px);
+    }
+
+    @media (max-width: 768px) {
+      body {
+        justify-content: center;
+        padding: 1rem;
+      }
+      .button-container {
+        margin-right: 0;
+        max-width: 320px;
+        padding: 30px 20px;
+        gap: 16px;
+      }
+      .btn-deco {
+        padding: 12px 16px;
+        font-size: 11px;
+        letter-spacing: 2px;
+      }
+      .style-14 span {
+        font-size: 11px;
+        letter-spacing: 2px;
+      }
+    }
+
+    .btn-deco:active {
+      transform: scale(0.96);
+      transition: transform 0.08s;
+    }
+
+    .btn-deco:focus-visible {
+      outline: 2px solid #c9a03d;
+      outline-offset: 4px;
+      border-radius: 0px;
+    }
+     .title {
+    position :fixed;
+    top: 20px;
+    left: 50px;
+    font-family: "Faculty Glyphic", sans-serif;
+    z-index: 10;
+    }
+    .title h1{ font-size: clamp(1em, 5vw, 3em)}
+
+/* Added for this site: on phones the fixed title sat on top of the first buttons,
+   so let it scroll away and start the column below it. */
+@media (max-width: 768px) {
+  .title { position: absolute; left: 1rem; right: 1rem; text-align: center; }
+  .button-container { margin-top: 3.5rem; }
+}
