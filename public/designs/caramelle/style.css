@@ -1,5 +1,5 @@
 :root {
-  --board: min(92vw, calc(100vh - 230px), 640px);
+  --board: min(92vw, calc(100vh - 330px), 620px);
   --pink: #ff4fa3;
   --berry: #b0125b;
   --cream: #fff6d6;
@@ -71,7 +71,7 @@ body::before {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   width: var(--board);
 }
 
@@ -237,6 +237,12 @@ body::before {
   font-weight: 700;
   font-size: 18px;
 }
+.card .actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+}
 .card button {
   padding: 12px 28px;
   border: 3px solid #fff;
@@ -257,6 +263,152 @@ body::before {
   outline-offset: 3px;
 }
 
+/* level badge, level map and goal line */
+.level {
+  align-items: center;
+  min-width: 70px;
+  background: linear-gradient(180deg, #ffe066 0%, #ffae1a 100%);
+  box-shadow: 0 5px 0 #c96f00, 0 10px 18px rgba(120, 60, 0, 0.3), inset 0 3px 0 rgba(255, 255, 255, 0.45);
+}
+.level b {
+  font-size: 30px;
+  text-shadow: 0 2px 0 #c96f00;
+}
+.level .lbl {
+  color: #8a4b00;
+}
+
+.map {
+  display: flex;
+  justify-content: space-between;
+  gap: 4px;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.map li {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+}
+.map button {
+  position: relative;
+  width: min(100%, 36px);
+  aspect-ratio: 1;
+  padding: 0;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  font: 400 15px "Lilita One", sans-serif;
+  color: #fff;
+  cursor: pointer;
+  background: linear-gradient(180deg, #ff9ad0, #e0338d);
+  box-shadow: 0 3px 0 var(--berry);
+}
+.map button.done {
+  background: linear-gradient(180deg, #fff27a, #ffb21f);
+  color: #8a4b00;
+  box-shadow: 0 3px 0 #c96f00;
+}
+.map button.current {
+  background: linear-gradient(180deg, #7fd3ff, #2f86e8);
+  box-shadow: 0 3px 0 #1b4f9c, 0 0 0 4px rgba(255, 255, 255, 0.55);
+  animation: here 1.6s ease-in-out infinite;
+}
+.map button.locked {
+  background: rgba(90, 30, 110, 0.35);
+  border-color: rgba(255, 255, 255, 0.45);
+  color: rgba(255, 255, 255, 0.55);
+  box-shadow: none;
+  cursor: not-allowed;
+}
+/* best stars under a cleared level */
+.map button[data-stars]::after {
+  content: attr(data-stars);
+  position: absolute;
+  left: 50%;
+  top: 100%;
+  transform: translate(-50%, 1px);
+  font-size: 9px;
+  letter-spacing: -1px;
+  color: #ffe14a;
+  text-shadow: 0 1px 0 var(--berry);
+  white-space: nowrap;
+}
+.map button:focus-visible {
+  outline: 3px solid #fff27a;
+  outline-offset: 2px;
+}
+
+.goal {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  width: 100%;
+  margin: 2px 0 0;
+  padding: 6px 12px;
+  box-sizing: border-box;
+  border-radius: 14px;
+  background: rgba(90, 20, 110, 0.35);
+  font-weight: 700;
+  font-size: 14px;
+}
+.goal > span {
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  opacity: 0.8;
+}
+.goal ul,
+.goals {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px 14px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.goal b {
+  color: #fff27a;
+}
+.candy-dot {
+  display: inline-block;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  vertical-align: -1px;
+  box-shadow: inset -2px -2px 0 rgba(0, 0, 0, 0.2), inset 2px 2px 0 rgba(255, 255, 255, 0.5);
+}
+
+.card-kicker {
+  margin: 0;
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #b06ab3;
+}
+.goals {
+  flex-direction: column;
+  align-items: center;
+  margin: 10px 0 0;
+  font-weight: 700;
+  font-size: 16px;
+}
+.card .goals b {
+  color: var(--pink);
+}
+.card button.secondary {
+  background: linear-gradient(180deg, #ffffff 0%, #f1e4ff 100%);
+  border-color: #b06ab3;
+  box-shadow: 0 5px 0 #7a1fa8;
+  color: #7a1fa8;
+  text-shadow: none;
+}
+
+@keyframes here {
+  50% { transform: scale(1.1); }
+}
 @keyframes drift {
   to { transform: translateY(50%); }
 }
@@ -283,7 +435,43 @@ body::before {
     gap: 24px;
   }
   .side {
-    width: min(300px, 34vw);
+    width: min(320px, 38vw);
+  }
+  .help {
+    display: none;
+  }
+}
+
+/* narrow side column (phones, short landscape): slimmer pills so the score bar keeps its room */
+@media (max-width: 520px), (max-height: 600px) and (min-aspect-ratio: 1/1) {
+  .hud {
+    gap: 8px;
+  }
+  .pill {
+    padding: 5px 10px 7px;
+    border-radius: 14px;
+  }
+  .pill .lbl {
+    font-size: 10px;
+    letter-spacing: 0.06em;
+  }
+  .level,
+  .moves {
+    min-width: 0;
+    flex: none;
+  }
+  .pill b,
+  .level b {
+    font-size: 22px;
+  }
+  .bar {
+    margin-right: 8px;
+  }
+  .bar s {
+    font-size: 14px;
+  }
+  .goal {
+    font-size: 13px;
   }
 }
 
@@ -298,6 +486,7 @@ body::before {
 
 @media (prefers-reduced-motion: reduce) {
   .sparkles,
+  .map button.current,
   .logo {
     animation: none;
   }

@@ -3,9 +3,24 @@
 // a tiny promise-based tween system driven by the frame loop.
 
 const N = 8;
-const TYPES = 6;
-const TARGET = 3000;
-const MOVES = 25;
+const TYPES = 6; // sprites and palette; a level may use fewer colors
+const CANDY_NAMES = ["rosse", "arancioni", "gialle", "verdi", "blu", "viola"];
+// target: points for the first star (2nd and 3rd at x1.3 and x1.6); collect: [type, count]
+const LEVELS = [
+  { name: "Zucchero filato", colors: 4, moves: 20, target: 1500 },
+  { name: "Lecca-lecca", colors: 5, moves: 20, target: 2500 },
+  { name: "Gelatine", colors: 5, moves: 22, target: 3000, collect: [0, 15] },
+  { name: "Menta", colors: 5, moves: 20, target: 3500, collect: [3, 14] },
+  { name: "Marzapane", colors: 6, moves: 25, target: 4000 },
+  { name: "Mirtillo", colors: 6, moves: 22, target: 4500, collect: [4, 18] },
+  { name: "Liquirizia", colors: 6, moves: 20, target: 5000, collect: [5, 16] },
+  { name: "Caramello", colors: 6, moves: 20, target: 6000 },
+  { name: "Arancia candita", colors: 6, moves: 18, target: 6000, collect: [1, 20] },
+  { name: "Gran finale", colors: 6, moves: 18, target: 7500, collect: [2, 18] },
+];
+const STAR_AT = [1, 1.3, 1.6];
+const BONUS_PER_MOVE = 60;
+const STORE = "caramelle-progress";
 const preview = new URLSearchParams(location.search).has("preview");
 const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
 const SPEED = reduced ? 0.35 : 1;
@@ -26,7 +41,11 @@ const ctx = cv.getContext("2d");
 let S, dpr, sprites;
 let grid = [];
 let score = 0;
-let moves = MOVES;
+let moves = 0;
+let level = 0;
+let colors = TYPES;
+let collected = 0;
+const progress = loadProgress();
 let busy = false;
 let selected = null;
 let cursor = { r: 3, c: 3 };
@@ -180,7 +199,7 @@ function fresh() {
   for (let r = 0; r < N; r++)
     for (let c = 0; c < N; c++) {
       let t;
-      do t = floor(random() * TYPES);
+      do t = floor(random() * colors);
       while (
         (c >= 2 && colorOf(grid[r][c - 1]) === t && colorOf(grid[r][c - 2]) === t) ||
         (r >= 2 && colorOf(grid[r - 1][c]) === t && colorOf(grid[r - 2][c]) === t)
@@ -239,7 +258,7 @@ function findMove() {
 
 // ---------- the move pipeline ----------
 async function trySwap(a, b) {
-  if (busy || moves <= 0 || !inside(b.r, b.c) || abs(a.r - b.r) + abs(a.c - b.c) !== 1) return;
+  if (busy || moves <= 0 || !$("end").hidden || !inside(b.r, b.c) || abs(a.r - b.r) + abs(a.c - b.c) !== 1) return;
   busy = true;
   selected = null;
   hint = null;
@@ -320,6 +339,8 @@ async function clearCells(keys, combo, make = []) {
     const k = grid[r][c];
     if (!k) continue;
     burst(c, r, k);
+    const goal = LEVELS[level].collect;
+    if (goal && k.special !== "bomb" && k.type === goal[0]) collected++;
     pops.push(tween(k, { scale: 0 }, 200, easeInBack).then(() => (grid[r][c] = null)));
     score += 60 * combo + (k.special ? 120 : 0);
   }
@@ -346,7 +367,7 @@ async function gravity() {
       write--;
     }
     for (let r = write, spawn = 1; r >= 0; r--, spawn++) {
-      const k = candy(floor(random() * TYPES), r, c);
+      const k = candy(floor(random() * colors), r, c);
       k.y = -spawn;
       grid[r][c] = k;
     }
@@ -364,9 +385,14 @@ async function afterMove() {
     await shuffle();
     busy = false;
   }
-  if (moves <= 0 && !preview) {
+  if (preview) return;
+  if (won()) {
+    busy = true;
+    await wait(500);
+    finish(true);
+  } else if (moves <= 0) {
     await wait(600);
-    end();
+    finish(false);
   }
 }
 
@@ -374,7 +400,7 @@ async function shuffle() {
   praise(0, "Mescolo!");
   await Promise.all(grid.flat().map((k) => tween(k, { scale: 0 }, 220, easeInBack)));
   do {
-    const types = grid.flat().map(() => floor(random() * TYPES));
+    const types = grid.flat().map(() => floor(random() * colors));
     grid.flat().forEach((k, i) => Object.assign(k, { type: types[i], special: null }));
   } while (findRuns().length || !findMove());
   await Promise.all(grid.flat().map((k) => tween(k, { scale: 1 }, 260, easeOutBack)));
@@ -399,31 +425,160 @@ function praise(combo, text) {
   el.classList.add("show");
 }
 
+// ---------- levels ----------
+// Best stars per level live in localStorage; level i unlocks once level i-1 has a star
+function loadProgress() {
+  try {
+    const p = JSON.parse(localStorage.getItem(STORE));
+    if (p && Array.isArray(p.stars)) return p;
+  } catch {}
+  return { stars: [] };
+}
+function saveProgress() {
+  try {
+    localStorage.setItem(STORE, JSON.stringify(progress));
+  } catch {}
+}
+const unlocked = (i) => i === 0 || (progress.stars[i - 1] || 0) > 0;
+const starsFor = (pts) => STAR_AT.filter((k) => pts >= k * LEVELS[level].target).length;
+function won() {
+  const L = LEVELS[level];
+  return score >= L.target && (!L.collect || collected >= L.collect[1]);
+}
+const dot = (type) => `<i class="candy-dot" style="background:${PAL[type][1]}"></i>`;
+
+function goalsHTML(withProgress) {
+  const L = LEVELS[level];
+  const mark = (ok) => (withProgress && ok ? "✔" : "◦");
+  let html = `<li>${mark(score >= L.target)} Fai ${L.target.toLocaleString("it-IT")} punti</li>`;
+  if (L.collect) {
+    const [type, need] = L.collect;
+    const count = withProgress ? ` <b>${min(collected, need)}/${need}</b>` : "";
+    html += `<li>${mark(collected >= need)} Raccogli ${need} caramelle ${CANDY_NAMES[type]} ${dot(type)}${count}</li>`;
+  }
+  return html;
+}
+
 function updateScore() {
+  const L = LEVELS[level];
   $("score").textContent = score.toLocaleString("it-IT");
-  $("fill").style.width = `${min(100, (score / TARGET) * 100)}%`;
-  document.querySelectorAll(".bar s").forEach((s, i) => s.classList.toggle("on", score >= ((i + 1) / 3) * TARGET));
+  $("fill").style.width = `${min(100, (score / (L.target * STAR_AT[2])) * 100)}%`;
+  document.querySelectorAll(".bar s").forEach((s, i) => {
+    s.style.left = `${(STAR_AT[i] / STAR_AT[2]) * 100}%`;
+    s.textContent = "★";
+    s.classList.toggle("on", score >= STAR_AT[i] * L.target);
+  });
+  $("goal").innerHTML = `<span>Obiettivo</span><ul>${goalsHTML(true)}</ul>`;
 }
 
-function end() {
-  const stars = [1, 2, 3].filter((i) => score >= (i / 3) * TARGET).length;
-  $("end-title").textContent = stars ? "Livello completato!" : "Mosse finite!";
-  $("stars").innerHTML = [1, 2, 3].map((i) => `<span class="${i <= stars ? "on" : ""}">★</span>`).join("");
-  $("end-score").textContent = `${score.toLocaleString("it-IT")} punti`;
+function renderMap() {
+  $("map").replaceChildren(
+    ...LEVELS.map((L, i) => {
+      const li = document.createElement("li");
+      const b = document.createElement("button");
+      const stars = progress.stars[i] || 0;
+      b.type = "button";
+      b.className = i === level ? "current" : stars ? "done" : unlocked(i) ? "open" : "locked";
+      b.disabled = !unlocked(i);
+      b.textContent = i + 1;
+      b.title = `Livello ${i + 1} · ${L.name}${stars ? ` · ${"★".repeat(stars)}` : unlocked(i) ? "" : " · bloccato"}`;
+      b.setAttribute("aria-label", b.title);
+      if (i === level) b.setAttribute("aria-current", "step");
+      if (stars) b.dataset.stars = "★".repeat(stars);
+      b.addEventListener("click", () => !busy && startLevel(i));
+      li.append(b);
+      return li;
+    })
+  );
+}
+
+// One dialog serves the level intro, the win and the loss
+function card({ kicker, title, stars, goals, text, actions }) {
+  $("end-kicker").textContent = kicker;
+  $("end-title").textContent = title;
+  $("stars").innerHTML = stars == null ? "" : [1, 2, 3].map((i) => `<span class="${i <= stars ? "on" : ""}">★</span>`).join("");
+  $("end-goals").innerHTML = goals || "";
+  $("end-score").textContent = text || "";
+  $("end-actions").replaceChildren(
+    ...actions.map(([label, fn, secondary]) => {
+      const b = document.createElement("button");
+      b.type = "button";
+      b.textContent = label;
+      if (secondary) b.className = "secondary";
+      b.addEventListener("click", fn);
+      return b;
+    })
+  );
   $("end").hidden = false;
-  $("again").focus();
+  $("end-actions").firstChild.focus();
 }
 
-function restart() {
+function closeCard() {
   $("end").hidden = true;
+  cv.focus();
+}
+
+function startLevel(i) {
+  const L = LEVELS[i];
+  level = i;
+  colors = L.colors;
   score = 0;
-  moves = MOVES;
+  collected = 0;
+  moves = L.moves;
+  selected = null;
+  hint = null;
+  $("lvl").textContent = i + 1;
+  $("lvl-name").textContent = L.name;
   $("moves").textContent = moves;
   updateScore();
+  renderMap();
   fresh();
   busy = true;
   gravity().then(() => (busy = false));
-  cv.focus();
+  lastAction = performance.now();
+  if (preview) return;
+  card({
+    kicker: `Livello ${i + 1} di ${LEVELS.length}`,
+    title: L.name,
+    goals: goalsHTML(false),
+    text: `${L.moves} mosse · ${L.colors} colori`,
+    actions: [["Gioca!", closeCard]],
+  });
+}
+
+function finish(win) {
+  const kicker = `Livello ${level + 1} · ${LEVELS[level].name}`;
+  if (!win) {
+    card({
+      kicker,
+      title: "Mosse finite!",
+      stars: 0,
+      goals: goalsHTML(true),
+      text: `${score.toLocaleString("it-IT")} punti`,
+      actions: [["Riprova", () => startLevel(level)]],
+    });
+    return;
+  }
+  // moves left over turn into points, which can lift the star rating
+  const bonus = moves * BONUS_PER_MOVE;
+  score += bonus;
+  moves = 0;
+  $("moves").textContent = moves;
+  updateScore();
+  const stars = starsFor(score);
+  progress.stars[level] = max(progress.stars[level] || 0, stars);
+  saveProgress();
+  renderMap();
+  const next = level + 1;
+  const replay = ["Rigioca", () => startLevel(level), true];
+  card({
+    kicker,
+    title: next < LEVELS.length ? "Livello completato!" : "Hai finito tutti i livelli!",
+    stars,
+    text: `${score.toLocaleString("it-IT")} punti${bonus ? ` · bonus mosse +${bonus.toLocaleString("it-IT")}` : ""}`,
+    actions: next < LEVELS.length ? [[`Livello ${next + 1} →`, () => startLevel(next)], replay] : [["Ricomincia dal 1", () => startLevel(0)], replay],
+  });
+  busy = false;
 }
 
 // ---------- drawing ----------
@@ -556,7 +711,6 @@ cv.addEventListener("keydown", (e) => {
     selected = selected ? null : { ...cursor };
   }
 });
-$("again").addEventListener("click", restart);
 addEventListener("resize", resize);
 
 // In a home tile the board plays itself
@@ -570,9 +724,8 @@ async function autoplay() {
 }
 
 resize();
-updateScore();
-fresh();
-busy = true;
-gravity().then(() => (busy = false));
+// resume at the first level without stars; the home tile shows a full 6-color board
+const resume = LEVELS.findIndex((_, i) => !progress.stars[i]);
+startLevel(preview ? 4 : resume === -1 ? 0 : resume);
 requestAnimationFrame(frame);
 if (preview) autoplay();

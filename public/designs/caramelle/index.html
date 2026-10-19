@@ -17,13 +17,19 @@
       <div class="side">
         <h1 class="logo">Caramelle</h1>
 
+        <ol class="map" id="map" aria-label="Livelli"></ol>
+
         <div class="hud">
+          <div class="pill level">
+            <span class="lbl">Livello</span>
+            <b id="lvl">1</b>
+          </div>
           <div class="pill score">
-            <span class="lbl">Punti</span>
+            <span class="lbl" id="lvl-name">Punti</span>
             <b id="score">0</b>
             <div class="bar" aria-hidden="true">
               <i id="fill"></i>
-              <s style="left: 33%">★</s><s style="left: 66%">★</s><s style="left: 100%">★</s>
+              <s></s><s></s><s></s>
             </div>
           </div>
           <div class="pill moves">
@@ -32,6 +38,7 @@
           </div>
         </div>
 
+        <p class="goal" id="goal" aria-live="polite"></p>
         <p class="help">Scambia due caramelle vicine per allinearne tre o più</p>
       </div>
 
@@ -47,10 +54,12 @@
 
     <div class="end" id="end" hidden>
       <div class="card" role="dialog" aria-modal="true" aria-labelledby="end-title">
+        <p class="card-kicker" id="end-kicker"></p>
         <h2 id="end-title"></h2>
         <div class="stars" id="stars"></div>
+        <ul class="goals" id="end-goals"></ul>
         <p id="end-score"></p>
-        <button type="button" id="again">Gioca ancora</button>
+        <div class="actions" id="end-actions"></div>
       </div>
     </div>
 
