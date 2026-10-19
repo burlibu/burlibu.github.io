@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="it">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Caramelle</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Fredoka:wght@500;700&display=swap"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="sparkles" aria-hidden="true"></div>
+    <main class="game">
+      <div class="side">
+        <h1 class="logo">Caramelle</h1>
+
+        <div class="hud">
+          <div class="pill score">
+            <span class="lbl">Punti</span>
+            <b id="score">0</b>
+            <div class="bar" aria-hidden="true">
+              <i id="fill"></i>
+              <s style="left: 33%">★</s><s style="left: 66%">★</s><s style="left: 100%">★</s>
+            </div>
+          </div>
+          <div class="pill moves">
+            <span class="lbl">Mosse</span>
+            <b id="moves">25</b>
+          </div>
+        </div>
+
+        <p class="help">Scambia due caramelle vicine per allinearne tre o più</p>
+      </div>
+
+      <div class="board-wrap">
+        <canvas
+          id="board"
+          tabindex="0"
+          aria-label="Tabellone: frecce per muoversi, Invio per selezionare, poi una freccia per scambiare"
+        ></canvas>
+        <div class="combo" id="combo" aria-live="polite"></div>
+      </div>
+    </main>
+
+    <div class="end" id="end" hidden>
+      <div class="card" role="dialog" aria-modal="true" aria-labelledby="end-title">
+        <h2 id="end-title"></h2>
+        <div class="stars" id="stars"></div>
+        <p id="end-score"></p>
+        <button type="button" id="again">Gioca ancora</button>
+      </div>
+    </div>
+
+    <script src="../preview.js"></script>
+    <script src="script.js"></script>
+  </body>
+</html>
