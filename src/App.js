@@ -1,8 +1,9 @@
-import React from "react";
+import React, { Suspense, lazy } from "react";
 // HashRouter: GitHub Pages has no SPA fallback, so BrowserRouter deep links break
 import { HashRouter as Router, Routes, Route, Link } from "react-router-dom";
 import { FaGithub, FaProjectDiagram, FaEnvelope, FaBook } from "react-icons/fa";
-import Graph3D from "./Graph3D";
+// three.js is ~1 MB: load it only when /graph3d is opened
+const Graph3D = lazy(() => import("./Graph3D"));
 
 const design = (name) => `${process.env.PUBLIC_URL}/designs/${name}/index.html`;
 
@@ -11,7 +12,7 @@ function Preview({ name }) {
   return (
     <iframe
       className="bento-preview"
-      src={design(name)}
+      src={`${design(name)}?preview`}
       title={name}
       loading="lazy"
       scrolling="no"
@@ -36,7 +37,7 @@ const tiles = [
 // [route, label, preview]; overflow tiles once the 3x3 bento is full, shown below it
 const more = [
   ["/futuro", "Futuro", <Preview name="futuro" />],
-  [null, "Prossimo design", null],
+  ["/stagger", "Stagger", <Preview name="stagger" />],
   [null, "Prossimo design", null],
 ];
 
@@ -164,6 +165,7 @@ function App() {
         <Route path="/baroque" element={<DesignFrame name="baroque" title="Barocco" />} />
         <Route path="/valhalla" element={<DesignFrame name="valhalla" title="Valhalla" />} />
         <Route path="/futuro" element={<DesignFrame name="futuro" title="Futuro" />} />
+        <Route path="/stagger" element={<DesignFrame name="stagger" title="Stagger" />} />
         <Route path="/contact"element={<Contact />} />
         <Route path="/resources" element={<Resources />} />
         <Route
@@ -171,7 +173,9 @@ function App() {
           element={
             <main className="min-h-screen bg-neutral-950">
               <Back />
-              <Graph3D />
+              <Suspense fallback={null}>
+                <Graph3D />
+              </Suspense>
             </main>
           }
         />
