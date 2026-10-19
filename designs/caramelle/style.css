@@ -1,0 +1,304 @@
+:root {
+  --board: min(92vw, calc(100vh - 230px), 640px);
+  --pink: #ff4fa3;
+  --berry: #b0125b;
+  --cream: #fff6d6;
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  font-family: "Fredoka", system-ui, sans-serif;
+  color: #fff;
+  background: linear-gradient(180deg, #ffc2e4 0%, #f78fd0 32%, #b56cf0 70%, #6b4bd8 100%);
+}
+
+/* soft clouds */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 22% 9% at 12% 18%, rgba(255, 255, 255, 0.75), transparent 70%),
+    radial-gradient(ellipse 16% 7% at 20% 14%, rgba(255, 255, 255, 0.6), transparent 70%),
+    radial-gradient(ellipse 24% 9% at 86% 26%, rgba(255, 255, 255, 0.6), transparent 70%),
+    radial-gradient(ellipse 18% 8% at 78% 21%, rgba(255, 255, 255, 0.5), transparent 70%),
+    radial-gradient(ellipse 30% 10% at 50% 104%, rgba(255, 255, 255, 0.35), transparent 70%);
+}
+
+/* drifting sugar sparkles: one oversized layer moved by transform (compositor only) */
+.sparkles {
+  position: fixed;
+  inset: -50% 0 0;
+  pointer-events: none;
+  background-image:
+    radial-gradient(circle, rgba(255, 255, 255, 0.9) 0 1.5px, transparent 2.5px),
+    radial-gradient(circle, rgba(255, 240, 160, 0.8) 0 1px, transparent 2px);
+  background-size: 140px 160px, 90px 110px;
+  background-position: 0 0, 40px 60px;
+  animation: drift 26s linear infinite;
+}
+
+.game {
+  position: relative;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 12px 16px;
+  box-sizing: border-box;
+}
+
+.logo {
+  margin: 0;
+  font: 400 clamp(34px, 6.5vmin, 68px) / 1 "Lilita One", "Fredoka", sans-serif;
+  letter-spacing: 0.02em;
+  background: linear-gradient(180deg, #fff6b8 0%, #ffd23f 45%, #ff8a2b 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 3px 0 var(--berry)) drop-shadow(0 -2px 0 var(--berry)) drop-shadow(3px 0 0 var(--berry))
+    drop-shadow(-3px 0 0 var(--berry)) drop-shadow(0 8px 10px rgba(80, 0, 60, 0.35));
+  animation: bob 3.2s ease-in-out infinite;
+}
+
+.side {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  width: var(--board);
+}
+
+.hud {
+  display: flex;
+  gap: 12px;
+  width: 100%;
+}
+
+.pill {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 6px 16px 8px;
+  border-radius: 18px;
+  background: linear-gradient(180deg, #ff7cc0 0%, #e0338d 100%);
+  border: 3px solid #fff;
+  box-shadow: 0 5px 0 var(--berry), 0 10px 18px rgba(80, 0, 60, 0.3), inset 0 3px 0 rgba(255, 255, 255, 0.35);
+}
+.pill .lbl {
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  opacity: 0.9;
+}
+.pill b {
+  font: 400 26px / 1.1 "Lilita One", sans-serif;
+  text-shadow: 0 2px 0 var(--berry);
+}
+.score {
+  flex: 1;
+}
+.moves {
+  align-items: center;
+  min-width: 78px;
+  background: linear-gradient(180deg, #7fd3ff 0%, #2f86e8 100%);
+  box-shadow: 0 5px 0 #1b4f9c, 0 10px 18px rgba(20, 30, 90, 0.3), inset 0 3px 0 rgba(255, 255, 255, 0.35);
+}
+.moves b {
+  text-shadow: 0 2px 0 #1b4f9c;
+}
+
+.bar {
+  position: relative;
+  height: 10px;
+  margin: 4px 14px 2px 0;
+  border-radius: 6px;
+  background: rgba(90, 0, 50, 0.35);
+}
+.bar i {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 0;
+  border-radius: 6px;
+  background: linear-gradient(90deg, #fff27a, #ffb21f);
+  transition: width 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.bar s {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  text-decoration: none;
+  font-size: 18px;
+  color: rgba(90, 0, 50, 0.5);
+  transition: color 0.3s, transform 0.3s;
+}
+.bar s.on {
+  color: #ffe14a;
+  transform: translate(-50%, -50%) scale(1.25);
+  text-shadow: 0 1px 0 var(--berry), 0 0 8px #fff3a0;
+}
+
+.board-wrap {
+  position: relative;
+  width: var(--board);
+  height: var(--board);
+  border-radius: 24px;
+  padding: 0;
+  background: rgba(60, 10, 90, 0.35);
+  border: 4px solid rgba(255, 255, 255, 0.85);
+  box-shadow: 0 8px 0 rgba(120, 30, 140, 0.55), 0 18px 40px rgba(60, 0, 80, 0.35), inset 0 0 30px rgba(40, 0, 60, 0.35);
+  box-sizing: border-box;
+}
+#board {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 20px;
+  cursor: pointer;
+  touch-action: none;
+}
+#board:focus-visible {
+  outline: 3px solid #fff27a;
+  outline-offset: 4px;
+}
+
+.combo {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 42%;
+  text-align: center;
+  font: 400 clamp(32px, 8vmin, 64px) / 1 "Lilita One", sans-serif;
+  background: linear-gradient(180deg, #fff 0%, #ffe14a 50%, #ff9a1f 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 3px 0 #7a1fa8) drop-shadow(0 -2px 0 #7a1fa8) drop-shadow(3px 0 0 #7a1fa8)
+    drop-shadow(-3px 0 0 #7a1fa8) drop-shadow(0 8px 12px rgba(40, 0, 60, 0.4));
+  pointer-events: none;
+  opacity: 0;
+}
+.combo.show {
+  animation: pop 1.2s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+.help {
+  margin: 0;
+  font-weight: 500;
+  font-size: 14px;
+  text-shadow: 0 1px 2px rgba(80, 0, 60, 0.5);
+  text-align: center;
+}
+
+.end {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: rgba(60, 10, 90, 0.45);
+  backdrop-filter: blur(4px);
+}
+.end[hidden] {
+  display: none;
+}
+.card {
+  padding: 28px 36px;
+  border-radius: 28px;
+  background: linear-gradient(180deg, #fff 0%, var(--cream) 100%);
+  border: 5px solid var(--pink);
+  box-shadow: 0 8px 0 var(--berry), 0 24px 50px rgba(40, 0, 60, 0.45);
+  text-align: center;
+  color: #7a1fa8;
+  animation: pop-in 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.card h2 {
+  margin: 0 0 8px;
+  font: 400 34px "Lilita One", sans-serif;
+  color: var(--pink);
+}
+.stars {
+  font-size: 44px;
+  letter-spacing: 6px;
+  color: #e6d3ef;
+}
+.stars .on {
+  color: #ffc81f;
+  text-shadow: 0 3px 0 #d38400;
+}
+.card p {
+  font-weight: 700;
+  font-size: 18px;
+}
+.card button {
+  padding: 12px 28px;
+  border: 3px solid #fff;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #8bf06a 0%, #2fb52f 100%);
+  box-shadow: 0 5px 0 #157a15;
+  color: #fff;
+  font: 400 22px "Lilita One", sans-serif;
+  text-shadow: 0 2px 0 #157a15;
+  cursor: pointer;
+}
+.card button:active {
+  transform: translateY(3px);
+  box-shadow: 0 2px 0 #157a15;
+}
+.card button:focus-visible {
+  outline: 3px solid #7a1fa8;
+  outline-offset: 3px;
+}
+
+@keyframes drift {
+  to { transform: translateY(50%); }
+}
+@keyframes bob {
+  50% { transform: translateY(-4px) rotate(-1deg); }
+}
+@keyframes pop {
+  0% { opacity: 0; transform: scale(0.3) rotate(-8deg); }
+  25% { opacity: 1; transform: scale(1.1) rotate(3deg); }
+  70% { opacity: 1; transform: scale(1) rotate(0); }
+  100% { opacity: 0; transform: scale(1.05) translateY(-30px); }
+}
+@keyframes pop-in {
+  from { transform: scale(0.6); opacity: 0; }
+}
+
+/* short landscape screens: title and HUD beside the board */
+@media (max-height: 600px) and (min-aspect-ratio: 1/1) {
+  :root {
+    --board: min(calc(100vh - 32px), 58vw);
+  }
+  .game {
+    flex-direction: row;
+    gap: 24px;
+  }
+  .side {
+    width: min(300px, 34vw);
+  }
+}
+
+@media (max-width: 520px) {
+  .help {
+    font-size: 12px;
+  }
+  .pill b {
+    font-size: 22px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sparkles,
+  .logo {
+    animation: none;
+  }
+}
