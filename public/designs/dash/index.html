@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="it">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Prisma Dash</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Russo+One&family=Chakra+Petch:wght@500;700&display=swap" />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <canvas id="c"></canvas>
+
+    <div class="hud" id="hud" hidden>
+      <div class="progress"><div class="bar"><i id="bar"></i></div><span id="pct">0%</span></div>
+      <button class="icon-btn pause-btn" id="pauseBtn" aria-label="Pausa">❚❚</button>
+      <div class="practice-tools" id="ptools" hidden>
+        <button class="chip" id="cpAdd">◆ Checkpoint <kbd>Z</kbd></button>
+        <button class="chip" id="cpDel">✕ Rimuovi <kbd>X</kbd></button>
+      </div>
+    </div>
+
+    <section class="screen" id="menu">
+      <header class="logo">
+        <h1><span>Prisma</span><b>Dash</b></h1>
+        <p>Salta, vola, rimbalza: quattro livelli a ritmo di musica</p>
+      </header>
+      <div class="carousel">
+        <button class="arrow" id="prevLvl" aria-label="Livello precedente">‹</button>
+        <article class="card glass" id="card"></article>
+        <button class="arrow" id="nextLvl" aria-label="Livello successivo">›</button>
+      </div>
+      <div class="dots" id="dots"></div>
+      <div class="menu-actions">
+        <button class="btn primary" id="play">▶ Gioca</button>
+        <button class="btn" id="practice" aria-pressed="false">◆ Pratica</button>
+        <button class="btn" id="demo">◉ Guarda la demo</button>
+      </div>
+      <p class="keys">
+        <kbd>Spazio</kbd> / clic / tocco per saltare · tieni premuto per saltare di continuo · <kbd>Esc</kbd> pausa ·
+        <kbd>R</kbd> ricomincia · <kbd>M</kbd> audio
+      </p>
+    </section>
+
+    <section class="screen" id="pause" hidden>
+      <div class="panel glass">
+        <h2>Pausa</h2>
+        <p class="sub" id="pauseInfo"></p>
+        <div class="col">
+          <button class="btn primary" id="resume">▶ Riprendi</button>
+          <button class="btn" id="restart">↻ Ricomincia</button>
+          <button class="btn" id="practice2" aria-pressed="false">◆ Pratica</button>
+          <button class="btn" id="toMenu">☰ Menu</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="screen" id="win" hidden>
+      <div class="panel glass">
+        <p class="kicker">Livello completato</p>
+        <h2 id="winName"></h2>
+        <div class="coins-row" id="winCoins"></div>
+        <dl class="stats" id="winStats"></dl>
+        <div class="row">
+          <button class="btn" id="again">↻ Rigioca</button>
+          <button class="btn" id="winMenu">☰ Menu</button>
+          <button class="btn primary" id="next">Avanti ›</button>
+        </div>
+      </div>
+    </section>
+
+    <div class="badge" id="badge" hidden></div>
+    <button class="icon-btn mute" id="mute" aria-label="Audio">♪</button>
+
+    <script src="../preview.js"></script>
+    <script src="game.js"></script>
+    <script src="demos.js"></script>
+    <script src="script.js"></script>
+  </body>
+</html>

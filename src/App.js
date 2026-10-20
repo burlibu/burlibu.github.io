@@ -1,9 +1,8 @@
 import React, { Suspense, lazy } from "react";
 // HashRouter: GitHub Pages has no SPA fallback, so BrowserRouter deep links break
 import { HashRouter as Router, Routes, Route, Link } from "react-router-dom";
-import { FaGithub, FaEnvelope } from "react-icons/fa";
 import Resources from "./Resources";
-import { ResourcesFace, GraphFace } from "./TileFaces";
+import { ResourcesFace, GraphFace, ContactFace, GithubFace } from "./TileFaces";
 // three.js is ~1 MB: load it only when /graph3d is opened
 const Graph3D = lazy(() => import("./Graph3D"));
 const NotePage = lazy(() => import("./NotePage"));
@@ -28,12 +27,12 @@ function Preview({ name }) {
 // [col, row, route, label, preview]; external routes are plain links
 const tiles = [
   [0, 0, "/wind", "Mediterranean Drift", <Preview name="wind" />],
-  [1, 0, "/contact", "Contatti", <FaEnvelope className="bento-icon" />],
+  [1, 0, "/contact", "Contatti", <ContactFace />],
   [2, 0, "/sphere", "Sphere Marquee", <Preview name="sphere" />],
   [0, 1, "/resources", "Resources", <ResourcesFace />],
   [2, 1, "/graph3d", "3D Graph", <GraphFace />],
   [0, 2, "/baroque", "Barocco", <Preview name="baroque" />],
-  [1, 2, "https://github.com/burlibu/burlibu.github.io", "GitHub", <FaGithub className="bento-icon" />],
+  [1, 2, "https://github.com/burlibu/burlibu.github.io", "GitHub", <GithubFace />],
   [2, 2, "/valhalla", "Valhalla", <Preview name="valhalla" />],
 ];
 
@@ -48,6 +47,7 @@ const more = [
   ["/buconero", "Orizzonte degli eventi", <Preview name="buconero" />],
   ["/manga", "Manga", <Preview name="manga" />],
   ["/circuito", "Circuito", <Preview name="circuito" />],
+  ["/dash", "Prisma Dash", <Preview name="dash" />],
 ];
 
 function Tile({ to, label, preview, ...props }) {
@@ -159,6 +159,7 @@ function App() {
         <Route path="/buconero" element={<DesignFrame name="buconero" title="Orizzonte degli eventi" />} />
         <Route path="/manga" element={<DesignFrame name="manga" title="Manga" />} />
         <Route path="/circuito" element={<DesignFrame name="circuito" title="Circuito" />} />
+        <Route path="/dash" element={<DesignFrame name="dash" title="Prisma Dash" />} />
         <Route path="/contact"element={<Contact />} />
         <Route path="/resources" element={<Resources />} />
         <Route
