@@ -1,0 +1,412 @@
+<!doctype html>
+<!--
+  "Manga" — original design for burlibu.github.io: a black-and-white manga page
+  with screentone, animated speed lines, speech bubbles and SFX lettering.
+  Click (or tap) a panel for an impact frame.
+-->
+<html lang="it">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Manga</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Comic+Neue:wght@700&display=swap" rel="stylesheet" />
+    <!-- Japanese glyphs only: the text= subset keeps the CJK font tiny -->
+    <link href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&text=%E3%83%90%E3%83%BC%E3%83%AA%E3%83%96%E3%83%89%E3%83%B3%E3%82%B4%E3%81%A4%E3%81%A5%E3%81%8F%E3%82%BA%E3%83%90%E3%83%83%E3%83%89%E3%82%AD%E3%83%B3!%EF%BC%81&display=swap" rel="stylesheet" />
+    <style>
+      :root {
+        --ink: #111;
+        --paper: #f6f2e7;
+        --gutter: 14px;
+        --line: 5px;
+      }
+      * { box-sizing: border-box; }
+      html, body { margin: 0; }
+      body {
+        background: #2a2a2a;
+        color: var(--ink);
+        font-family: "Comic Neue", "Comic Sans MS", sans-serif;
+        overflow-x: hidden;
+      }
+      .page {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: var(--gutter);
+        background: var(--paper);
+        display: grid;
+        grid-template-columns: repeat(6, minmax(0, 1fr));
+        gap: var(--gutter);
+        min-height: 100vh;
+        box-shadow: 0 0 60px #000;
+      }
+      .panel {
+        position: relative;
+        overflow: hidden;
+        background: #fff;
+        border: var(--line) solid var(--ink);
+        min-height: 260px;
+        cursor: pointer;
+        user-select: none;
+      }
+
+      /* Screentone: a dot grid faded out with a mask */
+      .tone {
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(circle, var(--ink) 1.3px, transparent 1.8px) 0 0 / 7px 7px;
+        -webkit-mask-image: linear-gradient(var(--dir, to bottom), #000, transparent 85%);
+        mask-image: linear-gradient(var(--dir, to bottom), #000, transparent 85%);
+        pointer-events: none;
+      }
+
+      /* Lettering */
+      .sfx {
+        font-family: "Dela Gothic One", "Bangers", sans-serif;
+        color: #fff;
+        -webkit-text-stroke: 7px var(--ink);
+        paint-order: stroke fill;
+        line-height: 1;
+        position: absolute;
+        pointer-events: none;
+      }
+      .caption {
+        position: absolute;
+        background: #fff;
+        border: 3px solid var(--ink);
+        padding: 8px 12px;
+        font-size: clamp(13px, 1.6vw, 17px);
+        max-width: 60%;
+        z-index: 3;
+      }
+      .bubble {
+        position: absolute;
+        background: #fff;
+        border: 3px solid var(--ink);
+        border-radius: 50%;
+        padding: 18px 26px;
+        font-size: clamp(15px, 2vw, 22px);
+        text-align: center;
+        z-index: 3;
+      }
+      .bubble::before,
+      .bubble::after {
+        content: "";
+        position: absolute;
+        clip-path: polygon(0 0, 100% 0, 30% 100%);
+      }
+      .bubble::before { width: 34px; height: 38px; background: var(--ink); left: var(--tail, 30%); bottom: -36px; }
+      .bubble::after { width: 26px; height: 30px; background: #fff; left: calc(var(--tail, 30%) + 4px); bottom: -27px; }
+
+      /* 1 — title with speed lines */
+      .p-title { grid-column: 1 / 7; min-height: clamp(320px, 52vh, 520px); }
+      .p-title canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+      .p-title h1 {
+        position: absolute;
+        left: 50%;
+        top: 54%;
+        transform: translate(-50%, -50%) rotate(-6deg);
+        margin: 0;
+        font-family: "Bangers", sans-serif;
+        font-weight: 400;
+        font-size: clamp(64px, 14vw, 170px);
+        letter-spacing: 0.04em;
+        color: #fff;
+        -webkit-text-stroke: 10px var(--ink);
+        paint-order: stroke fill;
+        text-shadow: 8px 8px 0 var(--ink);
+        white-space: nowrap;
+        pointer-events: none;
+      }
+      .p-title .kana {
+        right: 4%;
+        top: 8%;
+        writing-mode: vertical-rl;
+        font-size: clamp(30px, 5vw, 60px);
+      }
+      .p-title .caption { left: 3%; top: 6%; }
+
+      /* 2 — eye close-up */
+      .p-eye { grid-column: 1 / 5; }
+      .p-eye svg { position: absolute; left: 50%; top: 55%; width: min(80%, 460px); transform: translate(-50%, -50%); }
+      .p-eye .lid { transform-origin: 50% 50%; animation: blink 5s infinite; }
+      .p-eye .caption { left: 4%; top: 6%; }
+      .sparkle { animation: spin 6s linear infinite; transform-box: fill-box; transform-origin: center; }
+      @keyframes blink {
+        0%, 94%, 100% { transform: scaleY(1); }
+        97% { transform: scaleY(0.05); }
+      }
+      @keyframes spin { to { transform: rotate(360deg); } }
+
+      /* 3 — silhouette at sunset */
+      .p-hero { grid-column: 5 / 7; background: #fff; }
+      .p-hero .sun {
+        position: absolute; left: 50%; top: 62%;
+        width: 70%; aspect-ratio: 1; transform: translate(-50%, -50%);
+        border-radius: 50%; border: 3px solid var(--ink); background: #fff;
+      }
+      .p-hero svg { position: absolute; bottom: 0; left: 50%; width: 76%; transform: translateX(-50%); }
+      .p-hero .bubble { left: 6%; top: 6%; --tail: 60%; padding: 14px 18px; }
+
+      /* 4/5 — diagonal split row */
+      .split { grid-column: 1 / 7; position: relative; min-height: 280px; }
+      .split .panel {
+        position: absolute;
+        inset: 0;
+        border: 0;
+        min-height: 0;
+      }
+      /* drop-shadows draw the black frame around the clipped shape */
+      .split .frame { position: absolute; inset: 0; filter: drop-shadow(var(--line) 0 0 var(--ink)) drop-shadow(calc(-1 * var(--line)) 0 0 var(--ink)) drop-shadow(0 var(--line) 0 var(--ink)) drop-shadow(0 calc(-1 * var(--line)) 0 var(--ink)); }
+      .split .frame > .panel { inset: var(--line); }
+      .p-don { clip-path: polygon(0 0, 62% 0, 46% 100%, 0 100%); background: var(--ink); }
+      .p-don .rays {
+        position: absolute; inset: -50%;
+        background: repeating-conic-gradient(from 0deg at 50% 50%, #fff 0 1.2deg, transparent 1.2deg 7deg);
+        -webkit-mask-image: radial-gradient(circle, transparent 18%, #000 40%);
+        mask-image: radial-gradient(circle, transparent 18%, #000 40%);
+        left: -60%;
+      }
+      .p-don .sfx { left: 8%; top: 50%; transform: translateY(-50%) rotate(-8deg); font-size: clamp(56px, 10vw, 120px); }
+      .p-bam { clip-path: polygon(calc(62% + var(--gutter)) 0, 100% 0, 100% 100%, calc(46% + var(--gutter)) 100%); }
+      .p-bam .tone { --dir: to left; }
+      .p-bam svg { position: absolute; right: 4%; top: 50%; height: 115%; transform: translateY(-50%); }
+      .p-bam .bubble { right: 6%; bottom: 10%; --tail: 20%; }
+
+      /* 6 — menacing aura */
+      .p-gogo { grid-column: 1 / 3; background: var(--ink); }
+      .p-gogo .tone { background-image: radial-gradient(circle, #fff 1.2px, transparent 1.7px); --dir: to top; }
+      .p-gogo .sfx { font-size: clamp(36px, 5vw, 58px); animation: hover 1.6s ease-in-out infinite alternate; }
+      .p-gogo .sfx:nth-child(2) { left: 10%; top: 10%; }
+      .p-gogo .sfx:nth-child(3) { left: 55%; top: 22%; animation-delay: -0.4s; }
+      .p-gogo .sfx:nth-child(4) { left: 18%; top: 52%; animation-delay: -0.8s; }
+      .p-gogo .sfx:nth-child(5) { left: 60%; top: 66%; animation-delay: -1.2s; }
+      @keyframes hover { to { transform: translate(6px, -10px) rotate(4deg); } }
+
+      /* 7 — to be continued */
+      .p-end { grid-column: 3 / 7; display: grid; place-items: center; }
+      .p-end .tone { --dir: to top; }
+      .p-end .end {
+        position: relative;
+        text-align: center;
+        font-family: "Bangers", sans-serif;
+        font-size: clamp(30px, 5vw, 56px);
+        letter-spacing: 0.06em;
+      }
+      .p-end .end > span {
+        display: block;
+        font-family: "Dela Gothic One", sans-serif;
+        font-size: 1.6em;
+        color: #fff;
+        -webkit-text-stroke: 7px var(--ink);
+        paint-order: stroke fill;
+      }
+      .p-end .arrow {
+        display: inline-block;
+        margin-top: 8px;
+        padding: 6px 22px 6px 14px;
+        background: var(--ink);
+        color: #fff;
+        font-size: 0.5em;
+        clip-path: polygon(0 0, 88% 0, 100% 50%, 88% 100%, 0 100%);
+      }
+
+      /* Impact frame on click */
+      .panel.impact { animation: shake 0.32s; }
+      .panel.impact::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: #fff;
+        mix-blend-mode: difference;
+        animation: flash 0.32s steps(2) forwards;
+        z-index: 5;
+        pointer-events: none;
+      }
+      @keyframes shake {
+        20% { transform: translate(-8px, 4px); }
+        40% { transform: translate(7px, -5px); }
+        60% { transform: translate(-5px, -3px); }
+        80% { transform: translate(4px, 5px); }
+      }
+      @keyframes flash { to { opacity: 0; } }
+      .pop {
+        font-size: clamp(40px, 7vw, 84px);
+        z-index: 6;
+        transform: translate(-50%, -50%) rotate(var(--r)) scale(0.3);
+        animation: pop 0.9s cubic-bezier(.2, 1.6, .4, 1) forwards;
+      }
+      @keyframes pop {
+        30% { transform: translate(-50%, -50%) rotate(var(--r)) scale(1.1); opacity: 1; }
+        100% { transform: translate(-50%, -80%) rotate(var(--r)) scale(1); opacity: 0; }
+      }
+
+      @media (max-width: 700px) {
+        :root { --gutter: 10px; --line: 4px; }
+        .page { grid-template-columns: minmax(0, 1fr); }
+        .page > * { grid-column: 1 / -1; }
+        .p-eye .caption, .p-title .caption { max-width: 80%; }
+        .p-bam .bubble { right: 4%; bottom: 6%; padding: 12px 16px; }
+        .p-don { clip-path: polygon(0 0, 46% 0, 30% 100%, 0 100%); }
+        .p-don .sfx { left: 4%; font-size: 44px; }
+        .p-bam { clip-path: polygon(calc(46% + var(--gutter)) 0, 100% 0, 100% 100%, calc(30% + var(--gutter)) 100%); }
+        .p-bam svg { height: 72%; right: 2%; top: 40%; }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after { animation: none !important; }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="page">
+      <section class="panel p-title">
+        <canvas id="speed"></canvas>
+        <div class="caption">Capitolo 1 — Il risveglio</div>
+        <h1>BURLIBU!</h1>
+        <div class="sfx kana">バーリブ</div>
+      </section>
+
+      <section class="panel p-eye">
+        <div class="tone"></div>
+        <div class="caption">Quel giorno, il cielo si spezzò in due...</div>
+        <svg viewBox="0 0 400 200" aria-hidden="true">
+          <g class="lid">
+            <path d="M30 110 Q140 10 330 60 L372 48 L352 72 Q360 80 365 92 Q250 40 40 118 Z" fill="#111" />
+            <clipPath id="eyeClip"><path d="M48 112 Q170 30 352 86 Q260 180 120 170 Q70 150 48 112 Z" /></clipPath>
+            <g clip-path="url(#eyeClip)">
+              <rect width="400" height="200" fill="#fff" />
+              <ellipse cx="205" cy="112" rx="66" ry="80" fill="#111" />
+              <ellipse cx="205" cy="122" rx="54" ry="64" fill="#fff" />
+              <ellipse cx="205" cy="122" rx="54" ry="64" fill="url(#irisTone)" />
+              <ellipse cx="205" cy="118" rx="26" ry="34" fill="#111" />
+              <ellipse cx="178" cy="88" rx="17" ry="13" fill="#fff" />
+              <circle cx="232" cy="150" r="7" fill="#fff" />
+              <path d="M48 112 Q170 30 352 86" fill="none" stroke="#111" stroke-width="9" />
+            </g>
+            <path d="M80 168 Q200 190 330 120" fill="none" stroke="#111" stroke-width="3" />
+            <path d="M60 60 Q190 -10 340 30" fill="none" stroke="#111" stroke-width="4" />
+          </g>
+          <defs>
+            <pattern id="dots" width="6" height="6" patternUnits="userSpaceOnUse"><circle cx="3" cy="3" r="1.4" fill="#111" /></pattern>
+            <linearGradient id="fade" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" /><stop offset="0.7" stop-color="#fff" stop-opacity="0" /></linearGradient>
+            <mask id="fadeMask"><rect width="400" height="200" fill="url(#fade)" /></mask>
+            <pattern id="irisTone" width="400" height="200" patternUnits="userSpaceOnUse"><rect width="400" height="200" fill="url(#dots)" mask="url(#fadeMask)" /></pattern>
+          </defs>
+          <path class="sparkle" d="M360 130 l6 -20 l6 20 l20 6 l-20 6 l-6 20 l-6 -20 l-20 -6 Z" fill="#fff" stroke="#111" stroke-width="3" />
+          <path class="sparkle" d="M40 30 l4 -13 l4 13 l13 4 l-13 4 l-4 13 l-4 -13 l-13 -4 Z" fill="#fff" stroke="#111" stroke-width="2.5" style="animation-duration: 4s" />
+        </svg>
+      </section>
+
+      <section class="panel p-hero">
+        <div class="tone"></div>
+        <div class="sun"></div>
+        <svg viewBox="0 0 200 180" aria-hidden="true">
+          <path fill="#111" d="M100 20 L92 38 L74 22 L78 46 L56 40 L68 58 L50 62 L68 72 L64 84 Q66 100 78 108 L76 122 Q40 128 18 150 Q6 164 4 180 L196 180 Q194 164 182 150 Q160 128 124 122 L122 108 Q134 100 136 84 L132 72 L150 62 L132 58 L144 40 L122 46 L126 22 L108 38 Z" />
+        </svg>
+        <div class="bubble">Non mi arrendo!</div>
+      </section>
+
+      <div class="split">
+        <div class="frame"><section class="panel p-don"><div class="rays"></div><div class="sfx">ドン!</div></section></div>
+        <div class="frame">
+          <section class="panel p-bam">
+            <div class="tone"></div>
+            <svg id="burst" viewBox="-100 -100 200 200" aria-hidden="true">
+              <polygon fill="#fff" stroke="#111" stroke-width="4" stroke-linejoin="round" />
+              <text y="12" text-anchor="middle" font-family="Bangers, sans-serif" font-size="46" fill="#fff" stroke="#111" stroke-width="5" paint-order="stroke" transform="rotate(-10)">BAM!</text>
+            </svg>
+            <div class="bubble">Ancora!</div>
+          </section>
+        </div>
+      </div>
+
+      <section class="panel p-gogo">
+        <div class="tone"></div>
+        <div class="sfx">ゴ</div>
+        <div class="sfx">ゴ</div>
+        <div class="sfx">ゴ</div>
+        <div class="sfx">ゴ</div>
+      </section>
+
+      <section class="panel p-end">
+        <div class="tone"></div>
+        <div class="end">
+          <span>つづく</span>
+          Continua...
+          <div><span class="arrow">Capitolo 2</span></div>
+        </div>
+      </section>
+    </main>
+
+    <script src="../preview.js"></script>
+    <script>
+      // Speed lines: radial wedges toward a focus point, redrawn a few times a
+      // second so they flicker like hand-inked focus lines.
+      const canvas = document.getElementById("speed");
+      const ctx = canvas.getContext("2d");
+      let w, h;
+      function resize() {
+        const dpr = window.devicePixelRatio || 1;
+        w = canvas.clientWidth;
+        h = canvas.clientHeight;
+        canvas.width = Math.round(w * dpr);
+        canvas.height = Math.round(h * dpr);
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        draw();
+      }
+      function draw() {
+        const cx = w / 2, cy = h * 0.54, R = Math.hypot(w, h) * 0.6;
+        ctx.fillStyle = "#fff";
+        ctx.fillRect(0, 0, w, h);
+        ctx.fillStyle = "#111";
+        for (let i = 0; i < 180; i++) {
+          const a = Math.random() * Math.PI * 2;
+          const spread = 0.004 + Math.random() * 0.018;
+          const inner = R * (0.32 + Math.random() * 0.22);
+          ctx.beginPath();
+          ctx.moveTo(cx + Math.cos(a - spread) * R, cy + Math.sin(a - spread) * R);
+          ctx.lineTo(cx + Math.cos(a + spread) * R, cy + Math.sin(a + spread) * R);
+          ctx.lineTo(cx + Math.cos(a) * inner, cy + Math.sin(a) * inner);
+          ctx.fill();
+        }
+      }
+      let last = 0;
+      const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
+      function loop(t) {
+        if (t - last > 110) { draw(); last = t; }
+        requestAnimationFrame(loop);
+      }
+      window.addEventListener("resize", resize);
+      resize();
+      if (!still) requestAnimationFrame(loop);
+
+      // Jagged burst behind "BAM!"
+      const pts = [];
+      for (let i = 0; i < 26; i++) {
+        const a = (i / 26) * Math.PI * 2;
+        const r = i % 2 ? 50 + Math.random() * 10 : 82 + Math.random() * 16;
+        pts.push(`${(Math.cos(a) * r).toFixed(1)},${(Math.sin(a) * r).toFixed(1)}`);
+      }
+      document.querySelector("#burst polygon").setAttribute("points", pts.join(" "));
+
+      // Impact frame + random SFX where the panel is hit
+      const words = ["ドン!", "BAM!", "ズバッ", "KRAK!", "ドキン!", "POW!"];
+      document.querySelectorAll(".panel").forEach((panel) => {
+        panel.addEventListener("pointerdown", (e) => {
+          panel.classList.remove("impact");
+          void panel.offsetWidth; // restart the animation
+          panel.classList.add("impact");
+          const r = panel.getBoundingClientRect();
+          const pop = document.createElement("div");
+          pop.className = "sfx pop";
+          pop.textContent = words[Math.floor(Math.random() * words.length)];
+          pop.style.left = `${e.clientX - r.left}px`;
+          pop.style.top = `${e.clientY - r.top}px`;
+          pop.style.setProperty("--r", `${Math.round(Math.random() * 30 - 15)}deg`);
+          panel.append(pop);
+          pop.addEventListener("animationend", () => pop.remove());
+        });
+      });
+    </script>
+  </body>
+</html>
