@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="it">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Erbario — panoramica desktop e mobile</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:wght@300;400;500&family=Caveat:wght@400;600&display=swap"
+    />
+    <link rel="stylesheet" href="style.css" />
+    <style>
+      /* flat lay: the live page in a laptop window and a phone, lying on a sheet
+         of watercolor paper next to the swatches and type it is made from */
+      body { min-height: 100vh; }
+      .lay { position: relative; isolation: isolate; max-width: 1500px; margin: 0 auto; padding: clamp(28px, 4vw, 64px) var(--gutter) 80px; }
+      .lay > .bg { inset: -4% -8vw; height: 108%; }
+      .top { display: flex; justify-content: space-between; align-items: end; gap: 1.5rem; flex-wrap: wrap; margin-bottom: clamp(28px, 4vw, 56px); }
+      .top h1 { font-size: clamp(2.2rem, 4.4vw, 4.2rem); }
+      .top p { max-width: 30em; }
+      .back { font-size: 0.9rem; }
+      .devices { display: grid; grid-template-columns: 1fr minmax(180px, 0.27fr); gap: clamp(20px, 3.5vw, 56px); align-items: end; }
+      .device { position: relative; filter: drop-shadow(0 18px 30px rgba(60, 50, 40, 0.16)) drop-shadow(0 3px 6px rgba(60, 50, 40, 0.1)); }
+      .laptop { transform: rotate(-1.2deg); }
+      .win { background: #fdfbf7; border-radius: 12px; overflow: hidden; border: 1px solid rgba(46, 52, 71, 0.12); }
+      .bar { display: flex; align-items: center; gap: 7px; height: 30px; padding: 0 12px; background: #efe9de; border-bottom: 1px solid rgba(46, 52, 71, 0.1); }
+      .bar i { width: 10px; height: 10px; border-radius: 50%; background: var(--terracotta); opacity: 0.75; }
+      .bar i:nth-child(2) { background: var(--ochre); }
+      .bar i:nth-child(3) { background: var(--sage); }
+      .bar span { margin: 0 auto; font-size: 11px; color: var(--ink-soft); background: #fbf8f2; padding: 2px 40px; border-radius: 6px; }
+      .phone { transform: rotate(2.5deg); background: #2b2f3c; border-radius: 34px; padding: 9px; }
+      .phone .screen { border-radius: 26px; overflow: hidden; background: #fdfbf7; position: relative; }
+      .phone .screen::before { content: ""; position: absolute; z-index: 2; top: 7px; left: 50%; width: 30%; height: 18px; transform: translateX(-50%); background: #2b2f3c; border-radius: 12px; }
+      .scaler { position: relative; overflow: hidden; }
+      .scaler iframe { position: absolute; top: 0; left: 0; border: 0; transform-origin: 0 0; background: var(--paper); }
+      .label { margin-top: 1.1rem; font: 400 1.35rem/1.1 var(--hand); color: var(--ink-soft); text-align: center; }
+      .kit { display: grid; grid-template-columns: 1.3fr 1fr 1fr; gap: clamp(20px, 3vw, 44px); margin-top: clamp(44px, 6vw, 90px); }
+      .kit h2 { font-size: 1.6rem; margin-bottom: 1rem; }
+      .swatches { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.6rem 1rem; }
+      .sw { position: relative; }
+      .sw canvas { width: 100%; aspect-ratio: 1.4; }
+      .sw b { display: block; font: 500 0.9rem/1.2 var(--sans); color: var(--ink); }
+      .sw small { font-size: 0.75rem; letter-spacing: 0.04em; }
+      .panel { position: relative; padding: 1.6rem 1.7rem; background: var(--card); border-radius: 22px 6px 26px 9px / 8px 24px 7px 20px; }
+      .spec .big { font: 500 3.4rem/1 var(--serif); color: var(--ink); }
+      .spec .big em { font-weight: 400; }
+      .spec p { font-size: 0.92rem; margin-top: 0.7rem; }
+      .spec .hand { font: 400 1.6rem/1 var(--hand); color: var(--terracotta); margin-top: 0.8rem; }
+      .rules { margin: 0; padding-left: 1.1rem; font-size: 0.92rem; }
+      .rules li + li { margin-top: 0.45rem; }
+      @media (max-width: 900px) {
+        .devices { grid-template-columns: 1fr; justify-items: center; }
+        .laptop { width: 100%; }
+        .phone { width: min(300px, 70vw); }
+        .kit { grid-template-columns: 1fr; }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="sheet">
+      <div class="lay">
+        <canvas class="bg paint" data-p="layBg" aria-hidden="true"></canvas>
+        <header class="top">
+          <div>
+            <p class="kicker">Direzione artistica · Watercolor design</p>
+            <h1>Erbario, <em class="wash" data-c="sage"><canvas class="paint" data-p="word"></canvas>su carta</em> e su schermo</h1>
+          </div>
+          <div>
+            <p>La stessa pagina dal vivo, su desktop e su telefono, appoggiata sul foglio accanto ai pigmenti e ai caratteri da cui nasce.</p>
+            <p style="margin-top:1rem"><a class="sketch-btn sketch back" href="index.html">← Torna alla pagina</a></p>
+          </div>
+        </header>
+
+        <div class="devices">
+          <figure class="device laptop" style="margin:0">
+            <div class="win">
+              <div class="bar"><i></i><i></i><i></i><span>erbario.studio</span></div>
+              <div class="scaler" data-w="1440" data-h="900"><iframe src="index.html?bare" title="Anteprima desktop" loading="lazy" tabindex="-1"></iframe></div>
+            </div>
+            <figcaption class="label">desktop · 1440 px</figcaption>
+          </figure>
+          <figure class="device" style="margin:0">
+            <div class="phone">
+              <div class="screen scaler" data-w="390" data-h="844"><iframe src="index.html?bare" title="Anteprima mobile" loading="lazy" tabindex="-1"></iframe></div>
+            </div>
+            <figcaption class="label">mobile · 390 px</figcaption>
+          </figure>
+        </div>
+
+        <section class="kit">
+          <div>
+            <h2>Pigmenti</h2>
+            <div class="swatches">
+              <div class="sw"><canvas class="paint" data-p="swatch" data-c="sage" data-seed="1"></canvas><b>Salvia</b><small>#809C7C</small></div>
+              <div class="sw"><canvas class="paint" data-p="swatch" data-c="terracotta" data-seed="2"></canvas><b>Terracotta</b><small>#C67456</small></div>
+              <div class="sw"><canvas class="paint" data-p="swatch" data-c="ochre" data-seed="3"></canvas><b>Ocra</b><small>#D8A650</small></div>
+              <div class="sw"><canvas class="paint" data-p="swatch" data-c="rose" data-seed="4"></canvas><b>Rosa antico</b><small>#D2968E</small></div>
+              <div class="sw"><canvas class="paint" data-p="swatch" data-c="indigo" data-seed="5"></canvas><b>Indaco</b><small>#344874</small></div>
+              <div class="sw"><canvas class="paint" data-p="swatch" data-c="moss" data-seed="6"></canvas><b>Muschio</b><small>#526C56</small></div>
+            </div>
+          </div>
+          <div class="panel sketch spec" data-seed="7">
+            <h2>Caratteri</h2>
+            <div class="big">Aa <em>Gg</em></div>
+            <p><b>Cormorant Garamond</b> per i titoli, in inchiostro indaco #2E3447, mai nero puro.</p>
+            <p><b>Jost Light</b> per il testo: arioso, interlinea 1.7, sempre leggibile sulla carta.</p>
+            <div class="hand">Caveat, per le note a margine</div>
+          </div>
+          <div class="panel sketch" data-seed="9">
+            <h2>Regole del foglio</h2>
+            <ul class="rules">
+              <li>Carta cotone #FAF7F2 con grana visibile anche sopra il colore.</li>
+              <li>Macchie dipinte a strati: pigmento più denso sui bordi, fioriture, aloni asciutti.</li>
+              <li>Card e bottoni con bordi asimmetrici e contorno a matita, poggiati sulle macchie.</li>
+              <li>Foto e illustrazioni con bordi bagnati che si sciolgono nella carta.</li>
+              <li>Molto spazio vuoto: il bianco della carta è un colore.</li>
+            </ul>
+          </div>
+        </section>
+      </div>
+    </main>
+    <script src="../preview.js"></script>
+    <script src="paint.js"></script>
+    <script>
+      // fit each live page into its frame, keeping the device's real viewport size
+      function fit() {
+        document.querySelectorAll(".scaler").forEach((s) => {
+          const w = +s.dataset.w, h = +s.dataset.h, k = s.offsetWidth / w, f = s.querySelector("iframe");
+          s.style.height = h * k + "px";
+          f.style.width = w + "px";
+          f.style.height = h + "px";
+          f.style.transform = `scale(${k})`;
+        });
+      }
+      fit();
+      window.addEventListener("resize", fit);
+      document.querySelectorAll(".scaler iframe").forEach((f) => (f.loading = "eager"));
+    </script>
+    <script src="script.js"></script>
+  </body>
+</html>

@@ -48,6 +48,7 @@ const more = [
   ["/manga", "Manga", <Preview name="manga" />],
   ["/circuito", "Circuito", <Preview name="circuito" />],
   ["/dash", "Prisma Dash", <Preview name="dash" />],
+  ["/acquerello", "Acquerello", <Preview name="acquerello" />],
 ];
 
 function Tile({ to, label, preview, ...props }) {
@@ -160,6 +161,7 @@ function App() {
         <Route path="/manga" element={<DesignFrame name="manga" title="Manga" />} />
         <Route path="/circuito" element={<DesignFrame name="circuito" title="Circuito" />} />
         <Route path="/dash" element={<DesignFrame name="dash" title="Prisma Dash" />} />
+        <Route path="/acquerello" element={<DesignFrame name="acquerello" title="Acquerello" />} />
         <Route path="/contact"element={<Contact />} />
         <Route path="/resources" element={<Resources />} />
         <Route
