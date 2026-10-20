@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="it">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Vault — gioco di finanza personale</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <svg width="0" height="0" style="position: absolute" aria-hidden="true">
+      <defs>
+        <linearGradient id="iri" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#3a4fff" />
+          <stop offset="0.4" stop-color="#7b2cbf" />
+          <stop offset="0.65" stop-color="#d946ef" />
+          <stop offset="0.85" stop-color="#ff6b35" />
+          <stop offset="1" stop-color="#ffa07a" />
+        </linearGradient>
+        <!-- the mark: a vault door made of stacked, angled gradient stripes -->
+        <symbol id="mark" viewBox="0 0 48 48">
+          <path d="M6 14 L30 6 L42 6 L18 14 Z" fill="url(#iri)" opacity=".55" />
+          <path d="M6 22 L34 13 L42 13 L14 22 Z" fill="url(#iri)" opacity=".75" />
+          <path d="M6 30 L38 20 L42 20 L42 25 L18 33 L6 33 Z" fill="url(#iri)" />
+          <path d="M6 38 L42 28 L42 34 L22 42 L6 42 Z" fill="url(#iri)" opacity=".85" />
+        </symbol>
+      </defs>
+    </svg>
+
+    <header class="top">
+      <a class="brand" href="#" aria-label="Vault">
+        <svg><use href="#mark" /></svg>
+        <b>VAULT</b>
+      </a>
+      <span class="micro dim hide-s">v2.6 · 256-BIT LEDGER · <span id="seed">SEED —</span></span>
+      <span class="pill" id="regime"><i></i><span>MERCATO CALMO</span></span>
+    </header>
+
+    <main class="bento">
+      <section class="cell hero grid-bg">
+        <div class="orb o1"></div>
+        <div class="orb o2"></div>
+        <svg class="rays" viewBox="0 0 400 400" aria-hidden="true"></svg>
+        <svg class="glyph" viewBox="0 0 48 48" aria-hidden="true"><use href="#mark" /></svg>
+        <div class="pixels" aria-hidden="true"></div>
+
+        <p class="micro"><span class="dim">01 /</span> PATRIMONIO · SINCE 2026</p>
+        <h1>Proteggi.<br />Investi.<br /><span class="grad">Decidi.</span></h1>
+        <p class="lead">36 mesi per far crescere i tuoi risparmi. Dividi lo stipendio, reagisci agli imprevisti, non finire in rosso.</p>
+
+        <div class="hero-foot">
+          <div class="nw">
+            <span class="micro dim">PATRIMONIO NETTO</span>
+            <strong id="nw">€3.000</strong>
+            <span class="delta micro" id="nwDelta">—</span>
+          </div>
+          <div class="goal">
+            <div class="micro"><span>OBIETTIVO €50.000</span><span id="goalPct">6%</span></div>
+            <div class="bar"><i id="goalBar"></i></div>
+          </div>
+          <div class="go-row">
+            <button class="go" id="next">Avanza mese <span aria-hidden="true">→</span></button>
+            <span class="micro" id="month">MESE 00 / 36</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="cell event" id="event" aria-live="polite">
+        <div class="orb o3"></div>
+        <div class="orb o4"></div>
+        <p class="micro"><span class="dim" id="evNum">02 /</span> <span id="evTag">BRIEFING</span></p>
+        <h2 id="evTitle">Benvenuto nel Vault</h2>
+        <p id="evText"></p>
+        <strong class="ev-v" id="evV"></strong>
+        <div class="choices" id="choices"></div>
+        <div class="flow">
+          <div><span class="micro dim">ENTRATE</span><b id="fIn">€2.600</b></div>
+          <div><span class="micro dim">USCITE</span><b id="fOut">€1.750</b></div>
+          <div><span class="micro dim">DEBITO</span><b id="fDebt">€0</b></div>
+        </div>
+      </section>
+
+      <section class="cell chart grid-bg">
+        <header class="cell-head">
+          <p class="micro"><span class="dim">03 /</span> ANDAMENTO</p>
+          <p class="micro dim legend"><i></i> PATRIMONIO NETTO <i class="dash"></i> OBIETTIVO</p>
+        </header>
+        <div class="plot"><canvas id="chart" role="img" aria-label="Patrimonio netto mese per mese"></canvas></div>
+      </section>
+
+      <section class="cell plan light">
+        <header class="cell-head">
+          <p class="micro"><span class="dim">04 /</span> PIANO MENSILE</p>
+          <p class="micro dim" id="free">—</p>
+        </header>
+        <p class="hint">Ogni mese il denaro libero viene diviso così. Quello che resta rimane sul conto.</p>
+        <label class="slider" data-k="save">
+          <span class="s-name">Conto deposito <small class="micro">3,6% annuo · garantito</small></span>
+          <output>20%</output>
+          <input type="range" min="0" max="100" step="5" value="20" />
+        </label>
+        <label class="slider" data-k="index">
+          <span class="s-name">ETF globale <small class="micro">MSCI WORLD · volatilità media</small></span>
+          <output>50%</output>
+          <input type="range" min="0" max="100" step="5" value="50" />
+        </label>
+        <label class="slider" data-k="crypto">
+          <span class="s-name">Crypto <small class="micro">BTC · ETH · volatilità estrema</small></span>
+          <output>10%</output>
+          <input type="range" min="0" max="100" step="5" value="10" />
+        </label>
+        <div class="stack" aria-hidden="true"><i class="s-save"></i><i class="s-index"></i><i class="s-crypto"></i><i class="s-cash"></i></div>
+        <p class="micro rest"><span>LIQUIDITÀ</span><b id="cashPct">20%</b></p>
+      </section>
+
+      <section class="cell metric m1">
+        <p class="micro dim">RUNWAY</p>
+        <strong id="runway">1,7</strong>
+        <p class="micro dim">MESI DI SPESE COPERTI</p>
+      </section>
+      <section class="cell metric m2">
+        <p class="micro dim">RISCHIO</p>
+        <strong id="risk">—</strong>
+        <div class="meter" id="riskMeter"><i></i><i></i><i></i><i></i><i></i></div>
+      </section>
+      <section class="cell metric m3">
+        <p class="micro dim">MERCATI</p>
+        <strong id="gains">€0</strong>
+        <p class="micro dim">GUADAGNO CUMULATO</p>
+      </section>
+      <section class="cell metric m4">
+        <p class="micro dim">BENESSERE</p>
+        <strong id="mood">70%</strong>
+        <div class="bar thin"><i id="moodBar"></i></div>
+      </section>
+
+      <section class="cell port">
+        <header class="cell-head">
+          <p class="micro"><span class="dim">05 /</span> PORTAFOGLIO</p>
+          <p class="micro dim">ULTIMO MESE</p>
+        </header>
+        <ul class="rows" id="rows"></ul>
+      </section>
+
+      <section class="cell toggles grid-bg">
+        <header class="cell-head"><p class="micro"><span class="dim">06 /</span> CONTROLLI</p></header>
+        <div class="tg">
+          <span><b>Fondo d'emergenza</b><small class="micro">3 MESI DI SPESE IN CASSA</small></span>
+          <button class="switch" role="switch" aria-checked="true" data-opt="emergency" aria-label="Fondo d'emergenza"></button>
+        </div>
+        <div class="tg">
+          <span><b>Modalità frugale</b><small class="micro">SPESE −15% · BENESSERE ↓</small></span>
+          <button class="switch" role="switch" aria-checked="false" data-opt="frugal" aria-label="Modalità frugale"></button>
+        </div>
+        <div class="tg">
+          <span><b>Pilota automatico</b><small class="micro">AVANZA OGNI SECONDO</small></span>
+          <button class="switch" role="switch" aria-checked="false" data-opt="auto" aria-label="Pilota automatico"></button>
+        </div>
+      </section>
+
+      <section class="cell log">
+        <header class="cell-head">
+          <p class="micro"><span class="dim">07 /</span> REGISTRO</p>
+          <p class="micro dim"><span class="live"></span> LIVE</p>
+        </header>
+        <ol id="log"></ol>
+      </section>
+    </main>
+
+    <div class="dock">
+      <span><span class="micro dim" id="dockMonth">MESE 00</span><b id="dockNw">€3.000</b></span>
+      <button class="go" id="dockNext">Avanza <span aria-hidden="true">→</span></button>
+    </div>
+
+    <dialog id="end">
+      <p class="micro" id="endTag">RESOCONTO · 36 MESI</p>
+      <div class="grade grad" id="grade">A</div>
+      <h2 id="endTitle">Missione compiuta</h2>
+      <dl id="endStats"></dl>
+      <button class="go" id="again">Nuova partita <span aria-hidden="true">↻</span></button>
+    </dialog>
+
+    <script src="../preview.js"></script>
+    <script src="game.js"></script>
+    <script src="script.js"></script>
+  </body>
+</html>
