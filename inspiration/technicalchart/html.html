@@ -1,0 +1,101 @@
+<main class="sheet">
+  <div class="zones zones--top" aria-hidden="true"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span></div>
+  <div class="zones zones--bottom" aria-hidden="true"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span></div>
+  <div class="zones zones--left" aria-hidden="true"><span>A</span><span>B</span><span>C</span><span>D</span></div>
+  <div class="zones zones--right" aria-hidden="true"><span>A</span><span>B</span><span>C</span><span>D</span></div>
+
+  <div class="drawing">
+    <header class="sheet-head">
+      <h1>Annual operations report 2025</h1>
+      <p>Output, revenue, vacation and machine load at Kessler &amp; Voss Feinmechanik for the 2025 fiscal year. Hover a month, or move through the charts with the Tab key, to read exact values.</p>
+    </header>
+
+    <!-- View A: line chart -->
+    <section class="view view--production" id="view-a" aria-labelledby="h-a">
+      <div class="view-caption">
+        <span class="view-mark" aria-hidden="true">A</span>
+        <h2 id="h-a">Parts produced per month</h2>
+        <span class="view-note">pieces</span>
+      </div>
+      <div class="plot" id="chart-production"></div>
+      <ul class="legend">
+        <li><i class="sw sw--ink"></i>2025</li>
+        <li><i class="sw sw--dashed"></i>2024</li>
+        <li><i class="sw sw--center"></i>2025 average</li>
+      </ul>
+    </section>
+
+    <!-- View B: bars + line -->
+    <section class="view view--revenue" id="view-b" aria-labelledby="h-b">
+      <div class="view-caption">
+        <span class="view-mark" aria-hidden="true">B</span>
+        <h2 id="h-b">Revenue and scrap rate</h2>
+        <span class="view-note">k€ left, % right</span>
+      </div>
+      <div class="plot" id="chart-revenue"></div>
+      <ul class="legend">
+        <li><i class="sw sw--hatch"></i>Revenue</li>
+        <li><i class="sw sw--red"></i>Scrap rate</li>
+      </ul>
+    </section>
+
+    <!-- View C: bars with toggle -->
+    <section class="view view--vacation" id="view-c" aria-labelledby="h-c">
+      <div class="view-caption">
+        <span class="view-mark" aria-hidden="true">C</span>
+        <h2 id="h-c">Vacation days taken</h2>
+        <span class="view-note">10 employees, 25 days each</span>
+      </div>
+      <div class="toggle" role="group" aria-label="Vacation chart mode">
+        <button type="button" data-mode="total" aria-pressed="true">Running total</button>
+        <button type="button" data-mode="month" aria-pressed="false">Per month</button>
+      </div>
+      <div class="plot" id="chart-vacation"></div>
+      <ul class="legend">
+        <li><i class="sw sw--hatch"></i>Days taken</li>
+        <li data-only="total"><i class="sw sw--red"></i>Entitlement</li>
+        <li><i class="sw sw--center-pencil"></i>Even pace</li>
+      </ul>
+    </section>
+
+    <!-- View D: horizontal bars -->
+    <section class="view view--machines" id="view-d" aria-labelledby="h-d">
+      <div class="view-caption">
+        <span class="view-mark" aria-hidden="true">D</span>
+        <h2 id="h-d">Machine utilization</h2>
+        <span class="view-note">% of scheduled hours</span>
+      </div>
+      <div class="plot" id="chart-machines"></div>
+      <ul class="legend">
+        <li><i class="sw sw--band"></i>Target band 75–90 %</li>
+        <li><i class="sw sw--hatch"></i>In band</li>
+        <li><i class="sw sw--outline"></i>Below band</li>
+        <li><i class="sw sw--hatch-red"></i>Above band</li>
+      </ul>
+    </section>
+
+    <!-- Parts list + title block -->
+    <aside class="view view--records" aria-labelledby="h-e">
+      <div class="view-caption">
+        <h2 id="h-e">Key figures</h2>
+      </div>
+      <table class="parts">
+        <thead>
+          <tr><th class="pos">Pos.</th><th>Item</th><th class="num">Value</th><th>Unit</th><th class="pos">View</th></tr>
+        </thead>
+        <tbody id="parts-body"></tbody>
+      </table>
+
+      <div class="title-block">
+        <div class="tb tb--wide"><span>Company</span><b>Kessler &amp; Voss Feinmechanik GmbH</b></div>
+        <div class="tb"><span>Drawing no.</span><b>KV-OPS-2025</b></div>
+        <div class="tb tb--wide tb--title"><span>Title</span><b>Operations overview, fiscal year 2025</b></div>
+        <div class="tb"><span>Revision</span><b>B</b></div>
+        <div class="tb"><span>Drawn</span><b>Rassweiler-IT</b></div>
+        <div class="tb"><span>Issued</span><b>2026-01-15</b></div>
+        <div class="tb"><span>Scale</span><b>1 : 1</b></div>
+        <div class="tb"><span>Sheet</span><b>1 / 1</b></div>
+      </div>
+    </aside>
+  </div>
+</main>

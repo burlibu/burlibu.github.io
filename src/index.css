@@ -348,3 +348,106 @@ body { background: #0b0b0d; }
 @media (prefers-reduced-motion: reduce) {
   .kb-dust, .kb-label.lead { animation: none; }
 }
+
+/* ---------- bento faces for /resources and /graph3d (src/TileFaces.js) ---------- */
+.face-rs,
+.face-kb { position: absolute; inset: 0; width: 100%; height: 100%; container-type: size; overflow: hidden; }
+
+.face-rs { background: #d6dbd0; }
+.face-rs-sheet {
+  /* cq units resolve against .face-rs, so its inset lives here, not in its own padding */
+  position: absolute;
+  inset: 6cqmin;
+  padding: 5cqmin 5cqmin 4cqmin;
+  border: 1.5px solid #2b2f33;
+  outline: 1px solid #2b2f33;
+  outline-offset: 1.6cqmin;
+  color: #2b2f33;
+  font-family: "Barlow Condensed", "Arial Narrow", sans-serif;
+  background-color: #f3f6ee;
+  background-image:
+    linear-gradient(rgba(80, 142, 100, 0.3) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(80, 142, 100, 0.3) 1px, transparent 1px),
+    linear-gradient(rgba(96, 158, 116, 0.16) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(96, 158, 116, 0.16) 1px, transparent 1px);
+  background-size: 8cqmin 8cqmin, 8cqmin 8cqmin, 2cqmin 2cqmin, 2cqmin 2cqmin;
+  display: flex;
+  flex-direction: column;
+}
+.face-rs-sheet > b { font-size: clamp(16px, 13cqmin, 64px); line-height: 0.9; font-weight: 700; }
+.face-rs-sheet > small { font-size: clamp(9px, 4cqmin, 16px); letter-spacing: 0.18em; text-transform: uppercase; color: #c8102e; margin-top: 1cqmin; }
+/* plotter pen drawing a line across the top */
+.face-rs-pen { position: absolute; left: 0; right: 0; top: 2cqmin; height: 2px; }
+.face-rs-pen::before { content: ""; position: absolute; inset: 0; background: #c8102e; transform-origin: left; animation: face-trace 6s cubic-bezier(0.22, 1, 0.36, 1) infinite; }
+.face-rs-pen::after {
+  content: "";
+  position: absolute;
+  top: -5px;
+  width: 12px;
+  height: 12px;
+  margin-left: -6px;
+  border: 1.5px solid #2b2f33;
+  border-radius: 50%;
+  background: radial-gradient(circle, #c8102e 0 2px, #f3f6ee 2.5px);
+  animation: face-pen 6s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+}
+@keyframes face-trace { 0% { transform: scaleX(0); } 70%, 100% { transform: scaleX(1); } }
+@keyframes face-pen { 0% { left: 0; } 70%, 100% { left: 100%; } }
+.face-rs-grid {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 3cqmin;
+  margin-top: 4cqmin;
+}
+.face-rs-card {
+  position: relative;
+  min-height: 0;
+  border: 1.5px solid var(--pen);
+  background: #f3f6ee;
+  color: var(--pen);
+  display: grid;
+  place-items: center;
+  animation: face-bob 4s calc(var(--i) * -0.7s) ease-in-out infinite alternate;
+  transition: transform 0.4s, box-shadow 0.4s;
+}
+.face-rs-card svg { width: 62%; max-height: 70%; }
+.face-rs-card i { position: absolute; left: 1.5cqmin; top: 0.6cqmin; font: 600 clamp(7px, 3cqmin, 13px) "Barlow Condensed", sans-serif; font-style: normal; }
+.face-rs-v1 { border-style: double; border-width: 4px; }
+.face-rs-v2 { background: var(--pen); color: #f3f6ee; }
+@keyframes face-bob { to { transform: translateY(-1.6cqmin); } }
+.bento-item:hover .face-rs-card { box-shadow: 4px 4px 0 var(--pen); transform: translate(-3px, -3px); animation-play-state: paused; }
+
+.face-kb {
+  background:
+    radial-gradient(ellipse at 74% -4%, rgba(235, 252, 255, 0.45), transparent 42%),
+    radial-gradient(ellipse at 50% 125%, rgba(60, 170, 200, 0.35), transparent 60%),
+    linear-gradient(180deg, #0d3b4d 0%, #062331 45%, #020c13 100%);
+  color: #dff7ff;
+  font-family: "Rajdhani", "Segoe UI", sans-serif;
+}
+.face-kb::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    repeating-linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 0 1px, transparent 1px 4px),
+    radial-gradient(ellipse at 50% 50%, transparent 55%, rgba(0, 8, 14, 0.65) 100%);
+}
+.face-kb canvas { position: absolute; inset: 0; width: 100%; height: 100%; transition: transform 0.6s; }
+.bento-item:hover .face-kb canvas { transform: scale(1.08); }
+.face-kb-head { position: absolute; top: 5cqmin; left: 5cqmin; display: flex; align-items: center; gap: 3cqmin; }
+.face-kb-head .kb-sigil {
+  width: clamp(10px, 5cqmin, 20px);
+  height: clamp(10px, 5cqmin, 20px);
+  border: 1.5px solid #8fe9ff;
+  transform: rotate(45deg);
+  box-shadow: 0 0 12px #8fe9ff, inset 0 0 8px rgba(143, 233, 255, 0.6);
+}
+.face-kb-head b { font-size: clamp(11px, 5.5cqmin, 22px); font-weight: 300; letter-spacing: 0.4em; text-transform: uppercase; text-shadow: 0 0 12px rgba(143, 233, 255, 0.7); }
+
+@media (prefers-reduced-motion: reduce) {
+  .face-rs-pen::before, .face-rs-pen::after, .face-rs-card { animation: none; }
+}

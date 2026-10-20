@@ -1,7 +1,9 @@
 import React, { Suspense, lazy } from "react";
 // HashRouter: GitHub Pages has no SPA fallback, so BrowserRouter deep links break
 import { HashRouter as Router, Routes, Route, Link } from "react-router-dom";
-import { FaGithub, FaProjectDiagram, FaEnvelope, FaBook } from "react-icons/fa";
+import { FaGithub, FaEnvelope } from "react-icons/fa";
+import Resources from "./Resources";
+import { ResourcesFace, GraphFace } from "./TileFaces";
 // three.js is ~1 MB: load it only when /graph3d is opened
 const Graph3D = lazy(() => import("./Graph3D"));
 const NotePage = lazy(() => import("./NotePage"));
@@ -28,8 +30,8 @@ const tiles = [
   [0, 0, "/wind", "Mediterranean Drift", <Preview name="wind" />],
   [1, 0, "/contact", "Contatti", <FaEnvelope className="bento-icon" />],
   [2, 0, "/sphere", "Sphere Marquee", <Preview name="sphere" />],
-  [0, 1, "/resources", "Resources", <FaBook className="bento-icon" />],
-  [2, 1, "/graph3d", "3D Graph", <FaProjectDiagram className="bento-icon" />],
+  [0, 1, "/resources", "Resources", <ResourcesFace />],
+  [2, 1, "/graph3d", "3D Graph", <GraphFace />],
   [0, 2, "/baroque", "Barocco", <Preview name="baroque" />],
   [1, 2, "https://github.com/burlibu/burlibu.github.io", "GitHub", <FaGithub className="bento-icon" />],
   [2, 2, "/valhalla", "Valhalla", <Preview name="valhalla" />],
@@ -135,29 +137,6 @@ function Contact() {
           burlibu@email.com
         </a>
       </p>
-    </Panel>
-  );
-}
-
-const resources = [
-  ["React Docs", "https://react.dev/"],
-  ["Tailwind CSS Docs", "https://tailwindcss.com/docs"],
-  ["Repository GitHub", "https://github.com/burlibu/burlibu.github.io"],
-];
-
-function Resources() {
-  return (
-    <Panel title="Resources">
-      <p>Qui troverai link utili, documentazione e risorse consigliate.</p>
-      <ul className="list-disc ml-6 mt-4">
-        {resources.map(([label, href]) => (
-          <li key={href}>
-            <a className="text-sky-400 underline" href={href} target="_blank" rel="noopener noreferrer">
-              {label}
-            </a>
-          </li>
-        ))}
-      </ul>
     </Panel>
   );
 }
