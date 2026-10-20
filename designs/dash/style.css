@@ -1,0 +1,547 @@
+:root {
+  --ink: #f4f1ff;
+  --dim: rgba(244, 241, 255, 0.66);
+  --accent: #ff6ad5;
+  --glow: #5ff2ff;
+  --edge: rgba(255, 255, 255, 0.18);
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  background: #0b0420;
+  color: var(--ink);
+  font-family: "Chakra Petch", system-ui, sans-serif;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+canvas {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  touch-action: none;
+}
+[hidden] {
+  display: none !important;
+}
+kbd {
+  display: inline-block;
+  padding: 1px 6px;
+  border: 1px solid var(--edge);
+  border-bottom-width: 2px;
+  border-radius: 5px;
+  font: 600 0.85em "Chakra Petch", monospace;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.glass {
+  background: linear-gradient(140deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0.03) 60%), rgba(18, 8, 40, 0.42);
+  border: 1px solid var(--edge);
+  backdrop-filter: blur(16px) saturate(150%);
+  -webkit-backdrop-filter: blur(16px) saturate(150%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.22),
+    0 24px 60px rgba(0, 0, 0, 0.45);
+}
+
+/* ---------- buttons ---------- */
+.btn,
+.chip,
+.icon-btn,
+.arrow {
+  font: 700 15px "Chakra Petch", sans-serif;
+  color: var(--ink);
+  cursor: pointer;
+  border: 1px solid var(--edge);
+  background: rgba(255, 255, 255, 0.08);
+  transition:
+    transform 0.25s var(--ease),
+    background 0.25s,
+    border-color 0.25s,
+    box-shadow 0.25s;
+}
+.btn {
+  padding: 12px 22px;
+  border-radius: 14px;
+  letter-spacing: 0.06em;
+}
+.btn:hover,
+.btn:focus-visible,
+.chip:hover,
+.arrow:hover,
+.icon-btn:hover {
+  transform: translateY(-2px);
+  border-color: rgba(255, 255, 255, 0.5);
+  background: rgba(255, 255, 255, 0.14);
+  outline: none;
+}
+.btn.primary {
+  border-color: transparent;
+  background: linear-gradient(135deg, #ffe066, #ff6ad5 55%, #8b5cff);
+  color: #1a0630;
+  box-shadow: 0 8px 30px rgba(255, 106, 213, 0.45);
+}
+.btn.primary:hover {
+  box-shadow: 0 10px 40px rgba(255, 106, 213, 0.7);
+}
+.btn[aria-pressed="true"] {
+  background: rgba(125, 255, 178, 0.18);
+  border-color: #7dffb2;
+  color: #b9ffd6;
+}
+.icon-btn {
+  position: fixed;
+  top: 16px;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  font-size: 15px;
+  z-index: 5;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+.mute {
+  left: 16px;
+}
+.mute.off {
+  opacity: 0.45;
+  text-decoration: line-through;
+}
+.pause-btn {
+  left: 68px;
+}
+
+/* ---------- HUD ---------- */
+.hud {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 3;
+}
+.hud button {
+  pointer-events: auto;
+}
+.progress {
+  position: fixed;
+  top: 22px;
+  left: 50%;
+  translate: -50% 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: min(46vw, 520px);
+}
+.bar {
+  flex: 1;
+  height: 12px;
+  padding: 2px;
+  border-radius: 99px;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+}
+.bar i {
+  display: block;
+  height: 100%;
+  width: 100%;
+  border-radius: 99px;
+  background: linear-gradient(90deg, #7dffb2, #5ff2ff);
+  box-shadow: 0 0 10px #5ff2ff;
+  transform-origin: left;
+  transform: scaleX(0);
+}
+#pct {
+  min-width: 48px;
+  font: 400 18px "Russo One", sans-serif;
+  text-shadow: 0 2px 0 rgba(0, 0, 0, 0.5);
+}
+.practice-tools {
+  position: fixed;
+  left: 50%;
+  bottom: 20px;
+  translate: -50% 0;
+  display: flex;
+  gap: 10px;
+}
+.chip {
+  padding: 10px 16px;
+  border-radius: 99px;
+  background: rgba(10, 30, 20, 0.55);
+  border-color: rgba(125, 255, 178, 0.5);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+/* ---------- screens ---------- */
+.screen {
+  position: fixed;
+  inset: 0;
+  z-index: 4;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  padding: 72px 16px 24px;
+  overflow-y: auto;
+  animation: screen-in 0.5s var(--ease);
+}
+#pause,
+#win {
+  background: rgba(8, 2, 22, 0.45);
+}
+@keyframes screen-in {
+  from {
+    opacity: 0;
+  }
+}
+
+.logo {
+  text-align: center;
+}
+.logo h1 {
+  margin: 0;
+  display: flex;
+  gap: 0.25em;
+  justify-content: center;
+  font: 400 clamp(40px, 8vw, 96px) / 1 "Russo One", sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  filter: drop-shadow(0 6px 0 rgba(0, 0, 0, 0.35));
+}
+.logo h1 span {
+  background: linear-gradient(180deg, #fff 20%, #ffd1f3 50%, #ff6ad5 52%, #b23ad8);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.logo h1 b {
+  font-weight: 400;
+  background: linear-gradient(180deg, #fff 20%, #c9fbff 50%, #5ff2ff 52%, #2a7bd8);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: wobble 2.4s ease-in-out infinite;
+  display: inline-block;
+}
+@keyframes wobble {
+  50% {
+    transform: translateY(-6px) rotate(-2deg);
+  }
+}
+.logo p {
+  margin: 8px 0 0;
+  color: var(--dim);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-size: 13px;
+}
+
+.carousel {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: min(100%, 640px);
+}
+.arrow {
+  flex: none;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  font-size: 28px;
+  line-height: 1;
+}
+.card {
+  --c1: #ff6ad5;
+  --c2: #5a1e78;
+  flex: 1;
+  min-width: 0;
+  position: relative;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 6px 18px;
+  align-items: center;
+  padding: 20px 24px;
+  border-radius: 24px;
+  overflow: hidden;
+  animation: card-in 0.45s var(--ease);
+}
+.card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: radial-gradient(circle at 0% 0%, var(--c1), transparent 60%), linear-gradient(135deg, var(--c2), transparent);
+  opacity: 0.55;
+}
+@keyframes card-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.97);
+  }
+}
+.face {
+  grid-row: span 3;
+  width: 84px;
+  height: 84px;
+  filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.4));
+}
+.card h2 {
+  margin: 0;
+  font: 400 clamp(22px, 4vw, 30px) / 1.1 "Russo One", sans-serif;
+}
+.card .meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 14px;
+  font-size: 14px;
+  color: var(--dim);
+}
+.card .meta b {
+  color: var(--ink);
+}
+.stars {
+  color: #ffe066;
+  letter-spacing: 1px;
+}
+.coin-slot {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  margin-right: 4px;
+  border-radius: 50%;
+  border: 2px dashed rgba(255, 255, 255, 0.4);
+  vertical-align: middle;
+}
+.coin-slot.on {
+  border: 0;
+  background: radial-gradient(circle at 35% 30%, #fff8c4, #ffd23f 45%, #c98a00);
+  box-shadow: 0 0 10px rgba(255, 210, 63, 0.7);
+}
+.bests {
+  grid-column: 1 / -1;
+  display: grid;
+  gap: 8px;
+  margin-top: 8px;
+}
+.best {
+  display: grid;
+  grid-template-columns: 74px 1fr 46px;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  color: var(--dim);
+}
+.best .track {
+  height: 10px;
+  border-radius: 99px;
+  background: rgba(0, 0, 0, 0.35);
+  overflow: hidden;
+}
+.best .track i {
+  display: block;
+  height: 100%;
+  border-radius: 99px;
+  background: linear-gradient(90deg, #7dffb2, #5ff2ff);
+}
+.best.practice .track i {
+  background: linear-gradient(90deg, #ffe066, #ff9e3d);
+}
+.best b {
+  color: var(--ink);
+  text-align: right;
+}
+.dots {
+  display: flex;
+  gap: 8px;
+}
+.dots i {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  transition:
+    width 0.3s var(--ease),
+    background 0.3s;
+}
+.dots i.on {
+  width: 24px;
+  border-radius: 99px;
+  background: #fff;
+}
+.menu-actions,
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+}
+.keys {
+  max-width: 640px;
+  margin: 0;
+  text-align: center;
+  font-size: 13px;
+  line-height: 2;
+  color: var(--dim);
+}
+
+.panel {
+  width: min(100%, 420px);
+  padding: 26px 28px;
+  border-radius: 24px;
+  text-align: center;
+  animation: card-in 0.45s var(--ease);
+}
+.panel h2 {
+  margin: 0 0 6px;
+  font: 400 34px "Russo One", sans-serif;
+}
+.panel .sub,
+.kicker {
+  margin: 0 0 18px;
+  color: var(--dim);
+  font-size: 14px;
+}
+.kicker {
+  margin: 0 0 4px;
+  color: #7dffb2;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+}
+.col {
+  display: grid;
+  gap: 10px;
+}
+.coins-row {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin: 12px 0 16px;
+}
+.coins-row .coin-slot {
+  width: 34px;
+  height: 34px;
+  animation: pop 0.6s var(--ease) backwards;
+}
+.coins-row .coin-slot:nth-child(2) {
+  animation-delay: 0.15s;
+}
+.coins-row .coin-slot:nth-child(3) {
+  animation-delay: 0.3s;
+}
+@keyframes pop {
+  from {
+    transform: scale(0) rotate(-180deg);
+  }
+}
+.stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin: 0 0 20px;
+}
+.stats div {
+  padding: 8px 4px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.06);
+}
+.stats dt {
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--dim);
+}
+.stats dd {
+  margin: 2px 0 0;
+  font: 400 20px "Russo One", sans-serif;
+}
+
+.badge {
+  position: fixed;
+  left: 50%;
+  top: 64px;
+  translate: -50% 0;
+  z-index: 5;
+  padding: 8px 16px;
+  border-radius: 99px;
+  background: rgba(10, 30, 20, 0.7);
+  border: 1px solid rgba(125, 255, 178, 0.6);
+  color: #b9ffd6;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  pointer-events: none;
+}
+
+/* preview tile: just the running game, no chrome */
+.preview .icon-btn,
+.preview .screen,
+.preview .hud {
+  display: none !important;
+}
+
+@media (max-width: 900px) {
+  .icon-btn {
+    top: 10px;
+  }
+  .progress {
+    top: 64px;
+    width: min(70vw, 420px);
+  }
+  .screen {
+    padding-top: 64px;
+  }
+}
+@media (max-width: 560px) {
+  .card {
+    grid-template-columns: 1fr;
+    text-align: center;
+    padding: 18px;
+  }
+  .face {
+    grid-row: auto;
+    margin: 0 auto;
+    width: 64px;
+    height: 64px;
+  }
+  .card .meta {
+    justify-content: center;
+  }
+  .arrow {
+    width: 38px;
+    height: 38px;
+    font-size: 22px;
+  }
+  .stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .keys {
+    font-size: 12px;
+  }
+}
+@media (max-height: 560px) and (orientation: landscape) {
+  .screen {
+    gap: 10px;
+    padding-top: 12px;
+  }
+  .logo h1 {
+    font-size: 40px;
+  }
+  .logo p,
+  .keys {
+    display: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}
