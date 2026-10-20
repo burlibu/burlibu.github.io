@@ -45,6 +45,7 @@ const more = [
   ["/kinetic", "Kinetic", <Preview name="kinetic" />],
   ["/buconero", "Orizzonte degli eventi", <Preview name="buconero" />],
   ["/manga", "Manga", <Preview name="manga" />],
+  ["/circuito", "Circuito", <Preview name="circuito" />],
 ];
 
 function Tile({ to, label, preview, ...props }) {
@@ -178,6 +179,7 @@ function App() {
         <Route path="/kinetic" element={<DesignFrame name="kinetic" title="Kinetic Interface" />} />
         <Route path="/buconero" element={<DesignFrame name="buconero" title="Orizzonte degli eventi" />} />
         <Route path="/manga" element={<DesignFrame name="manga" title="Manga" />} />
+        <Route path="/circuito" element={<DesignFrame name="circuito" title="Circuito" />} />
         <Route path="/contact"element={<Contact />} />
         <Route path="/resources" element={<Resources />} />
         <Route

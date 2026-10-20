@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="it">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Circuito</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,500;0,700;1,800&family=Barlow:wght@400;500&family=Unbounded:wght@400;800;900&display=swap"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <!-- Photos: Unsplash License. Xavier Praillet (Ferrari 499P, Porsche 963), Flavien
+         (Lamborghini), Charles Causse (Mercedes-AMG GT3), Spurwing Agency (McLaren) -->
+    <div class="slides" id="slides"></div>
+    <canvas id="lines"></canvas>
+    <div class="shade"></div>
+    <div class="stripe" id="stripe"></div>
+
+    <header class="bar glass">
+      <div class="logo"><span class="flag"></span>Circuito</div>
+      <nav>
+        <a href="#" class="on">Garage</a>
+        <a href="#">Gare</a>
+        <a href="#">Piloti</a>
+        <a href="#">Box</a>
+      </nav>
+      <span class="live">Live</span>
+    </header>
+
+    <main class="info">
+      <p class="count"><b id="index">01</b> / <span id="total">05</span> <i id="place"></i></p>
+      <p class="brand" id="brand"></p>
+      <h1 class="model" id="model"></h1>
+      <p class="tagline" id="tagline"></p>
+      <dl class="specs">
+        <div><dt>Potenza</dt><dd><b data-spec="cv">0</b> CV</dd></div>
+        <div><dt>Velocità max</dt><dd><b data-spec="vmax">0</b> km/h</dd></div>
+        <div><dt>Motore</dt><dd><b data-spec="engine" class="text"></b></dd></div>
+      </dl>
+      <p class="credit" id="credit"></p>
+    </main>
+
+    <aside class="hud glass">
+      <div class="gauge">
+        <svg viewBox="0 0 200 140">
+          <defs>
+            <linearGradient id="arc" x1="0" x2="1">
+              <stop offset="0" stop-color="#fff" />
+              <stop offset="0.7" stop-color="#ffb000" />
+              <stop offset="1" stop-color="#ff2a2a" />
+            </linearGradient>
+          </defs>
+          <path class="track" d="M 20 120 A 80 80 0 1 1 180 120" pathLength="100" />
+          <path class="ticks" d="M 20 120 A 80 80 0 1 1 180 120" pathLength="100" />
+          <path class="fill" id="rpm" d="M 20 120 A 80 80 0 1 1 180 120" pathLength="100" />
+        </svg>
+        <div class="readout">
+          <b id="speed">0</b>
+          <span>km/h</span>
+        </div>
+        <div class="gear"><small>Marcia</small><b id="gear">N</b></div>
+      </div>
+      <div class="map">
+        <svg viewBox="0 0 220 150" id="map">
+          <path id="circuit" class="road" d="" />
+          <path id="circuit-glow" class="road-glow" d="" />
+          <circle id="car" r="4.5" />
+        </svg>
+        <dl class="laps">
+          <div><dt>Giro</dt><dd id="lap">1</dd></div>
+          <div><dt>Tempo</dt><dd id="time">0:00.000</dd></div>
+          <div><dt>Migliore</dt><dd id="best">—</dd></div>
+        </dl>
+      </div>
+    </aside>
+
+    <nav class="rail glass" aria-label="Auto">
+      <button class="arrow" id="prev" aria-label="Precedente">‹</button>
+      <div class="thumbs" id="thumbs"></div>
+      <button class="arrow" id="next" aria-label="Successiva">›</button>
+    </nav>
+
+    <script src="../preview.js"></script>
+    <script src="script.js"></script>
+  </body>
+</html>
