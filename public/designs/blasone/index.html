@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="it">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Blasone — duello di bestiari araldici</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;0,900;1,500;1,700&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Josefin+Sans:wght@400;600;700&display=swap"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <svg width="0" height="0" style="position: absolute" aria-hidden="true">
+      <defs>
+        <!-- heraldic hatching (Petra Sancta): how engravers print colour in black ink -->
+        <pattern id="h-oro" width="6" height="6" patternUnits="userSpaceOnUse"><circle cx="3" cy="3" r="0.9" fill="#0f0f10" /></pattern>
+        <pattern id="h-argento" width="6" height="6" patternUnits="userSpaceOnUse"></pattern>
+        <pattern id="h-rosso" width="4" height="4" patternUnits="userSpaceOnUse"><path d="M2 0v4" stroke="#0f0f10" stroke-width="0.9" /></pattern>
+        <pattern id="h-azzurro" width="4" height="4" patternUnits="userSpaceOnUse"><path d="M0 2h4" stroke="#0f0f10" stroke-width="0.9" /></pattern>
+        <pattern id="h-verde" width="4" height="4" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><path d="M0 2h4" stroke="#0f0f10" stroke-width="0.9" /></pattern>
+        <pattern id="h-nero" width="4" height="4" patternUnits="userSpaceOnUse"><path d="M0 2h4M2 0v4" stroke="#0f0f10" stroke-width="0.9" /></pattern>
+        <symbol id="shield" viewBox="0 0 40 46"><path d="M2 2h36v18c0 13-9 20-18 24C11 40 2 33 2 20z" /></symbol>
+        <symbol id="crown" viewBox="0 0 24 18"><path d="M2 15 1 4l6 5 5-8 5 8 6-5-1 11z" fill="currentColor" /><path d="M2 17h20" stroke="currentColor" stroke-width="1.6" /></symbol>
+      </defs>
+    </svg>
+
+    <div class="desk">
+      <!-- masthead: a printed title sheet laid over an ochre one -->
+      <header class="sheet mast">
+        <div class="initial" aria-hidden="true"><span>B</span></div>
+        <div class="mast-title">
+          <p class="label">Archivio araldico · Vol. I · Tavola 01</p>
+          <h1>Blasone</h1>
+          <p class="sub"><em>Duello di bestiari</em> in sei turni, sui quattro quarti di uno scudo.</p>
+        </div>
+        <div class="mast-score" aria-live="polite">
+          <div class="side-score"><span class="label">Tu</span><b id="scoreMe">0</b></div>
+          <svg class="crown big" aria-hidden="true"><use href="#crown" /></svg>
+          <div class="side-score"><span class="label">Il Conte</span><b id="scoreFoe">0</b></div>
+          <p class="label turn" id="turn">Turno I di VI</p>
+        </div>
+        <nav class="mast-tools">
+          <button class="tool" id="rulesBtn" aria-expanded="false" aria-controls="rules">Regole</button>
+          <button class="tool" id="newBtn">Nuova partita</button>
+        </nav>
+      </header>
+
+      <section class="sheet rules" id="rules" hidden>
+        <p class="label">Foglio di regole · Plate 00</p>
+        <ol>
+          <li><b>Sei turni.</b> Ogni turno scegli una carta dalla mano e un quarto dello scudo. Il Conte sceglie nello stesso momento, senza vedere la tua mossa.</li>
+          <li><b>Quattro quarti.</b> Ogni quarto va a chi ha la forza totale più alta e vale le corone indicate. Vince chi ha più corone; in parità conta la forza totale.</li>
+          <li><b>Campi.</b> Ogni quarto ha un campo con una regola propria: bonus a una tintura, corone doppie, posti limitati o vittoria al più basso.</li>
+          <li><b>Legge delle tinture.</b> Metallo su colore e colore su metallo: una carta giocata sopra una tua carta di classe opposta ottiene +1. Metalli: oro e argento. Colori: rosso, azzurro, verde, nero.</li>
+          <li><b>Bestie.</b> Ogni bestia ha un potere: alcune agiscono nel proprio quarto, altre nei quarti confinanti, cioè quelli separati da una sola piega.</li>
+        </ol>
+      </section>
+
+      <p class="label status"><span id="handHint">Scegli una carta, poi un quarto</span><span id="deckInfo">Mazzo: 8</span></p>
+
+      <main class="table">
+        <section class="board-wrap">
+          <div class="sheet ochre under" aria-hidden="true"></div>
+          <div class="sheet board" id="board" aria-label="Lo scudo, diviso in quattro quarti"></div>
+        </section>
+
+        <aside class="sheet ochre side">
+          <div class="foe-card">
+            <div class="seal" aria-hidden="true"><span>C</span></div>
+            <div>
+              <p class="label">Avversario</p>
+              <h2>Il Conte di Sable</h2>
+              <p class="small" id="foeInfo">4 carte in mano · 8 nel mazzo</p>
+            </div>
+          </div>
+          <div class="backs" id="foeHand" aria-hidden="true"></div>
+          <h3 class="label">Cronaca del torneo</h3>
+          <ol class="chron" id="log"></ol>
+        </aside>
+      </main>
+
+      <section class="hand-wrap">
+        <div class="hand" id="hand" role="listbox" aria-label="La tua mano"></div>
+      </section>
+    </div>
+
+    <div class="veil" id="end" hidden>
+      <div class="sheet endsheet" role="dialog" aria-modal="true" aria-labelledby="endTitle">
+        <p class="label" id="endLabel">Esito del torneo · Plate 06</p>
+        <div class="end-seal" id="endSeal" aria-hidden="true"></div>
+        <h2 id="endTitle">Vittoria</h2>
+        <p id="endText"></p>
+        <button class="tool solid" id="againBtn">Nuova partita</button>
+      </div>
+    </div>
+
+    <script src="../preview.js"></script>
+    <script src="game.js"></script>
+    <script src="script.js"></script>
+  </body>
+</html>
