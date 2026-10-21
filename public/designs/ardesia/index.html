@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="it">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Ardesia — scacchi su ardesia e noce</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <main class="ardesia">
+      <header class="top">
+        <div class="brand">
+          <svg class="mark" viewBox="0 0 40 40" aria-hidden="true">
+            <rect x="2" y="2" width="36" height="36" rx="6" />
+            <path d="M2 20h18V2M20 38V20h18" />
+          </svg>
+          <div>
+            <p class="eyebrow">Scacchi · tavolo 01</p>
+            <h1>Ardesia</h1>
+          </div>
+        </div>
+        <p class="status" id="status" aria-live="polite">Tocca al Bianco</p>
+      </header>
+
+      <section class="stage">
+        <div class="board-col">
+          <div class="player" id="barTop"></div>
+          <div class="frame">
+            <div class="board" id="board" role="group" aria-label="Scacchiera. Frecce per spostarsi, Invio per scegliere un pezzo e la sua destinazione, Esc per annullare."></div>
+            <div class="result" id="result" hidden>
+              <p class="result-kicker" id="resultKicker"></p>
+              <p class="result-title" id="resultTitle"></p>
+              <button class="btn amber" type="button" data-act="new">Nuova partita</button>
+            </div>
+          </div>
+          <div class="player" id="barBottom"></div>
+        </div>
+
+        <aside class="panel" aria-label="Pannello di gioco">
+          <div class="panel-head">
+            <p class="eyebrow">Partita</p>
+            <p class="mode" id="modeLabel"></p>
+          </div>
+          <ol class="moves" id="moves" aria-label="Cronologia mosse" tabindex="0"></ol>
+          <div class="controls">
+            <button class="btn" type="button" data-act="new"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.4-5.7M4 4v5h5" /></svg>Ricomincia</button>
+            <button class="btn" type="button" data-act="undo" id="undoBtn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 14 4 9l5-5M4 9h11a5 5 0 0 1 0 10h-3" /></svg>Annulla</button>
+            <button class="btn" type="button" data-act="redo" id="redoBtn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 14 5-5-5-5M20 9H9a5 5 0 0 0 0 10h3" /></svg>Ripeti</button>
+            <button class="btn" type="button" data-act="flip"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4v16m0 0-3-3m3 3 3-3M17 20V4m0 0-3 3m3-3 3 3" /></svg>Ruota</button>
+            <button class="btn wide" type="button" data-act="export"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11m0 0-4-4m4 4 4-4M5 19h14" /></svg>Esporta PGN / FEN</button>
+          </div>
+          <p class="fen" id="fenLine" title="Posizione corrente (FEN)"></p>
+        </aside>
+      </section>
+
+    <dialog class="sheet" id="promo" aria-labelledby="promoTitle">
+      <p class="eyebrow">Promozione</p>
+      <h2 id="promoTitle">Scegli il pezzo</h2>
+      <div class="promo-grid" id="promoGrid"></div>
+      <button class="btn ghost" type="button" value="" data-close>Annulla mossa</button>
+    </dialog>
+
+    <dialog class="sheet" id="setup" aria-labelledby="setupTitle">
+      <form method="dialog" id="setupForm">
+        <p class="eyebrow">Nuova partita</p>
+        <h2 id="setupTitle">Imposta il tavolo</h2>
+        <fieldset>
+          <legend>Avversario</legend>
+          <div class="seg">
+            <label><input type="radio" name="mode" value="ai" checked /><span>Contro l'IA</span></label>
+            <label><input type="radio" name="mode" value="local" /><span>Due giocatori</span></label>
+          </div>
+        </fieldset>
+        <fieldset class="ai-only">
+          <legend>Giochi con</legend>
+          <div class="seg">
+            <label><input type="radio" name="side" value="w" checked /><span>Bianco</span></label>
+            <label><input type="radio" name="side" value="b" /><span>Nero</span></label>
+            <label><input type="radio" name="side" value="r" /><span>A caso</span></label>
+          </div>
+        </fieldset>
+        <fieldset class="ai-only">
+          <legend>Forza dell'IA</legend>
+          <div class="seg">
+            <label><input type="radio" name="level" value="1" /><span>Principiante</span></label>
+            <label><input type="radio" name="level" value="2" checked /><span>Club</span></label>
+            <label><input type="radio" name="level" value="3" /><span>Maestro</span></label>
+          </div>
+        </fieldset>
+        <label class="field">
+          <span>Orologio</span>
+          <select name="clock">
+            <option value="0">Senza orologio</option>
+            <option value="1+0">Bullet 1+0</option>
+            <option value="3+2">Blitz 3+2</option>
+            <option value="5+3">Blitz 5+3</option>
+            <option value="10+0">Rapid 10+0</option>
+          </select>
+        </label>
+        <label class="field">
+          <span>Posizione di partenza (FEN, facoltativa)</span>
+          <input name="fen" type="text" spellcheck="false" autocomplete="off" placeholder="Posizione iniziale standard" aria-describedby="fenError" />
+        </label>
+        <p class="error" id="fenError" role="alert"></p>
+        <div class="sheet-actions">
+          <button class="btn ghost" type="button" data-close>Chiudi</button>
+          <button class="btn amber" type="submit">Inizia</button>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog class="sheet" id="export" aria-labelledby="exportTitle">
+      <p class="eyebrow">Esporta</p>
+      <h2 id="exportTitle">Salva la partita</h2>
+      <label class="field">
+        <span>FEN · posizione corrente</span>
+        <textarea id="fenOut" rows="2" readonly spellcheck="false"></textarea>
+      </label>
+      <label class="field">
+        <span>PGN · partita completa</span>
+        <textarea id="pgnOut" rows="8" readonly spellcheck="false"></textarea>
+      </label>
+      <div class="sheet-actions">
+        <button class="btn ghost" type="button" data-close>Chiudi</button>
+        <button class="btn" type="button" data-copy="fenOut">Copia FEN</button>
+        <button class="btn" type="button" data-copy="pgnOut">Copia PGN</button>
+        <button class="btn amber" type="button" id="download">Scarica .pgn</button>
+      </div>
+    </dialog>
+
+      <p class="sr-only" id="announce" aria-live="assertive"></p>
+    </main>
+
+    <script src="../preview.js"></script>
+    <script src="game.js"></script>
+    <script src="script.js"></script>
+  </body>
+</html>

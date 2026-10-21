@@ -1,0 +1,421 @@
+/* Ardesia: slate table, walnut and maple board, amber accents. Every token and
+   rule hangs off .ardesia, so the section never leaks into (or inherits from)
+   whatever page hosts it. */
+.ardesia {
+  --bg: #15181b;
+  --s1: #1d2125;
+  --s2: #262b30;
+  --line: #343b42;
+  --text: #ebe6dc;
+  --muted: #959ea5;
+  --amber: #e8a33d;
+  --amber-2: #f6c56e;
+  --red: #e2483d;
+  --ink: #121417;
+  --maple: #e4d1ad;
+  --walnut: #9a6b48;
+  --walnut-d: #5e3f2b;
+  --pad: clamp(14px, 2.4vw, 32px);
+  --panel: clamp(280px, 26vw, 340px);
+
+  box-sizing: border-box;
+  max-width: 1280px;
+  min-height: 100svh;
+  margin: 0 auto;
+  padding: var(--pad);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-content: start;
+  gap: clamp(14px, 2vw, 22px);
+  color: var(--text);
+  font: 400 15px/1.45 "IBM Plex Sans", system-ui, sans-serif;
+}
+.ardesia *, .ardesia *::before, .ardesia *::after { box-sizing: inherit; }
+
+body {
+  margin: 0;
+  background:
+    radial-gradient(1100px 620px at 12% -12%, rgba(232, 163, 61, 0.1), transparent 60%),
+    radial-gradient(900px 640px at 108% 108%, rgba(154, 107, 72, 0.16), transparent 60%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .05 0'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23n)'/%3E%3C/svg%3E"),
+    #15181b;
+}
+
+.ardesia .eyebrow {
+  margin: 0;
+  color: var(--amber);
+  font: 600 11px/1.2 "IBM Plex Mono", monospace;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+/* ---------- header ---------- */
+.ardesia .top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 10px 20px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--line);
+}
+.ardesia .brand { display: flex; align-items: center; gap: 14px; }
+.ardesia .mark { width: 42px; height: 42px; fill: none; stroke: var(--amber); stroke-width: 2; }
+.ardesia .mark path { fill: rgba(232, 163, 61, 0.18); }
+.ardesia h1 {
+  margin: 2px 0 0;
+  font: 700 clamp(30px, 4vw, 46px)/0.95 "Fraunces", Georgia, serif;
+  letter-spacing: -0.02em;
+}
+.ardesia .status {
+  margin: 0;
+  padding: 8px 14px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--s1);
+  font: 500 13px/1.2 "IBM Plex Mono", monospace;
+}
+.ardesia .status.alert { border-color: var(--red); color: #ff8a80; }
+.ardesia .status.over { border-color: var(--amber); color: var(--amber-2); }
+
+/* ---------- layout ---------- */
+.ardesia .stage {
+  display: grid;
+  grid-template-columns: auto var(--panel);
+  justify-content: center;
+  align-items: stretch;
+  gap: clamp(16px, 2vw, 26px);
+  min-width: 0;
+}
+/* the board is as large as the height allows, and never wider than the space beside the panel */
+.ardesia .board-col {
+  width: min(calc(100vw - 2 * var(--pad) - var(--panel) - 26px), calc(100svh - 230px), 760px);
+  min-width: 300px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* ---------- players ---------- */
+.ardesia .player {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 40px;
+  min-width: 0;
+}
+.ardesia .pl-dot {
+  flex: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 2px solid var(--line);
+}
+.ardesia .pl-dot.w { background: #f3ede2; }
+.ardesia .pl-dot.b { background: #2a2d31; }
+.ardesia .player.turn .pl-dot { border-color: var(--amber); box-shadow: 0 0 0 3px rgba(232, 163, 61, 0.25); }
+.ardesia .pl-name { font-weight: 600; font-size: 14px; white-space: nowrap; }
+.ardesia .caps { display: flex; align-items: center; min-width: 0; overflow: hidden; }
+.ardesia .caps .pc { width: 20px; height: 20px; flex: none; }
+.ardesia .caps .pc + .pc { margin-left: -7px; }
+.ardesia .caps .pc.gap { margin-left: 2px; }
+.ardesia .diff { font: 600 12px "IBM Plex Mono", monospace; color: var(--amber-2); }
+.ardesia .clock {
+  margin-left: auto;
+  padding: 6px 12px;
+  border-radius: 7px;
+  background: var(--s1);
+  border: 1px solid var(--line);
+  font: 600 18px/1 "IBM Plex Mono", monospace;
+  font-variant-numeric: tabular-nums;
+}
+.ardesia .player.turn .clock { background: var(--amber); border-color: var(--amber); color: var(--ink); }
+.ardesia .clock.low { color: #ff8a80; }
+.ardesia .player.turn .clock.low { background: var(--red); border-color: var(--red); color: #fff; }
+
+/* ---------- board ---------- */
+.ardesia .frame {
+  position: relative;
+  padding: clamp(6px, 1.4%, 12px);
+  border-radius: 12px;
+  background:
+    repeating-linear-gradient(100deg, rgba(0, 0, 0, 0.08) 0 2px, transparent 2px 9px),
+    linear-gradient(160deg, #7b5238, var(--walnut-d));
+  box-shadow: inset 0 0 0 1px rgba(246, 197, 110, 0.35), 0 24px 50px -18px rgba(0, 0, 0, 0.7);
+}
+.ardesia .board {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  grid-template-rows: repeat(8, 1fr);
+  aspect-ratio: 1 / 1;
+  width: 100%;
+  border-radius: 4px;
+  overflow: hidden;
+  box-shadow: 0 0 0 2px rgba(246, 197, 110, 0.55);
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  container-type: size;
+}
+.ardesia .sq {
+  position: relative;
+  display: grid;
+  min-width: 0;
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  color: inherit;
+  cursor: pointer;
+  font: inherit;
+}
+.ardesia .sq.light { background: linear-gradient(135deg, #ead9b8, var(--maple)); }
+.ardesia .sq.dark { background: linear-gradient(135deg, #a5764f, var(--walnut)); }
+.ardesia .sq::before,
+.ardesia .sq::after { content: ""; position: absolute; pointer-events: none; }
+.ardesia .sq.last::before { inset: 0; background: rgba(232, 163, 61, 0.42); }
+.ardesia .sq.sel::before { inset: 0; background: rgba(232, 163, 61, 0.72); }
+.ardesia .sq.target::after {
+  inset: 35%;
+  border-radius: 50%;
+  background: rgba(18, 20, 23, 0.34);
+}
+.ardesia .sq.target.cap::after {
+  inset: 0;
+  border-radius: 0;
+  background: radial-gradient(circle, transparent 60%, rgba(18, 20, 23, 0.4) 62%);
+}
+.ardesia .sq.target:hover::after,
+.ardesia .sq.target.hover::after { background: rgba(232, 163, 61, 0.55); inset: 0; border-radius: 0; }
+.ardesia .sq.check { background-image: radial-gradient(circle, #ff5a4a 0, rgba(226, 72, 61, 0.75) 32%, transparent 72%); }
+.ardesia .sq:focus { outline: none; }
+.ardesia .sq:focus-visible { outline: 3px solid var(--amber-2); outline-offset: -3px; z-index: 3; }
+.ardesia .slot { position: relative; z-index: 1; display: grid; width: 100%; height: 100%; }
+.ardesia .slot .pc { width: 90%; height: 90%; place-self: center; }
+.ardesia .sq.moving { z-index: 4; }
+.ardesia .sq.lifted .pc { opacity: 0.28; }
+.ardesia .coord {
+  position: absolute;
+  z-index: 2;
+  font: 600 clamp(8px, 2.6cqmin, 13px)/1 "IBM Plex Mono", monospace;
+  pointer-events: none;
+}
+.ardesia .coord.rank { top: 5%; left: 6%; }
+.ardesia .coord.file { right: 6%; bottom: 5%; }
+.ardesia .sq.light .coord { color: var(--walnut); }
+.ardesia .sq.dark .coord { color: var(--maple); }
+
+/* ---------- pieces (inline SVG, see script.js) ---------- */
+.ardesia .pc { display: block; overflow: visible; }
+.ardesia .pc .b { stroke-width: 3; stroke-linejoin: round; }
+.ardesia .pc .d { fill: none; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+.ardesia .pc .d.dot { stroke: none; }
+.ardesia .pc-w .b { fill: #f4eee3; stroke: #1b1d20; }
+.ardesia .pc-w .d { stroke: #1b1d20; }
+.ardesia .pc-w .d.dot { fill: #1b1d20; }
+.ardesia .pc-b .b { fill: #2b2e33; stroke: #0c0d0f; }
+.ardesia .pc-b .d { stroke: var(--amber); }
+.ardesia .pc-b .d.dot { fill: var(--amber); }
+.ardesia .slot .pc { filter: drop-shadow(0 2px 1.5px rgba(0, 0, 0, 0.35)); }
+
+.ardesia .ghost {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 60;
+  pointer-events: none;
+}
+.ardesia .ghost .pc {
+  width: 100%;
+  height: 100%;
+  transform: scale(1.12);
+  filter: drop-shadow(0 12px 10px rgba(0, 0, 0, 0.5));
+}
+
+/* ---------- result overlay ---------- */
+.ardesia .result {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 10px;
+  padding: 20px;
+  border-radius: 12px;
+  text-align: center;
+  background: rgba(18, 20, 23, 0.74);
+  backdrop-filter: blur(2px);
+  animation: rise 0.35s ease-out;
+}
+.ardesia .result[hidden] { display: none; }
+.ardesia .result-kicker { margin: 0; color: var(--amber); font: 600 12px "IBM Plex Mono", monospace; letter-spacing: 0.16em; text-transform: uppercase; }
+.ardesia .result-title { margin: 0 0 6px; font: 700 clamp(24px, 4.5cqmin, 40px)/1.05 "Fraunces", Georgia, serif; }
+@keyframes rise { from { opacity: 0; transform: translateY(8px); } }
+
+/* ---------- panel ---------- */
+.ardesia .panel {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-width: 0;
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: linear-gradient(180deg, var(--s1), rgba(29, 33, 37, 0.7));
+}
+.ardesia .panel-head { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
+.ardesia .mode { margin: 0; color: var(--muted); font-size: 13px; text-align: right; }
+.ardesia .moves {
+  flex: 1 1 0;
+  min-height: 160px;
+  margin: 0;
+  padding: 4px;
+  overflow-y: auto;
+  list-style: none;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--bg);
+  font: 500 14px/1.2 "IBM Plex Mono", monospace;
+  scrollbar-width: thin;
+  scrollbar-color: var(--line) transparent;
+}
+.ardesia .moves:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; }
+.ardesia .moves li { display: grid; grid-template-columns: 3.4em 1fr 1fr; align-items: center; border-radius: 6px; }
+.ardesia .moves li:nth-child(odd) { background: rgba(255, 255, 255, 0.025); }
+.ardesia .moves .n { padding-left: 8px; color: var(--muted); }
+.ardesia .moves .m { padding: 6px 8px; border-radius: 5px; }
+.ardesia .moves .m.cur { background: var(--amber); color: var(--ink); }
+.ardesia .moves .empty { display: block; padding: 10px 8px; color: var(--muted); font-family: "IBM Plex Sans", sans-serif; }
+.ardesia .controls { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.ardesia .controls .wide { grid-column: span 2; }
+.ardesia .fen {
+  margin: 0;
+  color: var(--muted);
+  font: 400 11px/1.4 "IBM Plex Mono", monospace;
+  word-break: break-all;
+}
+
+/* ---------- buttons ---------- */
+.ardesia .btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  background: var(--s2);
+  color: var(--text);
+  font: 600 13px/1.1 "IBM Plex Sans", sans-serif;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s, background-color 0.15s;
+}
+.ardesia .btn svg { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.ardesia .btn:hover:not(:disabled) { border-color: var(--amber); color: var(--amber-2); }
+.ardesia .btn:focus-visible { outline: 2px solid var(--amber-2); outline-offset: 2px; }
+.ardesia .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.ardesia .btn.amber { background: var(--amber); border-color: var(--amber); color: var(--ink); }
+.ardesia .btn.amber:hover:not(:disabled) { background: var(--amber-2); color: var(--ink); }
+.ardesia .btn.ghost { background: transparent; }
+
+/* ---------- dialogs ---------- */
+.ardesia .sheet {
+  width: min(460px, calc(100vw - 32px));
+  max-height: calc(100svh - 32px);
+  padding: 22px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--s1);
+  color: var(--text);
+  box-shadow: 0 30px 80px -20px rgba(0, 0, 0, 0.8);
+}
+.ardesia .sheet::backdrop { background: rgba(10, 12, 14, 0.72); backdrop-filter: blur(3px); }
+.ardesia .sheet[open] { animation: rise 0.25s ease-out; }
+.ardesia .sheet h2 { margin: 4px 0 18px; font: 700 26px/1.1 "Fraunces", Georgia, serif; }
+.ardesia fieldset { margin: 0 0 14px; padding: 0; border: 0; min-width: 0; }
+.ardesia legend,
+.ardesia .field > span {
+  margin-bottom: 6px;
+  padding: 0;
+  color: var(--muted);
+  font: 600 11px/1.3 "IBM Plex Mono", monospace;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.ardesia .seg { display: flex; gap: 3px; padding: 3px; border: 1px solid var(--line); border-radius: 10px; background: var(--bg); }
+.ardesia .seg label { flex: 1; min-width: 0; }
+.ardesia .seg input { position: absolute; opacity: 0; pointer-events: none; }
+.ardesia .seg span {
+  display: block;
+  padding: 9px 6px;
+  border-radius: 7px;
+  font-size: 13px;
+  font-weight: 600;
+  text-align: center;
+  cursor: pointer;
+}
+.ardesia .seg input:checked + span { background: var(--amber); color: var(--ink); }
+.ardesia .seg input:focus-visible + span { outline: 2px solid var(--amber-2); outline-offset: 1px; }
+.ardesia #setupForm:has(input[name="mode"][value="local"]:checked) .ai-only { display: none; }
+.ardesia .field { display: grid; margin-bottom: 14px; }
+.ardesia .field select,
+.ardesia .field input,
+.ardesia .field textarea {
+  width: 100%;
+  padding: 10px 11px;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  background: var(--bg);
+  color: var(--text);
+  font: 400 13px/1.4 "IBM Plex Mono", monospace;
+  resize: vertical;
+}
+.ardesia .field :focus-visible { outline: 2px solid var(--amber); outline-offset: 1px; }
+.ardesia .error { min-height: 1.2em; margin: -6px 0 10px; color: #ff8a80; font-size: 13px; }
+.ardesia .sheet-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; }
+.ardesia .promo-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 18px; }
+.ardesia .promo-grid button {
+  display: grid;
+  aspect-ratio: 1;
+  padding: 8%;
+  border: 2px solid transparent;
+  border-radius: 12px;
+  cursor: pointer;
+}
+.ardesia .promo-grid button:nth-child(odd) { background: var(--maple); }
+.ardesia .promo-grid button:nth-child(even) { background: var(--walnut); }
+.ardesia .promo-grid button:hover,
+.ardesia .promo-grid button:focus-visible { border-color: var(--amber-2); outline: none; }
+.ardesia .promo-grid .pc { width: 100%; height: 100%; }
+
+.ardesia .sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* ---------- phone and narrow tablet: one column ---------- */
+@media (max-width: 860px) {
+  .ardesia .stage { grid-template-columns: minmax(0, 1fr); }
+  .ardesia .board-col { width: min(100%, 620px, calc(100svh - 150px)); min-width: 0; margin: 0 auto; }
+  .ardesia .panel { width: min(100%, 620px); margin: 0 auto; }
+  .ardesia .moves { flex: none; height: 180px; min-height: 0; }
+  .ardesia .controls { grid-template-columns: repeat(4, 1fr); }
+  .ardesia .controls .wide { grid-column: span 4; }
+}
+@media (max-width: 460px) {
+  .ardesia .controls { grid-template-columns: 1fr 1fr; }
+  .ardesia .controls .wide { grid-column: span 2; }
+  .ardesia .status { width: 100%; text-align: center; }
+  .ardesia .clock { font-size: 16px; padding: 5px 9px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ardesia *, .ardesia *::before, .ardesia *::after { animation: none !important; transition: none !important; }
+}
