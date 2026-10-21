@@ -2,10 +2,11 @@ import React, { Suspense, lazy } from "react";
 // HashRouter: GitHub Pages has no SPA fallback, so BrowserRouter deep links break
 import { HashRouter as Router, Routes, Route, Link } from "react-router-dom";
 import Resources from "./Resources";
-import { ResourcesFace, GraphFace, ContactFace, GithubFace } from "./TileFaces";
+import { ResourcesFace, GraphFace, ContactFace, GithubFace, QuantumFace } from "./TileFaces";
 // three.js is ~1 MB: load it only when /graph3d is opened
 const Graph3D = lazy(() => import("./Graph3D"));
 const NotePage = lazy(() => import("./NotePage"));
+const Fcq = lazy(() => import("./Fcq"));
 
 const design = (name) => `${process.env.PUBLIC_URL}/designs/${name}/index.html`;
 
@@ -53,6 +54,7 @@ const more = [
   ["/stelle", "Stelle Erranti", <Preview name="stelle" />],
   ["/blasone", "Blasone", <Preview name="blasone" />],
   ["/ardesia", "Ardesia", <Preview name="ardesia" />],
+  ["/fcq", "Quantistica", <QuantumFace />],
 ];
 
 function Tile({ to, label, preview, ...props }) {
@@ -172,6 +174,17 @@ function App() {
         <Route path="/ardesia" element={<DesignFrame name="ardesia" title="Ardesia" />} />
         <Route path="/contact"element={<Contact />} />
         <Route path="/resources" element={<Resources />} />
+        <Route
+          path="/fcq"
+          element={
+            <>
+              <Suspense fallback={<div className="qc-desk" />}>
+                <Fcq />
+              </Suspense>
+              <Back />
+            </>
+          }
+        />
         <Route
           path="/graph3d"
           element={

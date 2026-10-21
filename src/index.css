@@ -348,6 +348,33 @@ body { background: #0b0b0d; }
 }
 
 /* ---------- bento faces for /resources and /graph3d (src/TileFaces.js) ---------- */
+.face-qc { position: absolute; inset: 0; container-type: size; overflow: hidden; background: #05080f; }
+.face-qc-sheet {
+  position: absolute;
+  inset: 6cqmin;
+  padding: 5cqmin;
+  border: 1px solid rgba(111, 220, 255, 0.35);
+  color: #dbe8ff;
+  font-family: "Rajdhani", "Barlow Condensed", sans-serif;
+  background-color: #0a1020;
+  background-image:
+    linear-gradient(rgba(80, 170, 255, 0.14) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(80, 170, 255, 0.14) 1px, transparent 1px);
+  background-size: 8cqmin 8cqmin;
+  display: flex;
+  flex-direction: column;
+}
+.face-qc-sheet > b { font-size: clamp(16px, 12cqmin, 60px); line-height: 0.9; font-weight: 600; color: #fff; }
+.face-qc-sheet > small { font-size: clamp(9px, 3.6cqmin, 15px); letter-spacing: 0.16em; text-transform: uppercase; color: #3ee6ff; margin-top: 1cqmin; }
+.face-qc-bloch { flex: 1; min-height: 0; width: 100%; margin-top: 2cqmin; overflow: visible; }
+.qf-sphere { fill: rgba(62, 230, 255, 0.06); stroke: rgba(111, 220, 255, 0.55); stroke-width: 0.6; }
+.qf-ring { fill: none; stroke: rgba(111, 220, 255, 0.4); stroke-width: 0.5; stroke-dasharray: 1.5 1.5; }
+.qf-lat { stroke: #ffc85a; stroke-dasharray: none; stroke-width: 0.6; }
+.qf-axis { stroke: rgba(219, 232, 255, 0.45); stroke-width: 0.5; }
+.qf-pole { fill: #dbe8ff; font: 600 6px ui-monospace, Consolas, monospace; text-anchor: middle; }
+.qf-vec { stroke: #3ee6ff; stroke-width: 1.6; stroke-linecap: round; filter: drop-shadow(0 0 1.5px #3ee6ff); }
+.qf-tip { fill: #fff; filter: drop-shadow(0 0 2px #3ee6ff); }
+
 .face-rs,
 .face-kb { position: absolute; inset: 0; width: 100%; height: 100%; container-type: size; overflow: hidden; }
 

@@ -33,6 +33,48 @@ export function ResourcesFace() {
   );
 }
 
+// Bento face for /fcq: a Bloch sphere on blueprint paper, its state precessing around z.
+// The path is precomputed and played with SMIL, so the tile costs no script per frame.
+const QF_EL = 0.35; // camera elevation, radians
+const qfProject = ([x, y, z]) => [50 + 30 * y, 50 - 30 * (z * Math.cos(QF_EL) - x * Math.sin(QF_EL))];
+const qfOrbit = Array.from({ length: 25 }, (_, i) => {
+  const t = (i / 24) * 2 * Math.PI, th = 0.95;
+  return qfProject([Math.sin(th) * Math.cos(t), Math.sin(th) * Math.sin(t), Math.cos(th)]);
+});
+const qfRing = (z) => {
+  const r = Math.sqrt(1 - z * z), [cx, cy] = qfProject([0, 0, z]);
+  return { cx, cy, rx: 30 * r, ry: 30 * r * Math.sin(QF_EL) };
+};
+
+export function QuantumFace() {
+  const xs = qfOrbit.map((p) => p[0].toFixed(1)).join(";"), ys = qfOrbit.map((p) => p[1].toFixed(1)).join(";");
+  const lat = qfRing(Math.cos(0.95)), eq = qfRing(0);
+  return (
+    <div className="face-qc" aria-hidden="true">
+      <div className="face-qc-sheet">
+        <b>Quantistica</b>
+        <small>FCQ · tavole A–D</small>
+        <svg viewBox="0 0 100 100" className="face-qc-bloch">
+          <circle cx="50" cy="50" r="30" className="qf-sphere" />
+          <ellipse {...eq} className="qf-ring" />
+          <ellipse {...lat} className="qf-ring qf-lat" />
+          <line x1="50" y1="14" x2="50" y2="86" className="qf-axis" />
+          <text x="50" y="10" className="qf-pole">|0⟩</text>
+          <text x="50" y="96" className="qf-pole">|1⟩</text>
+          <line x1="50" y1="50" x2={qfOrbit[0][0]} y2={qfOrbit[0][1]} className="qf-vec">
+            <animate attributeName="x2" values={xs} dur="7s" repeatCount="indefinite" />
+            <animate attributeName="y2" values={ys} dur="7s" repeatCount="indefinite" />
+          </line>
+          <circle cx={qfOrbit[0][0]} cy={qfOrbit[0][1]} r="2.4" className="qf-tip">
+            <animate attributeName="cx" values={xs} dur="7s" repeatCount="indefinite" />
+            <animate attributeName="cy" values={ys} dur="7s" repeatCount="indefinite" />
+          </circle>
+        </svg>
+      </div>
+    </div>
+  );
+}
+
 // Bento face for /graph3d: the real knowledge graph, projected and turning slowly
 export function GraphFace() {
   const canvas = useRef(null);
