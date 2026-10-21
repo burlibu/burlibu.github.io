@@ -47,3 +47,17 @@ Every push to `main` triggers `.github/workflows/deploy-gh-pages.yml`, which bui
 ## Notes
 
 - `inspiration/` holds third-party design references from CodePen. The author credits are kept in the copied files.
+
+## Agent skills
+
+### Issue tracker
+
+Issues live in GitHub Issues on burlibu/burlibu.github.io (gh CLI). See `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+Default five-role vocabulary (needs-triage, needs-info, ready-for-agent, ready-for-human, wontfix). See `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+Single-context: root `GLOSSARY.md` + `docs/adr/`. See `docs/agents/domain.md`.
