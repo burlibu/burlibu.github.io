@@ -22,14 +22,14 @@ if (missing.length) {
 (async () => {
   const server = await serve(path.join(root, "build"), { "/responsive-test.html": test });
   try {
-    const dom = await chrome(["--virtual-time-budget=300000", "--dump-dom",
+    const dom = await chrome(["--virtual-time-budget=600000", "--dump-dom",
       `http://127.0.0.1:${server.address().port}/responsive-test.html`]);
     const lines = dom.replace(/<[^>]*>/g, "\n").split("\n").filter((l) => /^(FAIL|ok)/.test(l));
     const fails = lines.filter((l) => l.startsWith("FAIL"));
     if (fails.length) console.log(fails.join("\n"));
     console.log(`${lines.length - fails.length} ok, ${fails.length} FAIL`);
-    if (!dom.includes("DONE")) console.log("FAIL test page did not finish (raise --virtual-time-budget)");
-    process.exitCode = fails.length || !dom.includes("DONE") ? 1 : 0;
+    if (!dom.includes("DONE</pre>")) console.log("FAIL test page did not finish (raise --virtual-time-budget)");
+    process.exitCode = fails.length || !dom.includes("DONE</pre>") ? 1 : 0;
   } finally {
     server.close();
   }

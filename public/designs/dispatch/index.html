@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="it">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Fire Dispatch HQ — City Operations</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <main class="fdhq" id="fdhq">
+      <header class="fdhq-hud">
+        <div class="fdhq-brand">
+          <svg class="fdhq-mark" viewBox="0 0 40 40" aria-hidden="true">
+            <path d="M20 3 35 11v18L20 37 5 29V11Z" />
+            <path class="fdhq-mark-flame" d="M20 11c4 5 7 8 7 13a7 7 0 0 1-14 0c0-3 1.6-5 3.4-6.6.2 2.4 1.2 3.8 2.6 4.4-.6-4.4-.2-7.6 1-10.8Z" />
+          </svg>
+          <div>
+            <p class="fdhq-eyebrow">City Operations · Distretto Centro</p>
+            <h1>Fire Dispatch HQ</h1>
+          </div>
+        </div>
+
+        <div class="fdhq-code" id="code" data-code="green" role="status" aria-live="polite">
+          <i></i><span><small>STATO</small><b id="codeText">CODICE VERDE</b></span>
+        </div>
+
+        <div class="fdhq-cell fdhq-clock">
+          <span class="fdhq-k">Ora operativa</span>
+          <strong id="clock">20:00</strong>
+          <div class="fdhq-speed" role="group" aria-label="Velocità simulazione">
+            <button type="button" data-speed="0" aria-label="Pausa" title="Pausa (spazio)">
+              <svg viewBox="0 0 12 12" aria-hidden="true"><path d="M3 2h2v8H3zM7 2h2v8H7z" /></svg>
+            </button>
+            <button type="button" data-speed="1" aria-pressed="true">1×</button>
+            <button type="button" data-speed="2">2×</button>
+            <button type="button" data-speed="4">4×</button>
+          </div>
+        </div>
+
+        <div class="fdhq-cell">
+          <span class="fdhq-k">Fondi comunali</span>
+          <strong id="budget">€60.000</strong>
+        </div>
+
+        <div class="fdhq-cell fdhq-rep">
+          <span class="fdhq-k">Reputazione <b id="rep">80%</b></span>
+          <div class="fdhq-meter" role="meter" aria-label="Reputazione cittadina" aria-valuemin="0" aria-valuemax="100" aria-valuenow="80" id="repMeter"><i id="repBar"></i></div>
+        </div>
+
+        <div class="fdhq-cell fdhq-staff">
+          <span class="fdhq-k">Personale</span>
+          <strong id="staff">14/14</strong>
+          <button type="button" class="fdhq-hire" id="hire" title="Richiama 2 operatori fuori turno">+2 · €7.500</button>
+        </div>
+      </header>
+
+      <section class="fdhq-map" id="map" aria-label="Mappa tattica">
+        <canvas id="cv" aria-label="Mappa della città con incendi, mezzi e idranti. Usa l'elenco delle chiamate per aprire un incendio da tastiera." role="img"></canvas>
+        <div class="fdhq-frame" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+        <p class="fdhq-coords" id="coords" aria-hidden="true">SETTORE — · ZOOM 1.0×</p>
+        <div class="fdhq-tools" role="group" aria-label="Zoom mappa">
+          <button type="button" id="zoomIn" aria-label="Ingrandisci">+</button>
+          <button type="button" id="zoomOut" aria-label="Riduci">−</button>
+          <button type="button" id="zoomFit" aria-label="Vista d'insieme">
+            <svg viewBox="0 0 12 12" aria-hidden="true"><path d="M1 4V1h3M8 1h3v3M11 8v3H8M4 11H1V8" /></svg>
+          </button>
+        </div>
+        <ul class="fdhq-legend" aria-label="Legenda">
+          <li><i class="lg-res"></i>Residenziale</li>
+          <li><i class="lg-tower"></i>Alto</li>
+          <li><i class="lg-ind"></i>Industriale</li>
+          <li><i class="lg-hyd"></i>Idrante</li>
+        </ul>
+        <div class="fdhq-tip" id="tip" hidden></div>
+        <div class="fdhq-pop" id="pop" role="dialog" aria-labelledby="popTitle" hidden></div>
+      </section>
+
+      <aside class="fdhq-side" id="side">
+        <button type="button" class="fdhq-handle" id="handle" aria-expanded="false" aria-controls="sideBody">
+          <i aria-hidden="true"></i>
+          <span id="handleText">Flotta · 5/5 in caserma</span>
+        </button>
+        <div class="fdhq-side-body" id="sideBody">
+          <dl class="fdhq-tally">
+            <div><dt>Edifici salvati</dt><dd id="saved">0</dd></div>
+            <div><dt>Crolli</dt><dd id="lost">0</dd></div>
+            <div><dt>Danni evitati</dt><dd id="avoided">€0</dd></div>
+          </dl>
+          <section class="fdhq-panel" aria-labelledby="fleetTitle">
+            <h2 id="fleetTitle"><span>Stato flotta</span><small id="fleetSum">5 in caserma</small></h2>
+            <ul class="fdhq-fleet" id="fleet"></ul>
+          </section>
+          <section class="fdhq-panel fdhq-logp" aria-labelledby="logTitle">
+            <h2 id="logTitle"><span>Chiamate 112</span><small id="active">0 attive</small></h2>
+            <ol class="fdhq-log" id="log" aria-live="polite"></ol>
+          </section>
+        </div>
+      </aside>
+
+      <dialog class="fdhq-end" id="end" aria-labelledby="endTitle">
+        <p class="fdhq-eyebrow" id="endEyebrow">Rapporto di fine turno</p>
+        <h2 id="endTitle">Turno concluso</h2>
+        <p id="endText"></p>
+        <dl class="fdhq-tally" id="endStats"></dl>
+        <button type="button" class="fdhq-btn" id="again">Nuovo turno</button>
+      </dialog>
+    </main>
+
+    <script src="../preview.js"></script>
+    <script src="game.js"></script>
+    <script src="script.js"></script>
+  </body>
+</html>
