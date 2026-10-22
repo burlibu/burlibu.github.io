@@ -10,7 +10,7 @@
   ok("formato malevolo ignorato -> Classico", /Classico/.test($("deckInfo").textContent));
   $("menuBtn").click();
   ok("?seed malevolo ignorato, codice valido: " + $("gameCode").textContent, Blasone.parseCode($("gameCode").textContent) !== null);
-  ok("versione mostrata", $("version").textContent === "0.0.6");
+  ok("versione mostrata", $("version").textContent === "0.0.7");
   $("codeInput").value = "<img src=x onerror=window.__pwned=1>";
   $("codeForm").requestSubmit();
   ok("codice malevolo rifiutato", /non valido/.test($("codeMsg").textContent) && noInjected());

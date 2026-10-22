@@ -2,13 +2,15 @@
 // prints, per beast, how often it is drawn and played and how often its
 // quarter and its game are won, then the fields and the Editto.
 // usage: node scripts/blasone-sim.js [config] [games]
-// config words, joined by "-": "crepuscolo" (format), "editto" (rule on),
+// config words, joined by "-": "crepuscolo" or "draft" (format), "casuale"
+// (draft picks at random instead of by the Conte's ranking), "editto" (rule on),
 // "conte=0.05" (the Conte's AI noise; you stay at 0.35), "name=N" (a power
 // override, e.g. drago=7). Seeds are 1000..1000+games, so runs are repeatable.
 const G = require("../public/designs/blasone/game.js");
 
 const cfg = process.argv[2] || "", N = +process.argv[3] || 400;
-const opts = { format: cfg.includes("crepuscolo") ? "crepuscolo" : "classico", editto: cfg.includes("editto") };
+const opts = { format: ["crepuscolo", "draft"].find((f) => cfg.includes(f)) || "classico", editto: cfg.includes("editto") };
+const draftNoise = cfg.includes("casuale") ? 1000 : 0.35;
 const noise = +(cfg.match(/conte=([0-9.]+)/) || [])[1];
 for (const [, k, v] of cfg.matchAll(/([a-z]+)=([0-9]+)(?![.\d])/g)) if (G.BEASTS[k]) G.BEASTS[k].power = +v;
 
@@ -17,6 +19,7 @@ let crowns = 0, contested = 0;
 const beast = (id) => (st[id] ||= { seen: 0, play: 0, win: 0, crowns: 0, game: 0, pow: 0 });
 for (let g = 0; g < N; g++) {
   const s = G.create(1000 + g, opts);
+  while (G.draftTurn(s)) G.pick(s, G.draftChoice(s, "me", draftNoise).id, draftNoise);
   const seen = { me: new Set(), foe: new Set() };
   const look = () => G.SIDES.forEach((side) => s.hands[side].forEach((c) => seen[side].add(c.id)));
   while (!s.over) {
