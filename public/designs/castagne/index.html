@@ -1,0 +1,307 @@
+<!doctype html>
+<html lang="it">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Castagne Bacci · Sillico, Garfagnana</title>
+    <meta name="description" content="Marroni freschi, castagne seccate nel metato e farina dolce macinata a pietra, raccolti a mano sopra Sillico e spediti entro 48 ore." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700&family=Barlow:wght@400;500&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="style.css" />
+    <script>document.documentElement.classList.add("js");</script>
+  </head>
+  <body>
+    <!-- the shapes of the stationery: the crate tag with its eyelet, in fractions of the box -->
+    <svg width="0" height="0" aria-hidden="true" focusable="false" style="position: absolute">
+      <clipPath id="tag" clipPathUnits="objectBoundingBox">
+        <path clip-rule="evenodd" d="M0.09,0 H0.91 L1,0.064 V1 H0 V0.064 Z M0.47,0.05 a0.03,0.0214 0 1,0 0.06,0 a0.03,0.0214 0 1,0 -0.06,0 Z" />
+      </clipPath>
+      <clipPath id="tag-phone" clipPathUnits="objectBoundingBox">
+        <path clip-rule="evenodd" d="M0.12,0 H0.88 L1,0.05 V1 H0 V0.05 Z M0.46,0.036 a0.04,0.018 0 1,0 0.08,0 a0.04,0.018 0 1,0 -0.08,0 Z" />
+      </clipPath>
+    </svg>
+
+    <main class="sheet">
+      <header class="hero" id="top">
+        <img class="hero-photo" src="img/valle.jpg" width="1600" height="1062" alt="I monti boscosi della Garfagnana visti dall'alto, sopra la valle di Fornovolasco" />
+        <nav class="top" aria-label="Sezioni">
+          <a class="mark" href="#top" aria-label="Castagne Bacci, inizio pagina">
+            <svg viewBox="0 0 40 40" aria-hidden="true"><use href="#nut" /></svg>
+            <span>Bacci</span>
+          </a>
+          <div class="top-links">
+            <a href="#cassetta">Castagne</a>
+            <a href="#metato">Il metato</a>
+            <a href="#prezzi">Prezzi</a>
+            <a href="#domande">Domande</a>
+          </div>
+          <a class="btn btn-ink" href="#cassetta">Ordina</a>
+        </nav>
+
+        <article class="tag" aria-labelledby="titolo">
+          <h1 id="titolo"><span class="l1">Castagne</span> <span class="l2">Bacci</span></h1>
+          <p class="sub">Marroni freschi, castagne seccate nel metato e farina dolce macinata a pietra. Raccolti a mano sopra Sillico, in Garfagnana, e spediti entro 48 ore.</p>
+          <ul class="facts-line">
+            <li>Raccolta dal 5 ottobre al 14 novembre</li>
+            <li>Castagneti a 720 metri</li>
+            <li id="heroLot">Una cassetta parte ogni mattina di raccolta</li>
+          </ul>
+          <p class="today" id="today" aria-live="polite">La raccolta va dal 5 ottobre al 14 novembre; il metato resta acceso fino a Natale.</p>
+          <a class="btn btn-ink btn-wide" href="#cassetta">Componi la tua cassetta</a>
+        </article>
+      </header>
+
+      <section class="intro" aria-labelledby="intro-h">
+        <div class="intro-row">
+          <h2 id="intro-h">Un versante, una famiglia</h2>
+          <p class="note">Dal 1952 i Bacci raccolgono sullo stesso versante sopra Sillico: seicento piante di Carpinese, Pontecosi e marrone, alcune più vecchie della casa.</p>
+        </div>
+        <dl class="facts">
+          <div><dt>720 m</dt><dd>dove crescono i castagni, sopra il paese</dd></div>
+          <div><dt>41 giorni</dt><dd>di raccolta, dal 5 ottobre al 14 novembre</dd></div>
+          <div><dt>40 giorni</dt><dd>di fuoco lento nel metato</dd></div>
+          <div><dt>48 ore</dt><dd>dalla pianta alla tua porta</dd></div>
+        </dl>
+        <div class="kinds">
+          <h3>Tre castagne, tre usi</h3>
+          <dl>
+            <div><dt>Marrone</dt><dd>Frutti grandi, tre al massimo per riccio, buccia chiara e striata. Si vende fresco, da arrostire o lessare.</dd></div>
+            <div><dt>Carpinese</dt><dd>Piccola e dolcissima, la castagna del metato: secca si conserva un anno.</dd></div>
+            <div><dt>Pontecosi</dt><dd>Dà la farina più chiara e profumata, quella dei necci.</dd></div>
+          </dl>
+        </div>
+        <figure class="intro-photo">
+          <img src="img/castagno.jpg" width="1100" height="1466" alt="Un grande castagno carico di ricci in un prato, in settembre" loading="lazy" />
+          <figcaption>Un castagno a fine estate, con i ricci ancora verdi.</figcaption>
+        </figure>
+      </section>
+
+      <section class="show" id="cassetta" aria-labelledby="cassetta-h">
+        <div class="plate">
+          <figure class="plate-pic" data-for="marroni">
+            <svg viewBox="0 0 400 400" role="img" aria-label="Un riccio aperto con tre marroni">
+              <use href="#burr" />
+            </svg>
+          </figure>
+          <figure class="plate-pic" data-for="secche" hidden>
+            <img src="img/secche.jpg" width="1200" height="861" alt="Castagne secche sbucciate in una cesta" loading="lazy" />
+          </figure>
+          <figure class="plate-pic" data-for="farina" hidden>
+            <img src="img/mulino.jpg" width="1400" height="891" alt="La farina di castagne che scende dalla macina di un vecchio mulino" loading="lazy" />
+          </figure>
+        </div>
+        <div class="show-text">
+          <h2 id="cassetta-h">Componi la cassetta</h2>
+          <div class="tabs" role="tablist" aria-label="Prodotto">
+            <button role="tab" id="t-marroni" aria-selected="true" aria-controls="crate" data-p="marroni">Marroni freschi</button>
+            <button role="tab" id="t-secche" aria-selected="false" aria-controls="crate" data-p="secche" tabindex="-1">Castagne secche</button>
+            <button role="tab" id="t-farina" aria-selected="false" aria-controls="crate" data-p="farina" tabindex="-1">Farina dolce</button>
+          </div>
+          <div class="crate" id="crate" role="tabpanel" aria-labelledby="t-marroni">
+            <h3 id="pName">Marroni freschi</h3>
+            <p class="desc" id="pDesc">Raccolti la mattina stessa della spedizione, calibrati a mano: tre al massimo per riccio, la buccia chiara e striata.</p>
+            <fieldset class="sizes">
+              <legend>Peso</legend>
+              <div id="sizes"></div>
+            </fieldset>
+            <p class="total"><b id="lPrice">42 €</b> <span>in tutto, spedizione compresa</span></p>
+            <dl class="label" aria-live="polite">
+              <div><dt>Cassetta</dt><dd id="lLot">n. 1</dd></div>
+              <div><dt>Contenuto</dt><dd id="lWhat">5 kg di marroni</dd></div>
+              <div><dt>Raccolta</dt><dd id="lHarvest">alla prossima raccolta</dd></div>
+              <div><dt>Arriva entro</dt><dd id="lArrive">48 ore dalla raccolta</dd></div>
+            </dl>
+          </div>
+          <div class="cells">
+            <a class="cell cell-ink" id="orderBtn" href="mailto:ordini@castagnebacci.it">Ordina per email</a>
+            <a class="cell cell-tone" href="#prezzi">Tutti i prezzi</a>
+          </div>
+        </div>
+      </section>
+
+      <section class="process" id="metato" aria-labelledby="metato-h">
+        <div class="process-text">
+          <h2 id="metato-h">Dal riccio al sacco</h2>
+          <p>Le castagne che non partono fresche salgono al piano di sopra del metato, su un graticcio di legno. Sotto, un fuoco di legna di castagno che non si spegne per quaranta giorni.</p>
+          <figure>
+            <img src="img/metato.jpg" width="1400" height="1050" alt="Un metato di pietra con il tetto di lastre, tra i castagni" loading="lazy" />
+            <figcaption>Un metato dell'Appennino tosco-emiliano: fuoco a terra, castagne al piano di sopra.</figcaption>
+          </figure>
+        </div>
+        <div class="slip">
+          <h3>Ottobre e novembre</h3>
+          <ul>
+            <li><span>Raccolta a mano, dall'alba</span><i></i><span>6–11</span></li>
+            <li><span>Cernita in acqua e calibratura</span><i></i><span>stesso giorno</span></li>
+            <li><span>Spedizione in cassetta di legno</span><i></i><span>entro 48 ore</span></li>
+          </ul>
+          <h3>Da metà novembre</h3>
+          <ul>
+            <li><span>Le castagne salgono sul graticcio</span><i></i><span>1 giorno</span></li>
+            <li><span>Fuoco lento di legna di castagno</span><i></i><span>40 giorni</span></li>
+          </ul>
+          <h3>Gennaio</h3>
+          <ul>
+            <li><span>Battitura, via la buccia</span><i></i><span>1 giorno</span></li>
+            <li><span>Macinatura a pietra al mulino</span><i></i><span>2 giorni</span></li>
+          </ul>
+          <p class="slip-end"><span>Farina dolce di castagne</span><span>3 mesi dal riccio</span></p>
+        </div>
+      </section>
+
+      <section class="prices" id="prezzi" aria-labelledby="prezzi-h">
+        <h2 id="prezzi-h">I prezzi</h2>
+        <p class="prices-sub">Spedizione compresa in tutta Italia. Ritiro in azienda il sabato mattina, allo stesso prezzo meno 5 €.</p>
+        <div class="ticket">
+          <div class="t-main">
+            <h3>Cassetta di marroni, 5 kg</h3>
+            <ul>
+              <li>Raccolti la mattina della spedizione</li>
+              <li>Consegna in Italia entro 48 ore</li>
+              <li>Cassetta di legno di castagno</li>
+              <li>Solo dal 5 ottobre al 14 novembre</li>
+            </ul>
+          </div>
+          <div class="t-stub notched">
+            <p class="price">42 €</p>
+            <a class="btn btn-accent btn-bar" href="#cassetta" data-pick="marroni:5">Ordina questa</a>
+          </div>
+        </div>
+        <table class="list">
+          <caption>Tutti i formati</caption>
+          <thead>
+            <tr><th scope="col">Prodotto</th><th scope="col">Formati e prezzi</th><th scope="col">Quando</th></tr>
+          </thead>
+          <tbody id="priceRows"></tbody>
+        </table>
+      </section>
+
+      <section class="faq" id="domande" aria-labelledby="domande-h">
+        <div class="faq-text">
+          <h2 id="domande-h">Prima di ordinare</h2>
+          <ul class="where">
+            <li>Ditta Bacci, via del Metato 4, Sillico, 55036 Pieve Fosciana (LU)</li>
+            <li>Ritiro in azienda il sabato, 9–12, da ottobre a gennaio</li>
+            <li>Ordini e domande: ordini@castagnebacci.it</li>
+          </ul>
+          <details>
+            <summary>Castagna o marrone: che differenza c'è?</summary>
+            <p>Il marrone ha frutti grandi, al massimo tre per riccio, la buccia chiara e striata e il seme intero, che si pela bene. Carpinese e Pontecosi sono castagne: più piccole e più dolci, le migliori secche e in farina.</p>
+          </details>
+          <details>
+            <summary>Quanto durano i marroni freschi?</summary>
+            <p>Una settimana in frigorifero, in un sacchetto di carta. Crudi e incisi si tengono mesi nel congelatore e si cuociono senza scongelarli.</p>
+          </details>
+          <details>
+            <summary>Troverò castagne bacate?</summary>
+            <p>Le cerniamo a mano e in acqua, e scartiamo quelle che galleggiano. Qualcuna può sfuggire: se ne trovi più di cinque in un chilo, ti rimandiamo il peso.</p>
+          </details>
+          <details>
+            <summary>Quando arriva la farina nuova?</summary>
+            <p>A metà gennaio, dopo il metato e la macinatura. Fino ad allora vendiamo quella dell'inverno scorso, finché dura.</p>
+          </details>
+          <details>
+            <summary>Spedite all'estero?</summary>
+            <p>In Europa sì, con 12 € in più a cassetta. I marroni freschi solo dove il corriere arriva in 48 ore.</p>
+          </details>
+          <details>
+            <summary>Posso venire a raccogliere?</summary>
+            <p>Le domeniche di ottobre, su prenotazione. Porti a casa quello che raccogli, a 5 € al chilo.</p>
+          </details>
+          <div class="faq-actions">
+            <a class="btn btn-ink" href="mailto:ordini@castagnebacci.it?subject=Una%20domanda">Scrivici</a>
+            <a class="text-link" href="#prezzi">Vedi i prezzi</a>
+          </div>
+        </div>
+        <div class="faq-pics">
+          <img class="tall" src="img/neccio.jpg" width="1400" height="976" alt="Un neccio di farina di castagne appena cotto nei testi, davanti al fuoco del camino" loading="lazy" />
+          <img class="square" src="img/secche.jpg" width="1200" height="861" alt="Castagne secche sbucciate" loading="lazy" />
+        </div>
+      </section>
+
+      <section class="book" id="prenota" aria-labelledby="prenota-h">
+        <form class="coupon" id="coupon">
+          <div class="c-left">
+            <h2 id="prenota-h">Prenota la farina</h2>
+            <p>La farina nuova si macina a metà gennaio e finisce in poche settimane. Lascia nome e chili: ti scriviamo il giorno della macinatura, e paghi solo alla spedizione.</p>
+          </div>
+          <div class="c-right notched">
+            <label class="vh" for="fName">Nome</label>
+            <input id="fName" name="nome" autocomplete="name" placeholder="Nome" required maxlength="80" />
+            <label class="vh" for="fMail">Email</label>
+            <input id="fMail" name="email" type="email" autocomplete="email" placeholder="Email" required maxlength="120" />
+            <label class="vh" for="fKg">Chili di farina</label>
+            <input id="fKg" name="kg" type="number" min="1" max="50" step="1" inputmode="numeric" placeholder="Chili di farina" required />
+            <label class="vh" for="fTown">Comune di consegna</label>
+            <input id="fTown" name="comune" autocomplete="address-level2" placeholder="Comune di consegna" required maxlength="80" />
+            <button class="submit" type="submit">Prenota</button>
+            <p class="c-msg" id="cMsg" aria-live="polite"></p>
+          </div>
+        </form>
+      </section>
+    </main>
+
+    <footer class="back">
+      <div class="cols">
+        <div>
+          <p>Ditta Bacci</p>
+          <p>via del Metato 4, Sillico</p>
+          <p>55036 Pieve Fosciana (LU)</p>
+        </div>
+        <div>
+          <p>La pagina</p>
+          <p><a href="#cassetta">Componi la cassetta</a></p>
+          <p><a href="#metato">Il metato</a></p>
+          <p><a href="#prezzi">Prezzi</a></p>
+          <p><a href="#prenota">Prenota la farina</a></p>
+        </div>
+        <div>
+          <p>Stagione</p>
+          <p>Raccolta: 5 ottobre – 14 novembre</p>
+          <p>Metato: metà novembre – Natale</p>
+          <p>Farina nuova: metà gennaio</p>
+        </div>
+        <div class="credits">
+          <p>Fotografie</p>
+          <p><a href="https://commons.wikimedia.org/wiki/File:Garfagnana_-_Tal_von_Fornovolasco.JPG">Valle di Fornovolasco</a>, H005, pubblico dominio</p>
+          <p><a href="https://commons.wikimedia.org/w/index.php?curid=2832604">Castanea sativa</a>, Willow, <a href="https://creativecommons.org/licenses/by/2.5/">CC BY 2.5</a></p>
+          <p><a href="https://commons.wikimedia.org/wiki/File:Metato_Orsigna_1.JPG">Metato a Orsigna</a>, Fraciatti, pubblico dominio</p>
+          <p><a href="https://commons.wikimedia.org/wiki/File:Castagne_secche_dried_chestnut_italy.JPG">Castagne secche</a>, G.steph.rocket, <a href="https://creativecommons.org/licenses/by-sa/3.0">CC BY-SA 3.0</a>, ritagliata</p>
+          <p><a href="https://commons.wikimedia.org/wiki/File:Farina_di_castagne_-_vecchio_mulino.jpg">Vecchio mulino</a>, Celeste Messina, <a href="https://creativecommons.org/licenses/by-sa/2.0">CC BY-SA 2.0</a></p>
+          <p><a href="https://commons.wikimedia.org/wiki/File:Neccio.jpg">Neccio</a>, Anton Francesco Renieri, <a href="https://creativecommons.org/licenses/by/3.0">CC BY 3.0</a></p>
+        </div>
+      </div>
+      <svg class="wordmark" id="wordmark" viewBox="0 -19 58 20" role="img" aria-label="Bacci">
+        <text x="0" y="0">BACCI</text>
+      </svg>
+      <p class="legal">© <span id="year">2026</span> Ditta Bacci. Ditta immaginaria: un esercizio di design, i prezzi e gli indirizzi sono d'esempio.</p>
+    </footer>
+
+    <!-- drawn in code: the nut and the open burr (no photograph of the product exists) -->
+    <svg width="0" height="0" aria-hidden="true" focusable="false" style="position: absolute">
+      <symbol id="nut" viewBox="0 0 40 40">
+        <path d="M20 3 C27 9 35 17 35 25 C35 32 28 36 20 36 C12 36 5 32 5 25 C5 17 13 9 20 3 Z" fill="currentColor" />
+        <path d="M7 29 C11 33 15 34 20 34 C25 34 29 33 33 29 C31 34 26 37 20 37 C14 37 9 34 7 29 Z" fill="#d9c49a" />
+      </symbol>
+      <symbol id="burr" viewBox="0 0 400 400">
+        <rect width="400" height="400" fill="#e5e1da" />
+        <g id="spines" fill="#8fae2e"></g>
+        <circle cx="200" cy="215" r="128" fill="#a8c43c" />
+        <path d="M110 215 C120 140 160 110 200 110 C240 110 280 140 290 215 C270 290 240 310 200 310 C160 310 130 290 110 215 Z" fill="#f2ead2" />
+        <g>
+          <path d="M150 150 C170 170 186 205 186 240 C186 270 168 290 145 290 C122 290 112 270 114 246 C116 210 132 178 150 150 Z" fill="#6b3a1f" />
+          <path d="M114 262 C120 280 132 290 145 290 C160 290 176 282 183 266 C170 276 130 276 114 262 Z" fill="#d9c49a" />
+          <path d="M250 150 C268 178 284 210 286 246 C288 270 278 290 255 290 C232 290 214 270 214 240 C214 205 230 170 250 150 Z" fill="#6b3a1f" />
+          <path d="M217 266 C224 282 240 290 255 290 C268 290 280 280 286 262 C270 276 230 276 217 266 Z" fill="#d9c49a" />
+          <path d="M200 132 C222 160 236 200 236 244 C236 278 220 300 200 300 C180 300 164 278 164 244 C164 200 178 160 200 132 Z" fill="#7d4524" />
+          <path d="M165 266 C170 286 184 300 200 300 C216 300 230 286 235 266 C220 280 180 280 165 266 Z" fill="#e3d1a8" />
+          <path d="M200 132 L196 118 L204 118 Z" fill="#7d4524" />
+        </g>
+      </symbol>
+    </svg>
+
+    <script src="../preview.js"></script>
+    <script src="script.js"></script>
+  </body>
+</html>
