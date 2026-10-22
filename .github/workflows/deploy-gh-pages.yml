@@ -4,6 +4,10 @@ on:
   push:
     branches:
       - main
+  # every morning: refresh the AI benchmark data and republish
+  schedule:
+    - cron: "17 5 * * *"
+  workflow_dispatch:
 
 jobs:
   deploy:
@@ -22,6 +26,13 @@ jobs:
 
       - name: Install dependencies
         run: npm install
+
+      # public sources for /benchmark; a failed source keeps the committed copy
+      - name: Refresh AI benchmark data
+        run: node scripts/ai-bench/fetch.mjs
+        continue-on-error: true
+        env:
+          AA_API_KEY: ${{ secrets.AA_API_KEY }}
 
       - name: Build React app
         run: npm run build
