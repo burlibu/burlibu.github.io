@@ -65,12 +65,14 @@
   }
 
   // ---------- board ----------
-  function mini(c, fresh) {
+  const signed = (v) => `${v > 0 ? "+" : "−"}${Math.abs(v)}`;
+  // a laid card: a button that opens its full sheet (see peek)
+  function mini(c, q, side, k, fresh) {
     const b = B.BEASTS[c.id], d = c.power - c.base;
-    const why = c.mods.map((m) => `${m.v > 0 ? "+" : "−"}${Math.abs(m.v)} ${m.why}`).join(", ");
-    return `<div class="mini ${fresh || ""}" title="${esc(b.name)} · forza ${c.power}${why ? " (" + esc(why) + ")" : ""}">
-      ${tinct(b.t)}<img src="${ART[c.id]}" alt="${esc(b.name)}" />
-      <span class="pw">${c.power}${d ? `<small class="${d > 0 ? "up" : "dn"}">${d > 0 ? "+" : "−"}${Math.abs(d)}</small>` : ""}</span></div>`;
+    const why = c.mods.map((m) => `${signed(m.v)} ${m.why}`).join(", ");
+    return `<button type="button" class="mini ${fresh || ""}" data-q="${q}" data-side="${side}" data-k="${k}" title="${esc(b.name)} · forza ${c.power}${why ? " (" + esc(why) + ")" : ""}" aria-label="${esc(b.name)}, forza ${c.power}. Apri la carta">
+      ${tinct(b.t)}<img src="${ART[c.id]}" alt="" />
+      <span class="pw">${c.power}${d ? `<small class="${d > 0 ? "up" : "dn"}">${signed(d)}</small>` : ""}</span></button>`;
   }
 
   function renderBoard() {
@@ -80,21 +82,25 @@
         const f = x.field, q = x.q;
         const open = B.legal(s, "me", q);
         const fresh = (c, side) => (s.last && s.last[side] === c.uid ? "fresh-" + side : "");
-        const crowns = Array.from({ length: x.crowns }, () => `<svg aria-hidden="true"><use href="#crown"/></svg>`).join("");
+        const crown = `<svg aria-hidden="true"><use href="#crown"/></svg>`;
+        const extra = B.SIDES.filter((side) => x.bonus[side])
+          .map((side) => `<span class="bonus" title="Ostentazione: +1 corona solo se ${side === "me" ? "tu conquisti" : "il Conte conquista"} il quarto">+${crown}${side === "me" ? "Tu" : "C"}</span>`)
+          .join("");
+        const crowns = crown.repeat(x.crowns) + extra;
         return `<article class="plate" aria-label="Quarto ${B.ROMAN[q]}, ${esc(f.name)}">
           <header class="plate-head">
             <span class="numeral">${B.ROMAN[q]}</span>
             <div class="field">${tinct(f.t, "esc")}<div><h3><small>${B.QUARTERS[q]}</small>${esc(f.name)}</h3><p>${esc(f.text)}</p></div></div>
             <span class="crowns" title="${x.crowns} ${x.crowns === 1 ? "corona" : "corone"}">${crowns}</span>
           </header>
-          <div class="row foe">${x.foe.cards.map((c) => mini(c, fresh(c, "foe"))).join("") || `<span class="slot"><span class="empty">Il Conte non ha carte qui</span></span>`}</div>
+          <div class="row foe">${x.foe.cards.map((c, k) => mini(c, q, "foe", k, fresh(c, "foe"))).join("") || `<span class="slot"><span class="empty">Il Conte non ha carte qui</span></span>`}</div>
           <div class="band">
             <span class="foe-tot"><span class="label">Conte</span> <b class="tot">${x.foe.total}</b></span>
             <span class="lead ${x.lead || ""}" title="${x.lead === "me" ? "Il quarto è tuo" : x.lead === "foe" ? "Il quarto è del Conte" : "Quarto conteso"}">${x.lead === "me" ? "TU" : x.lead === "foe" ? "C" : "—"}</span>
             <span class="me-tot"><b class="tot">${x.me.total}</b> <span class="label">Tu</span></span>
           </div>
-          <div class="row me"><button class="slot ${open ? "open" : ""}" data-q="${q}" ${open && picked !== null ? "" : "disabled"} aria-label="Gioca nel quarto ${B.ROMAN[q]}">
-            ${x.me.cards.map((c) => mini(c, fresh(c, "me"))).join("")}${open ? `<span class="empty">${x.me.cards.length ? "" : "Posa qui"}</span>` : x.me.cards.length ? "" : `<span class="empty">Pieno</span>`}
+          <div class="row me ${open ? "open" : ""}" data-q="${q}">${x.me.cards.map((c, k) => mini(c, q, "me", k, fresh(c, "me"))).join("")}<button class="slot" data-q="${q}" ${open && picked !== null ? "" : "disabled"} aria-label="Gioca nel quarto ${B.ROMAN[q]}">
+            ${open ? `<span class="empty">${x.me.cards.length ? "" : "Posa qui"}</span>` : x.me.cards.length ? "" : `<span class="empty">Pieno</span>`}
           </button></div>
         </article>`;
       })
@@ -108,13 +114,16 @@
   }
 
   // ---------- hand ----------
+  // the printed face, shared by the hand and the peek sheet
+  function face(id) {
+    const b = B.BEASTS[id];
+    return `<span class="card-top"><b class="pwr">${b.power}</b><span class="label">${plateNo(id)}<br />${B.TINCT[b.t].name}</span></span>
+      <span class="art"><img src="${ART[id]}" alt="" />${tinct(b.t)}</span>
+      <span><h4>${esc(b.name)}</h4><p class="ab"><i>${esc(b.ab)}.</i> ${esc(b.text)}</p></span>`;
+  }
   function card(c, i) {
     const b = B.BEASTS[c.id];
-    return `<button class="card" role="option" data-i="${i}" aria-selected="${picked === i}" aria-label="${esc(b.name)}, forza ${b.power}, ${B.TINCT[b.t].name}. ${esc(b.ab)}: ${esc(b.text)}">
-      <span class="card-top"><b class="pwr">${b.power}</b><span class="label">${plateNo(c.id)}<br />${B.TINCT[b.t].name}</span></span>
-      <span class="art"><img src="${ART[c.id]}" alt="" />${tinct(b.t)}</span>
-      <span><h4>${esc(b.name)}</h4><p class="ab"><i>${esc(b.ab)}.</i> ${esc(b.text)}</p></span>
-    </button>`;
+    return `<button class="card" role="option" data-i="${i}" aria-selected="${picked === i}" aria-label="${esc(b.name)}, forza ${b.power}, ${B.TINCT[b.t].name}. ${esc(b.ab)}: ${esc(b.text)}">${face(c.id)}</button>`;
   }
   function renderHand() {
     const hand = $("hand");
@@ -140,6 +149,31 @@
     renderSide();
     if (s.over) showEnd();
   }
+
+  // ---------- peek: the full sheet of a card on the shield ----------
+  let peekFrom = null;
+  function peek(q, side, k, from) {
+    const x = B.evaluate(s).quarters[q], c = x[side].cards[k];
+    $("peekLabel").textContent = `Quarto ${B.ROMAN[q]} · ${x.field.name} · ${side === "me" ? "tua" : "del Conte"} · turno ${NUM[c.at]}`;
+    $("peekCard").innerHTML = face(c.id);
+    $("peekTitle").textContent = `Forza ${c.power}`;
+    const named = (why) => (why === "campo" ? x.field.name : why === "tinture" ? "Legge delle tinture" : why);
+    $("peekMods").innerHTML =
+      `<li><span>Forza stampata</span><b>${c.base}</b></li>` +
+      c.mods.map((m) => `<li><span>${esc(named(m.why))}</span><b>${signed(m.v)}</b></li>`).join("") +
+      (c.mods.reduce((t, m) => t + m.v, c.base) < 0 ? `<li><span>La forza non scende sotto zero</span><b></b></li>` : "");
+    peekFrom = from;
+    $("peek").hidden = false;
+    $("peekClose").focus();
+  }
+  function closePeek() {
+    $("peek").hidden = true;
+    if (peekFrom && peekFrom.isConnected) peekFrom.focus();
+    peekFrom = null;
+  }
+  $("peekClose").onclick = closePeek;
+  $("peek").addEventListener("click", (e) => e.target === $("peek") && closePeek());
+  addEventListener("keydown", (e) => e.key === "Escape" && !$("peek").hidden && closePeek());
 
   // ---------- end ----------
   function showEnd() {
@@ -167,12 +201,16 @@
     if (picked !== null && innerWidth < 720) $("board").scrollIntoView({ behavior: "smooth", block: "start" });
   });
   $("board").addEventListener("click", (e) => {
-    const slot = e.target.closest(".slot.open");
-    if (!slot || picked === null) return;
-    const i = picked;
-    picked = null;
-    B.play(s, i, +slot.dataset.q);
-    render();
+    // with a card chosen, your whole half of an open quarter is the target
+    const row = e.target.closest(".row.me.open");
+    if (row && picked !== null && !s.over) {
+      const i = picked;
+      picked = null;
+      B.play(s, i, +row.dataset.q);
+      return render();
+    }
+    const m = e.target.closest(".mini");
+    if (m) peek(+m.dataset.q, m.dataset.side, +m.dataset.k, m);
   });
   $("newBtn").onclick = newGame;
   $("againBtn").onclick = newGame;
