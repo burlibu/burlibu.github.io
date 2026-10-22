@@ -24,7 +24,12 @@
     gallo: { name: "Gallo", glyph: "🐓", power: 2, t: "rosso", ab: "Vigilia", text: "+2 nei quarti di capo (I e II)." },
     cigno: { name: "Cigno", glyph: "🦢", power: 1, t: "argento", ab: "Grazia", text: "+1 a ogni tua carta nei quarti confinanti." },
     gufo: { name: "Gufo", glyph: "🦉", power: 2, t: "azzurro", ab: "Presagio", text: "−1 a ogni carta avversaria nei quarti confinanti." },
-    torre: { name: "Torre", glyph: "🏰", power: 1, t: "oro", ab: "Bastione", text: "Il suo quarto vale una corona in più." },
+    torre: { name: "Torre", glyph: "🏰", power: 1, t: "oro", ab: "Bastione", text: "Il suo quarto vale una corona in più, per chi lo conquista." },
+    // expansion: Le Case del Crepuscolo
+    volpe: { name: "Volpe", glyph: "🦊", power: 3, t: "rosso", ab: "Astuzia", text: "+2 se nel suo quarto c'erano già carte avversarie quando è stata posata." },
+    tasso: { name: "Tasso", glyph: "🦡", power: 4, t: "nero", ab: "Tenacia", text: "Le abilità avversarie non possono ridurne la forza." },
+    fenice: { name: "Fenice", glyph: "🐦‍🔥", power: 3, t: "oro", ab: "Rinascita", text: "+3 se senza questo potere il suo quarto andrebbe all'avversario." },
+    pavone: { name: "Pavone", glyph: "🦚", power: 3, t: "argento", ab: "Ostentazione", text: "Se è la tua prima carta nel quarto, il quarto vale +1 corona solo per te." },
   };
 
   // each game deals four fields, one per quarter
@@ -36,7 +41,7 @@
     { id: "nero", name: "Campo di nero", t: "nero", text: "Nere +1, d'argento −1." },
     { id: "argento", name: "Campo d'argento", t: "argento", text: "Il quarto vale 2 corone." },
     { id: "stretto", name: "Campo stretto", t: "argento", text: "Al massimo 2 carte per lato." },
-    { id: "rovescio", name: "Campo rovesciato", t: "nero", text: "Vince il totale più basso." },
+    { id: "rovescio", name: "Campo rovesciato", t: "nero", text: "Vince il totale più basso; se un solo lato ha carte, è suo." },
   ];
 
   const TURNS = 6;
@@ -114,29 +119,45 @@
           if (c.id === "lupo" && opp.length > own.length) add(3, b.ab);
           if (c.id === "delfino" && q >= 2) add(2, b.ab);
           if (c.id === "gallo" && q < 2) add(2, b.ab);
-          // abilities of the other cards around it
+          if (c.id === "volpe" && opp.some((o) => o.at < c.at)) add(2, b.ab);
+          // abilities of the other cards around it (the Tasso shrugs off the enemy's)
+          const tough = c.id === "tasso";
           add(own.filter((o) => o !== c && o.id === "cervo").length, "Cervo");
           add(-2 * own.filter((o) => o !== c && o.id === "drago").length, "Drago");
-          add(-has(q, other(side), "serpe"), "Serpe");
+          if (!tough) add(-has(q, other(side), "serpe"), "Serpe");
           for (const n of NEAR[q]) {
             add(has(n, side, "cigno"), "Cigno");
-            add(-has(n, other(side), "gufo"), "Gufo");
+            if (!tough) add(-has(n, other(side), "gufo"), "Gufo");
           }
-          const total = mods.reduce((t, m) => t + m.v, b.power);
-          return { ...c, power: Math.max(0, total), base: b.power, mods };
+          return { ...c, base: b.power, mods };
         });
-        sides[side] = { cards, total: cards.reduce((t, c) => t + c.power, 0) };
+        sides[side] = { cards };
+      }
+      const leader = () => {
+        for (const x of [sides.me, sides.foe]) {
+          x.cards.forEach((c) => (c.power = Math.max(0, c.mods.reduce((t, m) => t + m.v, c.base))));
+          x.total = x.cards.reduce((t, c) => t + c.power, 0);
+        }
+        const a = sides.me, z = sides.foe;
+        if (a.cards.length && !z.cards.length) return "me";
+        if (z.cards.length && !a.cards.length) return "foe";
+        if (a.cards.length && a.total !== z.total) return (a.total > z.total) !== (f.id === "rovescio") ? "me" : "foe";
+        return null;
+      };
+      let lead = leader();
+      // the Fenice reads the result without itself, then rises: a second pass
+      const loser = lead && other(lead);
+      if (loser && has(q, loser, "fenice")) {
+        sides[loser].cards.forEach((c) => c.id === "fenice" && c.mods.push({ v: 3, why: "Rinascita" }));
+        lead = leader();
       }
       const crowns = (f.id === "argento" ? 2 : 1) + has(q, "me", "torre") + has(q, "foe", "torre");
-      const a = sides.me, z = sides.foe;
-      let lead = null;
-      if (a.cards.length && !z.cards.length) lead = "me";
-      else if (z.cards.length && !a.cards.length) lead = "foe";
-      else if (a.cards.length && a.total !== z.total) lead = (a.total > z.total) !== (f.id === "rovescio") ? "me" : "foe";
-      return { q, field: f, crowns, me: a, foe: z, lead };
+      // the Pavone's crown only goes to its own side
+      const bonus = { me: +(sq.me[0]?.id === "pavone"), foe: +(sq.foe[0]?.id === "pavone") };
+      return { q, field: f, crowns, bonus, me: sides.me, foe: sides.foe, lead };
     });
     const score = { me: 0, foe: 0 };
-    quarters.forEach((x) => x.lead && (score[x.lead] += x.crowns));
+    quarters.forEach((x) => x.lead && (score[x.lead] += x.crowns + x.bonus[x.lead]));
     return { quarters, score };
   }
 
@@ -148,12 +169,15 @@
       if (x.field.id === "rovescio") m = -m;
       if (!x[side].cards.length) m = -4;
       if (!x[other(side)].cards.length && x[side].cards.length) m = Math.max(m, 3);
-      return v + x.crowns * Math.tanh(m / 2.5);
+      // expected crowns won minus crowns conceded
+      const p = (1 + Math.tanh(m / 2.5)) / 2;
+      return v + p * (x.crowns + x.bonus[side]) - (1 - p) * (x.crowns + x.bonus[other(side)]);
     }, 0);
   }
   function choose(s, side, noise = 0.35) {
     let best = null;
     s.hands[side].forEach((card, i) => {
+      card.at = s.turn;
       for (let q = 0; q < 4; q++) {
         if (!legal(s, side, q)) continue;
         s.board[q][side].push(card);
@@ -172,8 +196,10 @@
     const f = foeMove || choose(s, "foe");
     const fc = f && s.hands.foe[f.i];
     s.hands.me.splice(i, 1);
+    card.at = s.turn;
     s.board[q].me.push(card);
     if (fc) {
+      fc.at = s.turn;
       s.hands.foe.splice(f.i, 1);
       s.board[f.q].foe.push(fc);
     }
@@ -201,7 +227,7 @@
     s.over = w;
   }
 
-  const api = { TINCT, BEASTS, FIELDS, TURNS, QUARTERS, ROMAN, NEAR, create, legal, cap, evaluate, choose, play };
+  const api = { TINCT, BEASTS, FIELDS, TURNS, QUARTERS, ROMAN, NEAR, SIDES, create, legal, cap, evaluate, choose, play };
   if (typeof module !== "undefined") module.exports = api;
   else root.Blasone = api;
 })(this);

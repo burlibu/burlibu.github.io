@@ -53,12 +53,13 @@
           <li><b>Sei turni.</b> Ogni turno scegli una carta dalla mano e un quarto dello scudo. Il Conte sceglie nello stesso momento, senza vedere la tua mossa.</li>
           <li><b>Quattro quarti.</b> Ogni quarto va a chi ha la forza totale più alta e vale le corone indicate. Vince chi ha più corone; in parità conta la forza totale.</li>
           <li><b>Campi.</b> Ogni quarto ha un campo con una regola propria: bonus a una tintura, corone doppie, posti limitati o vittoria al più basso.</li>
-          <li><b>Legge delle tinture.</b> Metallo su colore e colore su metallo: una carta giocata sopra una tua carta di classe opposta ottiene +1. Metalli: oro e argento. Colori: rosso, azzurro, verde, nero.</li>
-          <li><b>Bestie.</b> Ogni bestia ha un potere: alcune agiscono nel proprio quarto, altre nei quarti confinanti, cioè quelli separati da una sola piega.</li>
+          <li><b>Legge delle tinture.</b> Metallo su colore e colore su metallo: una carta ottiene +1 se è di classe opposta alla tua carta giocata più di recente in quel quarto. Metalli: oro e argento. Colori: rosso, azzurro, verde, nero.</li>
+          <li><b>Bestie.</b> Ogni bestia ha un potere: alcune agiscono nel proprio quarto, altre nei quarti confinanti, cioè quelli separati da una sola piega. Tocca una carta sullo scudo per leggerla e vedere da dove viene la sua forza.</li>
+          <li><b>Corone in più.</b> Ogni Torre aggiunge una corona al quarto, per chi lo conquista. Il Pavone ne aggiunge una solo al suo lato. Se in un quarto ha carte un solo lato, il quarto è suo, anche sul Campo rovesciato.</li>
         </ol>
       </section>
 
-      <p class="label status"><span id="handHint">Scegli una carta, poi un quarto</span><span id="deckInfo">Mazzo: 8</span></p>
+      <p class="label status"><span id="handHint">Scegli una carta, poi un quarto</span><span id="deckInfo">Mazzo: 12</span></p>
 
       <main class="table">
         <section class="board-wrap">
@@ -72,7 +73,7 @@
             <div>
               <p class="label">Avversario</p>
               <h2>Il Conte di Sable</h2>
-              <p class="small" id="foeInfo">4 carte in mano · 8 nel mazzo</p>
+              <p class="small" id="foeInfo">4 carte in mano · 12 nel mazzo</p>
             </div>
           </div>
           <div class="backs" id="foeHand" aria-hidden="true"></div>
@@ -93,6 +94,18 @@
         <h2 id="endTitle">Vittoria</h2>
         <p id="endText"></p>
         <button class="tool solid" id="againBtn">Nuova partita</button>
+      </div>
+    </div>
+
+    <div class="veil" id="peek" hidden>
+      <div class="sheet peeksheet" role="dialog" aria-modal="true" aria-labelledby="peekTitle">
+        <div class="card" id="peekCard"></div>
+        <div class="peek-body">
+          <p class="label" id="peekLabel"></p>
+          <h2 id="peekTitle"></h2>
+          <ul class="peek-mods" id="peekMods"></ul>
+          <button class="tool solid" id="peekClose">Chiudi</button>
+        </div>
       </div>
     </div>
 

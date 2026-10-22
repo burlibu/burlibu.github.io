@@ -129,6 +129,18 @@ Non applicare i cambiamenti di forza e l'Editto tutti insieme: le partite devono
 - L'editto, se mantenuto, crea decisioni di tempismo e non diventa una scelta obbligatoria ogni turno.
 - Si conserva la durata di sei turni e la valutazione deterministica dei punteggi.
 
+## Stato dell'implementazione
+
+Implementato in `public/designs/blasone`: le quattro carte dell'espansione, con mazzo da 16 (una copia per bestia), e i ritocchi di chiarezza 1–5. L'Editto non è implementato, come previsto dal piano.
+
+Simulazioni AI contro AI (`node scripts/blasone-sim.js`, 400–2000 partite per configurazione):
+
+- **Drago 7 e Torre 2 non cambiano il quadro.** Il Drago a 8 vince il 51% delle partite in cui è giocato, la Torre il 40% in entrambe le versioni. I valori restano 8 e 1. Il dato vale per l'AI attuale, che non sa proteggere un quarto con la Torre: va ricontrollato con partite umane.
+- **Valori delle nuove carte ritoccati sui dati.** Il Tasso a 2 era quasi inutile (giocato 8%, partite vinte 37%) e passa a **4**. La Fenice passa a **3** (44% → 52%) e il Pavone a **3** (42% → 46%). La Volpe resta a 3 (49%).
+- Con questi valori le sedici bestie stanno tra il 37% (Torre) e il 55% (Aquila, Gufo) di partite vinte quando giocate. I due lati restano al 49% ciascuno.
+- **Fenice:** il +3 si applica se il quarto, calcolato senza Rinascita, andrebbe all'avversario. Sul Campo rovesciato quel +3 peggiora il totale: è voluto, e il testo della carta lo lascia leggere.
+- **Volpe:** ogni carta posata ricorda il turno di posa (`at`). Le carte avversarie posate nello stesso turno, simultaneamente, non attivano l'Astuzia.
+
 ## Note d'implementazione
 
 - Per le nuove carte aggiornare `BEASTS`, le condizioni in `evaluate()` e l'elenco di nomi/grafica. Ogni abilità deve essere calcolabile dal solo stato finale del tabellone, coerentemente con l'engine attuale.
