@@ -1,0 +1,250 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Archivo+Black&family=DM+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg: #ece9e2;
+  --ink: #191919;
+  --acid: #d6ff36;
+  --pink: #fa6483;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: 'DM Mono', monospace;
+}
+
+.stage {
+  position: relative;
+  isolation: isolate;
+  min-height: 100svh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: clamp(18px, 4vw, 42px);
+  background:
+    radial-gradient(circle at 72% 28%, #ffffff80, transparent 45%),
+    var(--bg);
+}
+
+.noise {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.12;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.45'/%3E%3C/svg%3E");
+}
+
+.topline,
+.bottomline {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  font-size: clamp(9px, 1.2vw, 12px);
+  font-weight: 500;
+  letter-spacing: 0.12em;
+}
+
+.topline {
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--ink);
+}
+
+.bottomline {
+  padding-top: 14px;
+  border-top: 1px solid var(--ink);
+}
+
+.reaction {
+  width: 100%;
+  text-align: center;
+  margin: auto 0;
+  padding: 55px 0;
+}
+
+.reaction-word {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  white-space: nowrap;
+  position: relative;
+  font-family: 'Archivo Black', Impact, sans-serif;
+  font-size: clamp(76px, 23vw, 350px);
+  font-weight: 900;
+  letter-spacing: -0.095em;
+  line-height: 1;
+  padding-right: 0.08em;
+  animation: wholeDrama 6s infinite;
+}
+
+.letter {
+  display: inline-block;
+  position: relative;
+  transform-origin: center 75%;
+  will-change: transform;
+}
+
+/* E recoils in horror */
+.e {
+  animation: recoil 6s infinite;
+}
+
+/* First W loses composure */
+.w-one {
+  animation: wobbleOne 6s infinite;
+}
+
+/* Second W joins the panic */
+.w-two {
+  animation: wobbleTwo 6s infinite;
+}
+
+/* The exclamation mark faints */
+.bang {
+  color: var(--pink);
+  transform-origin: 50% 90%;
+  animation: faint 6s infinite;
+}
+
+.subtitle {
+  display: inline-block;
+  margin: 22px 0 0;
+  background: var(--acid);
+  padding: 9px 15px;
+  font-size: clamp(9px, 1.6vw, 14px);
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  transform: rotate(-2deg);
+}
+
+.description {
+  margin-top: 24px;
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  opacity: 0.65;
+}
+
+/* Dramatic entrance */
+@keyframes recoil {
+  0%, 5%, 100% {
+    transform: translateY(0) rotate(0) scale(1);
+  }
+  12% {
+    transform: translateY(-22px) rotate(-12deg) scale(1.18);
+  }
+  19% {
+    transform: rotate(7deg) scale(0.92);
+  }
+  26%, 85% {
+    transform: none;
+  }
+}
+
+@keyframes wobbleOne {
+  0%, 13%, 85%, 100% {
+    transform: none;
+  }
+  19% {
+    transform: skewX(-18deg) rotate(-8deg);
+  }
+  23% {
+    transform: skewX(14deg) rotate(9deg);
+  }
+  27% {
+    transform: skewX(-7deg);
+  }
+  32% {
+    transform: none;
+  }
+}
+
+@keyframes wobbleTwo {
+  0%, 18%, 85%, 100% {
+    transform: none;
+  }
+  24% {
+    transform: rotate(14deg) translateY(-18px);
+  }
+  29% {
+    transform: rotate(-12deg) translateY(9px);
+  }
+  34% {
+    transform: rotate(6deg);
+  }
+  39% {
+    transform: none;
+  }
+}
+
+@keyframes faint {
+  0%, 30%, 90%, 100% {
+    transform: none;
+  }
+  35% {
+    transform: rotate(-8deg) translateY(-15px);
+  }
+  42%, 66% {
+    transform: rotate(75deg) translate(8px, 20px);
+  }
+  74% {
+    transform: rotate(-12deg);
+  }
+  82% {
+    transform: none;
+  }
+}
+
+/* Full-word glitch */
+@keyframes wholeDrama {
+  0%, 47%, 58%, 100% {
+    transform: translate(0);
+    filter: none;
+  }
+  49% {
+    transform: translate(-5px, 2px);
+    filter: drop-shadow(5px 0 var(--pink));
+  }
+  51% {
+    transform: translate(6px, -3px) skewX(-5deg);
+    filter: drop-shadow(-6px 0 var(--acid));
+  }
+  53% {
+    transform: translate(-3px, 1px);
+    filter: drop-shadow(4px 0 var(--pink));
+  }
+  56% {
+    transform: none;
+    filter: none;
+  }
+}
+
+@media (max-width: 520px) {
+  .topline,
+  .bottomline {
+    font-size: 8px;
+    letter-spacing: 0.04em;
+  }
+
+  .reaction-word {
+    font-size: 23vw;
+  }
+
+  .subtitle {
+    max-width: 92%;
+    line-height: 1.6;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .letter,
+  .reaction-word {
+    animation: none !important;
+  }
+}

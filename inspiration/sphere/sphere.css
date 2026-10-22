@@ -1,0 +1,214 @@
+@layer reset, base, space, controls, responsive, accessibility;
+
+@property --angle { syntax: "<angle>"; inherits: true; initial-value: 24deg; }
+@property --flight { syntax: "<angle>"; inherits: true; initial-value: 0deg; }
+@property --growth { syntax: "<number>"; inherits: false; initial-value: 1; }
+@property --life-opacity { syntax: "<number>"; inherits: false; initial-value: 1; }
+
+@layer reset {
+  *, *::before, *::after { box-sizing: border-box; }
+  body { margin: 0; }
+}
+
+@layer base {
+  :root {
+    --surface: oklch(15.91% 0.0000 0.00);
+    --text: oklch(94% .006 105);
+    --muted: oklch(56% .008 105);
+    --white: oklch(97.72% 0.0132 102.01);
+    --planet-tint: oklch(22% .014 250);
+    --pink: oklch(65.49% 0.2239 7.73);
+    --cyan: oklch(65.86% 0.1116 220.25);
+    --violet: oklch(64.96% 0.1463 284.27);
+    --yellow: oklch(87.76% 0.1499 93.44);
+    font-family: "Avenir Next", system-ui, sans-serif;
+    color-scheme: dark;
+    color: var(--text);
+    background: var(--surface);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body {
+    min-height: 100svh;
+    overflow-x: clip;
+    background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2264%22%20height%3D%2264%22%20viewBox%3D%220%200%2064%2064%22%3E%20%3Cg%20fill%3D%22none%22%20stroke%3D%22%23363631%22%20stroke-width%3D%220.6%22%3E%20%3Cpath%20d%3D%22M64%200H0V64%22%20stroke-opacity%3D%220.32%22%20%2F%3E%20%3Cpath%20d%3D%22M30%2032h4M32%2030v4%22%20stroke-opacity%3D%220.26%22%20%2F%3E%20%3C%2Fg%3E%20%3C%2Fsvg%3E");
+    background-size: 64px 64px;
+    background-position: center;
+    padding: 28px clamp(20px, 5vw, 64px) 22px;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+  }
+
+  header, footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    width: 100%;
+    max-width: 1200px;
+    margin-inline: auto;
+  }
+
+  h1 { margin: 0; font-size: 17px; font-weight: 500; letter-spacing: -.03em; }
+  h1 span { color: var(--muted); font-weight: 400; }
+  .meta, footer { margin: 0; color: var(--muted); font-size: 11px; }
+  footer { flex-wrap: wrap; line-height: 1.6; }
+  footer p { margin: 0; }
+  a { color: var(--muted); text-decoration: none; }
+  a:hover { color: var(--text); }
+  a:focus-visible { outline: 2px solid var(--cyan); outline-offset: 5px; }
+  .footer-links { display: flex; flex-wrap: wrap; gap: 8px 20px; }
+  .footer-links [aria-current="page"] { color: var(--text); }
+  .demo-links { display: flex; flex-wrap: wrap; gap: 14px; }
+  .demo-links [aria-current="page"] { color: var(--text); }
+  .footer-notes { display: grid; gap: 8px; }
+
+  main { display: grid; place-items: center; padding-block: 32px; }
+  .experiment { display: grid; justify-items: center; gap: 32px; }
+}
+
+@layer space {
+  .scene {
+    --diameter: min(86vw, 70svh, 820px);
+    --time-scale: 1;
+    --sphere-ratio: .7;
+    --fade-width: .06;
+    --bang-duration: 1.4s;
+    position: relative;
+    isolation: isolate;
+    width: var(--diameter);
+    height: var(--diameter);
+    animation: big-bang var(--bang-duration) linear(0, .55 8%, .9 13%, 1.22 22%, .88 42%, 1.075 62%, .98 80%, 1.012 90%, 1) both;
+  }
+  .scene::before { content: ""; position: absolute; inset: 0; border-radius: 50%; background: #000; z-index: -2; }
+  .planet {
+    position: absolute;
+    inset: calc((1 - var(--sphere-ratio)) * 50%);
+    z-index: 3;
+    border-radius: 50%;
+    background: var(--planet-tint);
+    box-shadow: 0 0 0 1px oklch(100% 0 0 / .09);
+    overflow: clip;
+  }
+  .sphere {
+    --planet-size: calc(var(--diameter) * var(--sphere-ratio));
+    --radius: calc(var(--planet-size) * .48);
+    position: absolute;
+    inset: 0;
+    transform: rotate(-14deg);
+    transform-style: preserve-3d;
+    animation: circulate calc(28s * var(--time-scale)) linear infinite;
+  }
+  .particle {
+    --phase: calc(var(--angle) + var(--longitude));
+    --orbit-radius: calc(var(--radius) * cos(var(--latitude)));
+    --x: calc(var(--orbit-radius) * cos(var(--phase)));
+    --z: calc(var(--orbit-radius) * sin(var(--phase)));
+    position: absolute;
+    left: 50%;
+    top: calc(50% + var(--radius) * sin(var(--latitude)));
+    width: 0;
+    height: 0;
+    transform-style: preserve-3d;
+  }
+  .particle::before {
+    content: "";
+    position: absolute;
+    width: calc(var(--size) * var(--planet-size));
+    aspect-ratio: 1;
+    border: 1.5px solid var(--color);
+    border-radius: 50%;
+    transform: translate(-50%, -50%) translate3d(var(--x), 0, var(--z)) rotateY(calc(90deg - var(--phase))) rotateX(calc(-1 * var(--latitude))) scale(var(--growth));
+    opacity: calc((.16 + .84 * (.5 + .5 * sin(var(--phase)))) * var(--life-opacity));
+    animation: appear calc(var(--duration) * var(--time-scale)) ease-out var(--delay) infinite;
+  }
+  .particle.dot::before { border: 0; background: var(--color); }
+  .flight {
+    position: absolute;
+    inset: 0;
+    animation: orbit-flight calc(var(--period) * var(--time-scale)) linear var(--delay, 0s) infinite;
+  }
+  .path {
+    position: absolute;
+    inset: calc(50% - var(--distance) * 100%);
+    border: 1px solid var(--color);
+    border-radius: 50%;
+    mask-image: linear-gradient(to bottom, rgb(0 0 0 / .22), rgb(0 0 0 / .82));
+    transform: rotate(var(--tilt)) scaleY(var(--flatten));
+    pointer-events: none;
+  }
+  .path.rear { z-index: 1; clip-path: inset(0 0 50%); }
+  .path.front { z-index: 5; clip-path: inset(50% 0 0); }
+  .traveler {
+    --phase: calc(var(--flight) + var(--offset));
+    --orbit-x: calc(var(--distance) * cos(var(--phase)));
+    --orbit-y: calc(var(--distance) * var(--flatten) * sin(var(--phase)));
+    --x: calc(var(--diameter) * var(--orbit-x));
+    --y: calc(var(--diameter) * var(--orbit-y));
+    --boundary: calc(var(--sphere-ratio) / 2);
+    --fade-end: calc(var(--boundary) + var(--fade-width));
+    --distance-squared: calc(var(--orbit-x) * var(--orbit-x) + var(--orbit-y) * var(--orbit-y));
+    --edge-progress: clamp(0, (var(--distance-squared) - var(--boundary) * var(--boundary)) / (var(--fade-end) * var(--fade-end) - var(--boundary) * var(--boundary)), 1);
+    --edge-visibility: calc(1 - var(--edge-progress) * var(--edge-progress) * (3 - 2 * var(--edge-progress)));
+    --front-opacity: clamp(0, sin(var(--phase)) * 5, 1);
+    --px: calc(var(--x) * cos(var(--tilt)) - var(--y) * sin(var(--tilt)));
+    --py: calc(var(--x) * sin(var(--tilt)) + var(--y) * cos(var(--tilt)));
+    --depth: calc(.5 + .5 * sin(var(--phase)));
+    position: absolute;
+    left: calc(50% + var(--px));
+    top: calc(50% + var(--py));
+    z-index: calc(3 + 4 * sin(var(--phase)));
+    width: calc(var(--diameter) * var(--size, .025));
+    height: calc(var(--diameter) * var(--size, .025));
+    color: var(--color);
+    opacity: calc((.35 + .65 * var(--depth)) * var(--edge-visibility) * var(--front-opacity));
+    transform: translate(-50%, -50%) scale(calc((.7 + .3 * var(--depth)) * var(--edge-visibility)));
+  }
+  .star { background: currentColor; clip-path: polygon(50% 0, 62% 37%, 100% 50%, 62% 62%, 50% 100%, 38% 62%, 0 50%, 38% 37%); }
+  .moon { background: currentColor; border-radius: 50%; }
+  @keyframes orbit-flight { to { --flight: 360deg; } }
+  @keyframes circulate { to { --angle: 384deg; } }
+  @keyframes big-bang { from { transform: scale(.1); } to { transform: scale(1); } }
+  @keyframes appear {
+    0%, 100% { --growth: 0; --life-opacity: 0; }
+    6% { --life-opacity: 1; }
+    40%, 62% { --growth: 1; --life-opacity: 1; }
+    92% { --growth: 0; --life-opacity: 0; }
+  }
+}
+
+@layer controls {
+  .controls { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px 24px; color: var(--muted); font-size: 12px; }
+  .controls label { display: inline-flex; align-items: center; gap: 8px; padding: 8px 0; cursor: pointer; }
+  .controls input { width: 13px; height: 13px; margin: 0; accent-color: var(--cyan); }
+  .controls button { padding: 7px 12px; border: 1px solid oklch(100% 0 0 / .16); border-radius: 999px; background: transparent; color: var(--text); font: inherit; cursor: pointer; }
+  .controls button:hover { border-color: var(--cyan); }
+  .controls :focus-visible { outline: 2px solid var(--cyan); outline-offset: 4px; }
+  .experiment:has(#pause:checked) .scene,
+  .experiment:has(#pause:checked) .scene *,
+  .experiment:has(#pause:checked) .scene *::before,
+  .experiment:has(#pause:checked) .scene *::after { animation-play-state: paused; }
+  .experiment:has(#slow:checked) .scene { --time-scale: 2; --bang-duration: 2.8s; }
+  .experiment:has(#paths:checked) .path { visibility: hidden; }
+  .experiment:has(#replay:active) .scene { animation: none; transform: scale(.1); }
+}
+
+@layer responsive {
+  @media (max-width: 520px) {
+    body { padding: 22px 20px 20px; }
+    header { align-items: flex-start; }
+    h1 { font-size: 15px; }
+    h1 span { display: block; margin-top: 5px; font-size: 12px; }
+    .meta { font-size: 10px; padding-top: 3px; text-align: right; }
+    .scene { --diameter: min(88vw, calc(100vw - 40px), 62svh); }
+    .controls { gap: 8px 16px; font-size: 11px; }
+    footer { flex-direction: column; align-items: flex-start; gap: 12px; font-size: 10px; }
+  }
+}
+
+@layer accessibility {
+  @media (prefers-reduced-motion: reduce) {
+    .scene, .scene *, .scene *::before, .scene *::after { animation: none !important; }
+    .experiment .scene { transform: scale(1); }
+  }
+}

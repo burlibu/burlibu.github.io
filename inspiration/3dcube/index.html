@@ -1,0 +1,187 @@
+<!doctype html>
+<!--
+CodePen Collection Cube
+=======================
+
+A scroll-driven 3D gallery built around CodePen Collections and
+the CodePen REST API v2.
+
+The cube represents a Collection of public Pens. Each Pen becomes
+a stop in a vertical sequence, with its title, description,
+editor version, creation date and links retrieved from the API.
+
+Data and authentication
+-----------------------
+
+The Collection ID and PHP proxy URL are configured in script.js.
+
+The PHP proxy handles authenticated requests to the CodePen REST
+API v2, keeping the API key on the server rather than exposing it
+in the Pen's JavaScript.
+
+Three proxy resources are used:
+
+collection   Collection metadata, including title and description
+pens         Public Pens, with pagination and sorting
+cover        Optional custom images belonging to an individual Pen
+
+The JavaScript retrieves all available pages of the Collection's
+Pens before building the navigation and content. Cover lookups
+start right after, one per Pen. Cube faces can display the available
+screenshot without waiting for the cover API; a custom cover replaces
+it when the lookup succeeds. The PHP proxy caches successful cover
+lookup responses for one hour.
+
+Custom cube images
+------------------
+
+CodePen 2.0 supports folders and image files inside individual
+Pens. Each Pen can provide a custom image for the cube by adding
+a WebP file at the following path:
+
+assets/
+    cube-cover.webp
+
+The image belongs to the individual Pen being retrieved, not to
+the Collection or to this gallery Pen.
+
+The extended PHP proxy verifies that the Pen is public and belongs
+to the requested Collection, then checks for assets/cube-cover.webp
+through the CodePen file API.
+
+If the file exists, its URL is used for the corresponding cube
+face. Otherwise, the gallery uses the Pen's automatically generated
+screenshot, selecting an appropriate available resolution.
+
+If the custom image fails to load, the JavaScript falls back to
+the default screenshot. If neither image is available, the cube
+displays a placeholder.
+
+Custom images are optional. Pens without an assets folder or
+cube-cover.webp continue to work with their default screenshots.
+
+For the dark theme, a Pen with a custom cover can also provide
+assets/cube-cover-dark.webp. The v2 proxy checks for it in the
+same cover lookup and returns its URL as darkUrl. In dark mode
+the dark cover is used when it exists, then the regular cover,
+then the screenshot.
+
+The custom covers in this Collection use a 1024 x 1024 canvas. Images are
+displayed using object-fit: cover, so landscape screenshots may
+be cropped to fit the square surface.
+
+Theme
+-----
+
+The page starts in the theme set on the <html> element with
+data-theme: "light", "dark", or "auto" to follow the system
+setting. Visitors can switch with the Light / Dark toggle.
+
+References
+----------
+
+PHP proxy reference:
+https://gist.github.com/arenagroove/ec98806b34b7d523118d5f439b82691a
+
+CodePen REST API v2 documentation:
+https://blog.codepen.io/docs/api/api-v2/rest-api-v2/
+
+-->
+<html lang="en" data-theme="auto">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>CodePen Collection Cube</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@700&text=0123456789&display=swap">
+    <link rel="stylesheet" href="./style.css">
+</head>
+
+<body data-state="loading">
+    <div id="page_loader" class="page-loader" aria-hidden="true">
+        <span class="face-spinner"></span>
+    </div>
+
+    <div id="scene" class="scene" aria-hidden="true" hidden>
+        <div id="cube_shadow" class="cube-shadow"></div>
+        <div id="cube" class="cube">
+            <div class="face" data-face="top"></div>
+            <div class="face" data-face="front"></div>
+            <div class="face" data-face="right"></div>
+            <div class="face" data-face="back"></div>
+            <div class="face" data-face="left"></div>
+            <div class="face" data-face="bottom"></div>
+        </div>
+    </div>
+
+    <button id="theme_switch" class="theme-switch" type="button" data-current="light" aria-label="Switch to dark theme">
+        <svg class="theme-icon icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="4" />
+            <path d="M12 2v2" />
+            <path d="M12 20v2" />
+            <path d="m4.93 4.93 1.41 1.41" />
+            <path d="m17.66 17.66 1.41 1.41" />
+            <path d="M2 12h2" />
+            <path d="M20 12h2" />
+            <path d="m6.34 17.66-1.41 1.41" />
+            <path d="m19.07 4.93-1.41 1.41" />
+        </svg>
+        <svg class="theme-icon icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
+        </svg>
+    </button>
+
+    <div id="hud" class="hud" aria-hidden="true" hidden>
+        <span id="hud_count">00 / 00</span>
+        <span class="progress"><span id="progress_fill" class="progress-fill"></span></span>
+    </div>
+
+    <main id="stops" class="stops">
+        <section id="s0" class="stop" aria-labelledby="collection_title">
+            <div class="card">
+                <p class="card-label">CodePen Collection</p>
+                <h1 id="collection_title">Collection</h1>
+                <p id="collection_description" class="card-description" hidden></p>
+                <p class="card-meta">
+                    <span id="request_status" role="status">Loading…</span>
+                </p>
+                <p class="card-links">
+                    <a id="collection_link" target="_blank" rel="noopener noreferrer" hidden>
+                        View Collection
+                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M15 3h6v6" />
+                            <path d="M10 14 21 3" />
+                            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                        </svg>
+                    </a>
+                    <a href="https://blog.codepen.io/docs/api/api-v2/rest-api-v2/" target="_blank" rel="noopener noreferrer">
+                        CodePen API docs
+                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M15 3h6v6" />
+                            <path d="M10 14 21 3" />
+                            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                        </svg>
+                    </a>
+                </p>
+                <p id="request_error" class="error" role="alert" hidden></p>
+                <div id="intro_nav" class="cta-row" hidden>
+                    <a class="cta" href="#s1">
+                        Enter
+                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M5 12h14" />
+                            <path d="m12 5 7 7-7 7" />
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <ol id="pen_list" class="pen-list" aria-label="Pens in this Collection"></ol>
+    </main>
+
+    <script src="./script.js"></script>
+</body>
+
+</html>

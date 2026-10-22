@@ -49,6 +49,8 @@ Every push to `main` triggers `.github/workflows/deploy-gh-pages.yml`, which bui
 ## Notes
 
 - `inspiration/` holds third-party design references from CodePen. The author credits are kept in the copied files.
+- Full mirrors of third-party sites (`inspiration/clipo`, `inspiration/grail`) are gitignored: they are copyrighted, so they stay local.
+- The repo is edited from more than one computer. Run `git pull` before modifying anything.
 
 ## Agent skills
 

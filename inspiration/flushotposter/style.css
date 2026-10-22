@@ -1,0 +1,583 @@
+ {
+  box-sizing: border-box;
+}
+
+:root {
+  --cream: #f8f1e8;
+  --paper: #fffaf4;
+  --pink: #f5bdb5;
+  --light-pink: #fbe2dc;
+  --red: #bd1828;
+  --dark-red: #8f1020;
+  --black: #171313;
+  --white: #ffffff;
+}
+
+body {
+  margin: 0;
+  padding: 30px 16px;
+  background-color: #e8ddd3;
+  color: var(--black);
+  font-family: "Nunito Sans", sans-serif;
+}
+
+/* ------------------------------
+   MAIN POSTER
+------------------------------ */
+
+.poster {
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 35px;
+  overflow: hidden;
+  background-color: var(--cream);
+  border: 2px solid var(--black);
+  box-shadow: 8px 8px 0 var(--black);
+}
+
+/* ------------------------------
+   HEADER
+------------------------------ */
+
+.poster-header {
+  text-align: center;
+  border-bottom: 2px solid var(--black);
+  padding-bottom: 18px;
+}
+
+.university-name {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 900;
+  letter-spacing: 4px;
+}
+
+.header-message {
+  margin: 8px 0 0;
+  font-family: "Caveat", cursive;
+  font-size: 25px;
+  font-weight: 700;
+}
+
+.header-decoration {
+  margin-top: 8px;
+  color: var(--red);
+  font-size: 18px;
+}
+
+/* ------------------------------
+   HERO / MAIN HEADLINE
+------------------------------ */
+
+.hero {
+  position: relative;
+  padding: 30px 10px 25px;
+  text-align: center;
+}
+
+.eyebrow {
+  display: inline-block;
+  margin: 0 0 14px;
+  padding: 8px 12px;
+  background-color: var(--pink);
+  border: 2px solid var(--black);
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 1px;
+}
+
+.hero h1 {
+  margin: 0;
+  font-family: "Anton", sans-serif;
+  font-size: clamp(58px, 11vw, 108px);
+  line-height: 0.92;
+  letter-spacing: 2px;
+}
+
+.hero h1 span {
+  color: var(--red);
+  -webkit-text-stroke: 1px var(--black);
+}
+
+.hero-benefit {
+  margin: 20px 0 5px;
+  font-size: 16px;
+  font-weight: 900;
+}
+
+.hero-note {
+  margin: 0;
+  color: var(--dark-red);
+  font-family: "Caveat", cursive;
+  font-size: 25px;
+  font-weight: 700;
+}
+
+/* ------------------------------
+   DECORATIVE CSS SYRINGE
+------------------------------ */
+
+.syringe {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 180px;
+  height: 34px;
+  margin: 25px auto 15px;
+  transform: rotate(-8deg);
+}
+
+.syringe-plunger {
+  width: 15px;
+  height: 24px;
+  border: 3px solid var(--black);
+  border-right: 0;
+  background-color: var(--pink);
+}
+
+.syringe-body {
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  width: 95px;
+  height: 30px;
+  border: 3px solid var(--black);
+  background-color: var(--white);
+}
+
+.syringe-body span {
+  width: 3px;
+  height: 12px;
+  background-color: var(--red);
+}
+
+.syringe-body span:nth-child(even) {
+  height: 18px;
+}
+
+.syringe-tip {
+  width: 12px;
+  height: 12px;
+  border-top: 3px solid var(--black);
+  border-right: 3px solid var(--black);
+  transform: rotate(45deg);
+  margin-left: -4px;
+  background-color: var(--pink);
+}
+
+.syringe-needle {
+  width: 28px;
+  height: 2px;
+  background-color: var(--black);
+}
+
+/* ------------------------------
+   FREE BANNER
+------------------------------ */
+
+.free-banner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  padding: 17px;
+  color: var(--white);
+  background-color: var(--red);
+  border: 2px solid var(--black);
+  text-align: center;
+}
+
+.free-star {
+  font-size: 30px;
+}
+
+.free-label {
+  margin: 0 0 3px;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 3px;
+}
+
+.free-title {
+  margin: 0;
+  font-size: clamp(16px, 3vw, 25px);
+  font-weight: 900;
+  letter-spacing: 1px;
+}
+
+/* ------------------------------
+   EVENT INFORMATION GRID
+------------------------------ */
+
+.details-grid {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr 1.1fr;
+  grid-template-areas: "dates location registration";
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.info-card {
+  position: relative;
+  min-width: 0;
+  padding: 20px 16px;
+  border: 2px solid var(--black);
+}
+
+.dates-card {
+  grid-area: dates;
+  background-color: var(--paper);
+}
+
+.location-card {
+  grid-area: location;
+  background-color: var(--pink);
+}
+
+.registration-card {
+  grid-area: registration;
+  background-color: var(--paper);
+}
+
+.card-label {
+  margin: 0 0 10px;
+  color: var(--red);
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 1.5px;
+}
+
+.info-card h2 {
+  margin: 0 0 18px;
+  font-family: "Anton", sans-serif;
+  font-size: 26px;
+  font-weight: 400;
+  letter-spacing: 0.5px;
+}
+
+/* ------------------------------
+   DATE INFORMATION
+------------------------------ */
+
+.date-item {
+  margin: 0;
+}
+
+.date-day {
+  margin: 0;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 1px;
+}
+
+.date-number {
+  margin: 3px 0;
+  color: var(--red);
+  font-family: "Anton", sans-serif;
+  font-size: 32px;
+  line-height: 1.1;
+}
+
+.date-time {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.date-divider {
+  height: 2px;
+  margin: 17px 0;
+  background-color: var(--black);
+}
+
+/* ------------------------------
+   LOCATION INFORMATION
+------------------------------ */
+
+.location-icon {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  margin-bottom: 12px;
+  border: 2px solid var(--black);
+  border-radius: 50%;
+  background-color: var(--paper);
+  font-size: 30px;
+}
+
+.location-name {
+  margin: 0;
+  font-size: 19px;
+  font-weight: 900;
+}
+
+.location-description {
+  margin: 8px 0 0;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.location-decoration {
+  margin-top: 16px;
+  color: var(--red);
+  font-size: 30px;
+  text-align: right;
+}
+
+/* ------------------------------
+   REGISTRATION AND QR CODE
+------------------------------ */
+
+.registration-description {
+  margin: 0 0 14px;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.qr-link {
+  display: block;
+  width: fit-content;
+  margin: 0 auto;
+  padding: 7px;
+  background-color: var(--white);
+  border: 2px solid var(--black);
+}
+
+.qr-code {
+  display: block;
+  width: 120px;
+  max-width: 100%;
+  height: auto;
+}
+
+.scan-label {
+  margin: 10px 0 4px;
+  color: var(--red);
+  font-size: 14px;
+  font-weight: 900;
+  letter-spacing: 2px;
+  text-align: center;
+}
+
+.registration-link {
+  display: block;
+  overflow-wrap: anywhere;
+  color: var(--black);
+  font-size: 11px;
+  font-weight: 800;
+  text-align: center;
+}
+
+/* ------------------------------
+   WHY IT MATTERS
+------------------------------ */
+
+.bottom-message {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 20px;
+  padding: 20px;
+  border: 2px dashed var(--red);
+  background-color: var(--light-pink);
+}
+
+.bottom-icon {
+  flex-shrink: 0;
+  color: var(--red);
+  font-size: 42px;
+}
+
+.bottom-message h2 {
+  margin: 0 0 5px;
+  font-family: "Caveat", cursive;
+  font-size: 30px;
+}
+
+.bottom-message p {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.bottom-message .audience {
+  margin-top: 7px;
+  font-weight: 900;
+}
+
+/* ------------------------------
+   FOOTER
+------------------------------ */
+
+.poster-footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 22px;
+  padding-top: 15px;
+  border-top: 2px solid var(--black);
+}
+
+.poster-footer p {
+  margin: 0;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 1.5px;
+}
+
+/* ------------------------------
+   TABLET RESPONSIVE LAYOUT
+------------------------------ */
+
+@media (max-width: 750px) {
+  body {
+    padding: 20px 12px;
+  }
+
+  .poster {
+    padding: 25px;
+  }
+
+  .details-grid {
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas:
+      "dates location"
+      "registration registration";
+  }
+
+  .registration-card {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    column-gap: 20px;
+    align-items: center;
+  }
+
+  .registration-card .card-label,
+  .registration-card h2,
+  .registration-description {
+    grid-column: 1;
+  }
+
+  .registration-card .qr-link {
+    grid-column: 2;
+    grid-row: 1 / span 4;
+  }
+
+  .registration-card .scan-label,
+  .registration-card .registration-link {
+    grid-column: 1;
+  }
+}
+
+/* ------------------------------
+   MOBILE RESPONSIVE LAYOUT
+------------------------------ */
+
+@media (max-width: 480px) {
+  body {
+    padding: 12px 8px;
+  }
+
+  .poster {
+    padding: 18px 14px;
+    box-shadow: 4px 4px 0 var(--black);
+  }
+
+  .university-name {
+    font-size: 11px;
+    letter-spacing: 2px;
+  }
+
+  .header-message {
+    font-size: 22px;
+  }
+
+  .hero {
+    padding: 25px 0 22px;
+  }
+
+  .eyebrow {
+    font-size: 9px;
+    letter-spacing: 0.5px;
+  }
+
+  .hero h1 {
+    font-size: clamp(54px, 16vw, 76px);
+  }
+
+  .hero-benefit {
+    font-size: 14px;
+  }
+
+  .hero-note {
+    font-size: 22px;
+  }
+
+  .free-banner {
+    gap: 10px;
+    padding: 14px 8px;
+  }
+
+  .free-star {
+    font-size: 22px;
+  }
+
+  .free-title {
+    font-size: 16px;
+  }
+
+  .details-grid {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "dates"
+      "location"
+      "registration";
+    gap: 12px;
+  }
+
+  .info-card {
+    padding: 18px;
+  }
+
+  .info-card h2 {
+    font-size: 25px;
+  }
+
+  .date-number {
+    font-size: 30px;
+  }
+
+  .registration-card {
+    display: block;
+  }
+
+  .registration-card .qr-link {
+    margin: 0 auto;
+  }
+
+  .registration-card .scan-label,
+  .registration-card .registration-link {
+    text-align: center;
+  }
+
+  .bottom-message {
+    align-items: flex-start;
+    gap: 10px;
+    padding: 14px;
+  }
+
+  .bottom-icon {
+    font-size: 32px;
+  }
+
+  .bottom-message h2 {
+    font-size: 26px;
+  }
+
+  .poster-footer {
+    flex-direction: column;
+    text-align: center;
+  }
+}

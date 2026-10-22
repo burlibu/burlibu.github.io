@@ -8,6 +8,10 @@ Il sito è pubblicato su GitHub Pages all’indirizzo:
 
 Puoi visitare direttamente il link per vedere la versione aggiornata del sito React.
 
+### Prima di modificare
+
+Il repo viene modificato da più computer. Prima di toccare qualsiasi file, esegui `git pull` su `main` per partire dalla versione più recente ed evitare conflitti.
+
 ### Aggiornamento automatico
 
 Ogni modifica alla branch `main` aggiorna automaticamente il sito online tramite GitHub Actions.

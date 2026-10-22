@@ -21,3 +21,7 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# full mirrors of third-party sites (copyrighted): keep local only
+/inspiration/clipo/
+/inspiration/grail/

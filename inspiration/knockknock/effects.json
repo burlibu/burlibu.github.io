@@ -1,0 +1,267 @@
+{
+  "_readme": [
+    "KNOCK, KNOCK — effects settings. Edit this file to customize the house.",
+    "Each set (boo, scary, booscary, funny) is a list of effects. The FizzBuzz answer picks the set; a shuffle bag picks which effect.",
+    "files: video = your big background video (.mp4), poster = still image shown until the first knock. startOnKnock: true starts the video on the first knock. videoSound: true plays the video's own audio (your song is in the video). loop: true loops it. song: optional separate .mp3 (leave empty if the song is in the video).",
+    "on: true/false switches an effect in or out of the rotation.",
+    "line: the text shown when it plays. Change it to anything you like.",
+    "extra: true lets it also pop up as a bonus effect layered on other scares.",
+    "effect: which built-in animation to run. You can move any effect to any set, or use the same effect twice with different lines (give each its own id).",
+    "Built-in effects: peek, crack, drift, bleed, frost, prints, lamp, words, candles, knockback, shadow, attic, swarm, spider, ferns, wisps, crows, blood, rot, burst, flood, grab, storm, parade, band, dirge, coffin, roofline, bonegang, conga, dormer, peekaboo, rise, breath",
+    "combo: how many bonus extras layer on top of each set's main scare (0 = none).",
+    "script: force a specific effect id on a specific knock, e.g. \"3\": \"vampire\". Only applies to knocks that are already scares.",
+    "plainLines: what the house says on plain-number knocks. {n} is replaced with the knock number.",
+    "door: a transparent picture standing behind the door (needs image; optional hold in ms). Balance tip: over one play of the song you get roughly 21 Boo, 11 Scary and 6 BooScary knocks, so keep each set at or under that if you want every scare findable.",
+    "scripted: true keeps a scare out of the random shuffle, so it only plays on its scripted knock (the second line on 15).",
+    "nightScares: how many scares make a night (20). Each plays once; then the grand finale (lastScare) comes out and the door locks until it's over. The next knock starts a new night, drawn from the scares this visitor hasn't met yet. The house remembers who you've met in this browser.",
+    "lastScare: the id of the scare that ends every night (the grand finale)."
+  ],
+  "files": {
+    "video": "/knock-knock-halloween-19.mp4",
+    "poster": "/haunted-house-codepen.jpg",
+    "startOnKnock": true,
+    "videoSound": true,
+    "loop": true,
+    "song": ""
+  },
+  "combo": {
+    "boo": 0,
+    "scary": 0,
+    "booscary": 0
+  },
+  "script": {
+    "3": "vampire",
+    "15": "parade"
+  },
+  "nightScares": 20,
+  "lastScare": "finale",
+  "plainLines": [
+    "{n}? That's a FizzBUST!",
+    "No Fizz. No Buzz. No candy.",
+    "Wrong number, bonehead!",
+    "The witch says: LEARN TO DIVIDE!",
+    "Fizz? Nope. Buzz? Nope. BOO!",
+    "Even zombies know how to divide!",
+    "{n}? The ghosts demand a recount!",
+    "No FizzBuzz for you!",
+    "The vampire says: YOU SUCK AT MATH!",
+    "The skeleton has more digits than you!",
+    "Three? No. Five? No. BYE!",
+    "The witch failed you. Again.",
+    "That's a mathematical monstrosity!",
+    "The ghosts are NOT impressed.",
+    "The house says: TRY A NUMBER!",
+    "No Fizz. No Buzz. Just shame.",
+    "The mummy wants his number back!",
+    "{n}? That's a grave mistake!",
+    "Your math is giving us nightmares!",
+    "The bats are better at division!",
+    "The witch just rolled her eyes.",
+    "Boo-hoo! No Buzz for you!",
+    "The skeleton says: DO THE MATH!",
+    "The vampire counted. Still nope.",
+    "Not divisible. Not admissible!",
+    "The ghosts say: NEXT!",
+    "Fizzless. Buzzless. Brainless.",
+    "{n}? What a number nightmare!",
+    "The witch says: YOU'RE FIRED!",
+    "Even the pumpkins know division!"
+  ],
+  "boo": [
+    {
+      "effect": "skelpeek",
+      "on": true,
+      "line": "BOO! Somebody's home."
+    },
+    {
+      "effect": "crack",
+      "on": true,
+      "line": "The door opens a crack. Something looks back."
+    },
+    {
+      "effect": "swing",
+      "on": true,
+      "line": "Just hanging around the oaks."
+    },
+    {
+      "effect": "bleed",
+      "on": true,
+      "line": "Your screen is bleeding!"
+    },
+    {
+      "effect": "prints",
+      "on": true,
+      "line": "Someone wants out."
+    },
+    {
+      "effect": "lamp",
+      "on": true,
+      "line": "The lantern dies… and relights."
+    },
+    {
+      "effect": "candlelight",
+      "on": true,
+      "line": "Skeleton candlelight procession."
+    },
+    {
+      "effect": "beads",
+      "on": true,
+      "line": "Throw me something, mister!"
+    },
+    {
+      "effect": "shadow",
+      "on": true,
+      "line": "Someone just walked past the window."
+    },
+    {
+      "id": "vampire",
+      "effect": "door",
+      "on": true,
+      "line": "HE'S BEEN EXPECTING YOU.",
+      "image": "/vampire-cutout.webp",
+      "hold": 2200
+    },
+    {
+      "effect": "dormer",
+      "on": true,
+      "line": "Someone's practicing upstairs."
+    },
+    {
+      "effect": "peekaboo",
+      "on": true,
+      "line": "Peekaboo. He's been following you."
+    },
+    {
+      "effect": "winpeek",
+      "on": true,
+      "line": "Tap, tap, tap. Someone wants your attention."
+    },
+    {
+      "effect": "butler",
+      "on": true,
+      "line": "Good evening. The master will see you… never."
+    },
+    {
+      "effect": "doordance",
+      "on": true,
+      "line": "The party's inside and frightenly festive."
+    },
+    {
+      "effect": "dolls",
+      "on": true,
+      "line": "The Baby Dolls are out tonight."
+    },
+    {
+      "effect": "pumpkin",
+      "on": true,
+      "line": "Pumpkin Pete is losing his head."
+    },
+    {
+      "effect": "chef",
+      "on": true,
+      "line": "Supper's on. Don't ask what's in it."
+    },
+    {
+      "effect": "lilbones",
+      "on": true,
+      "line": "Lil' Bones wants candy too."
+    }
+  ],
+  "scary": [
+    {
+      "effect": "swarm",
+      "on": true,
+      "line": "The bats know you're here now."
+    },
+    {
+      "effect": "dangle",
+      "on": true,
+      "line": "Just dropping in!"
+    },
+    {
+      "effect": "skulls",
+      "on": true,
+      "line": "The garden is growing dead heads."
+    },
+    {
+      "effect": "crows",
+      "on": true,
+      "line": "The crows have come to watch."
+    },
+    {
+      "effect": "blood",
+      "on": true,
+      "line": "The door is bleeding."
+    },
+    {
+      "effect": "storm",
+      "on": true,
+      "line": "WHO IS STANDING ON THE PATH?"
+    },
+    {
+      "effect": "bonegang",
+      "on": true,
+      "line": "THE BONE GANG IS OUT TONIGHT."
+    },
+    {
+      "effect": "roofline",
+      "on": true,
+      "line": "THE CHORUS LINE IS ON THE ROOF."
+    },
+    {
+      "effect": "rise",
+      "on": true,
+      "line": "The garden is giving up its dead."
+    },
+    {
+      "effect": "twins",
+      "on": true,
+      "line": "The twins want to play."
+    },
+    {
+      "effect": "doorskulls",
+      "on": true,
+      "line": "Room for one more!"
+    }
+  ],
+  "booscary": [
+    {
+      "effect": "parade",
+      "on": true,
+      "line": "THE DEAD ARE SECOND-LINING.",
+      "scripted": true
+    },
+    {
+      "effect": "band",
+      "on": true,
+      "line": "THE BAND IS COMING BACK AROUND."
+    },
+    {
+      "effect": "coffin",
+      "on": true,
+      "line": "THE DECEASED IS NOT RESTING."
+    },
+    {
+      "effect": "dirge",
+      "on": true,
+      "line": "A JAZZ FUNERAL… FOR THE LIVING."
+    },
+    {
+      "effect": "conga",
+      "on": true,
+      "line": "EVERYBODY CONGA! NOBODY LEAVES."
+    },
+    {
+      "effect": "grab",
+      "on": true,
+      "line": "IT KEPT YOUR HAND."
+    },
+    {
+      "id": "finale",
+      "effect": "finale",
+      "on": true,
+      "scripted": true,
+      "line": "THE WHOLE CLUB CAME OUT FOR YOU."
+    }
+  ]
+}

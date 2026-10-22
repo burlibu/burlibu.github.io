@@ -1,0 +1,29 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+
+#letterfield {
+  display: flex;
+  flex-wrap: wrap;
+  line-height: 1;
+  font-family: 'Inter', sans-serif;
+  position: fixed;
+  left: 50vw;
+  top:50vh;
+  transform: translate(-50%,-50%);
+}
+
+#letterfield div {
+  width: var(--w-width);
+  height: var(--w-width);
+/*   font-weight: var(--font-weight);
+  color: var(--color); */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+/*   text-shadow: 1px 1px 0px rgba(0,0,0,.5); */
+/*   transition: color 0.5s linear, font-weight 0s linear; */
+/*   overflow:hidden; */
+}
+#letterfield div::selection {
+  background-color: currentColor; 
+/*   color: #000; */
+}

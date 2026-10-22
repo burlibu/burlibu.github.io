@@ -1,0 +1,86 @@
+:root {
+  --bg-color: #f0f2f5;
+  --gap: 15px;
+}
+
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  margin: 0;
+}
+
+/* The Bento Grid Logic */
+.bento-container {
+  display: grid;
+  gap: var(--gap);
+  width: 90vw;
+  height: 90vh;
+  max-width: 1000px;
+  max-height: 800px;
+}
+
+/*
+Specific classes for each event target
+*/
+.bento-container.rows-3-1-1 {
+  grid-template-rows: 3fr 1fr 1fr;
+}
+
+.bento-container.rows-1-3-1 {
+  grid-template-rows: 1fr 3fr 1fr;
+}
+
+.bento-container.rows-1-1-3 {
+  grid-template-rows: 1fr 1fr 3fr;
+}
+
+.bento-container.cols-3-1-1 {
+  grid-template-columns: 3fr 1fr 1fr;
+}
+
+.bento-container.cols-1-3-1 {
+  grid-template-columns: 1fr 3fr 1fr;
+}
+
+.bento-container.cols-1-1-3 {
+  grid-template-columns: 1fr 1fr 3fr;
+}
+
+.bento-item {
+  background-color: var(--card-color);
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(255, 252, 225, 0.25);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+  color: #333;
+  position: relative;
+  cursor: pointer;
+  overflow: hidden;
+  border: 1px solid rgba(255, 252, 225, 0.5);
+
+  img {
+    position: absolute;
+    inset: 0;
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+  }
+
+  .image-overlay {
+    position: absolute;
+    inset: 0;
+    background-color: #333;
+    opacity: 0;
+    z-index: 2;
+  }
+}
+
+/* Hover Effect: Scale up and bring to front */
+.bento-item:hover {
+  z-index: 10;
+}
