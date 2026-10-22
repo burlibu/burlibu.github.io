@@ -42,24 +42,19 @@
           <p class="label turn" id="turn">Turno I di VI</p>
         </div>
         <nav class="mast-tools">
-          <button class="tool" id="rulesBtn" aria-expanded="false" aria-controls="rules">Regole</button>
-          <button class="tool" id="newBtn">Nuova partita</button>
+          <button class="tool" id="menuBtn" aria-haspopup="dialog">Menu</button>
         </nav>
       </header>
 
-      <section class="sheet rules" id="rules" hidden>
-        <p class="label">Foglio di regole · Plate 00</p>
-        <ol>
-          <li><b>Sei turni.</b> Ogni turno scegli una carta dalla mano e un quarto dello scudo. Il Conte sceglie nello stesso momento, senza vedere la tua mossa.</li>
-          <li><b>Quattro quarti.</b> Ogni quarto va a chi ha la forza totale più alta e vale le corone indicate. Vince chi ha più corone; in parità conta la forza totale.</li>
-          <li><b>Campi.</b> Ogni quarto ha un campo con una regola propria: bonus a una tintura, corone doppie, posti limitati o vittoria al più basso.</li>
-          <li><b>Legge delle tinture.</b> Metallo su colore e colore su metallo: una carta ottiene +1 se è di classe opposta alla tua carta giocata più di recente in quel quarto. Metalli: oro e argento. Colori: rosso, azzurro, verde, nero.</li>
-          <li><b>Bestie.</b> Ogni bestia ha un potere: alcune agiscono nel proprio quarto, altre nei quarti confinanti, cioè quelli separati da una sola piega. Tocca una carta sullo scudo per leggerla e vedere da dove viene la sua forza.</li>
-          <li><b>Corone in più.</b> Ogni Torre aggiunge una corona al quarto, per chi lo conquista. Il Pavone ne aggiunge una solo al suo lato. Se in un quarto ha carte un solo lato, il quarto è suo, anche sul Campo rovesciato.</li>
-        </ol>
-      </section>
-
-      <p class="label status"><span id="handHint">Scegli una carta, poi un quarto</span><span id="deckInfo">Mazzo: 12</span></p>
+      <div class="label status">
+        <span id="handHint">Scegli una carta, poi un quarto</span>
+        <span class="status-tools">
+          <button class="tool mini-tool" id="cancelBtn" hidden>Annulla scelta</button>
+          <button class="tool mini-tool" id="edictBtn" aria-pressed="false" hidden>Editto</button>
+          <span id="deckInfo">Mazzo: 12</span>
+        </span>
+      </div>
+      <p class="reveal" id="reveal" aria-live="polite" hidden></p>
 
       <main class="table">
         <section class="board-wrap">
@@ -83,7 +78,7 @@
       </main>
 
       <section class="hand-wrap">
-        <div class="hand" id="hand" role="listbox" aria-label="La tua mano"></div>
+        <div class="hand" id="hand" role="group" aria-label="La tua mano"></div>
       </section>
     </div>
 
@@ -93,9 +88,89 @@
         <div class="end-seal" id="endSeal" aria-hidden="true"></div>
         <h2 id="endTitle">Vittoria</h2>
         <p id="endText"></p>
-        <button class="tool solid" id="againBtn">Nuova partita</button>
+        <div class="end-sum" id="endSum"></div>
+        <div class="end-tools">
+          <button class="tool solid" id="againBtn">Nuova partita</button>
+          <button class="tool" id="endClose">Guarda lo scudo</button>
+        </div>
       </div>
     </div>
+
+    <dialog class="sheet menusheet" id="menu" aria-labelledby="menuTitle">
+      <header class="menu-head">
+        <div>
+          <p class="label">Archivio araldico · Indice</p>
+          <h2 id="menuTitle">Menu</h2>
+        </div>
+        <button class="tool" id="menuClose">Chiudi</button>
+      </header>
+      <div class="tabs" role="tablist" aria-label="Sezioni del menu">
+        <button role="tab" id="tab-partita" aria-controls="pane-partita">Partita</button>
+        <button role="tab" id="tab-regole" aria-controls="pane-regole">Regole</button>
+        <button role="tab" id="tab-bestiario" aria-controls="pane-bestiario">Bestiario</button>
+        <button role="tab" id="tab-vista" aria-controls="pane-vista">Presentazione</button>
+        <button role="tab" id="tab-conte" aria-controls="pane-conte">Conte</button>
+      </div>
+
+      <section class="pane" role="tabpanel" id="pane-partita" aria-labelledby="tab-partita">
+        <fieldset>
+          <legend class="label">Formato</legend>
+          <div class="choices" id="formatChoices"></div>
+        </fieldset>
+        <label class="check">
+          <input type="checkbox" id="edictPref" />
+          <span><b>Regola dell'Editto</b> Una volta per partita, dal turno II, puoi dichiarare l'Editto insieme alla carta: il quarto in cui la posi vale +1 corona, solo per te e solo se lo conquisti. Il Conte ha lo stesso diritto.</span>
+        </label>
+        <p class="small">Formato ed Editto valgono dalla prossima partita.</p>
+        <div class="new-row">
+          <button class="tool solid" id="newBtn">Nuova partita</button>
+          <span class="confirm" id="confirmNew" hidden>
+            <span>La partita in corso andrà persa.</span>
+            <button class="tool solid" id="confirmYes">Ricomincia</button>
+            <button class="tool" id="confirmNo">Continua a giocare</button>
+          </span>
+        </div>
+      </section>
+
+      <section class="pane" role="tabpanel" id="pane-regole" aria-labelledby="tab-regole" hidden>
+        <div class="rule-cards">
+          <article><p class="label">I · Il turno</p><p>Scegli una carta dalla mano, poi un quarto dello scudo. Il Conte sceglie nello stesso momento e le due carte si scoprono insieme. Sei turni; si pesca una carta dopo ognuno dei primi cinque.</p></article>
+          <article><p class="label">II · I campi</p><p>Ogni quarto ha un campo con una regola propria: bonus a una tintura, corone doppie, al massimo due carte per lato, o vittoria al totale più basso. La regola è scritta sotto il nome del quarto.</p></article>
+          <article><p class="label">III · Le tinture</p><p>Metalli: oro e argento. Colori: rosso, azzurro, verde, nero. Una carta prende +1 se è di classe opposta alla tua carta giocata più di recente in quel quarto. La prima carta non ne prende.</p></article>
+          <article><p class="label">IV · Le corone</p><p>Ogni quarto va al totale più alto e vale una corona, due sul Campo d'argento. Ogni Torre aggiunge una corona per chi conquista il quarto; Pavone ed Editto ne aggiungono una solo al proprio lato. Vince chi ha più corone; in parità conta la forza totale.</p></article>
+          <article><p class="label">V · Casi speciali</p><p>Se in un quarto ha carte un solo lato, il quarto è suo, anche sul Campo rovesciato. La forza di una carta non scende sotto zero. Quarti confinanti: quelli separati da una sola piega. Tocca una carta sullo scudo per vedere da dove viene la sua forza.</p></article>
+        </div>
+      </section>
+
+      <section class="pane" role="tabpanel" id="pane-bestiario" aria-labelledby="tab-bestiario" hidden>
+        <div class="bestiary-tools">
+          <label class="search"><span class="label">Cerca</span><input type="search" id="beastSearch" placeholder="Nome della bestia" autocomplete="off" /></label>
+          <div class="tint-filter" id="tintFilter" role="group" aria-label="Filtra per tintura"></div>
+          <label class="check inline"><input type="checkbox" id="beastInGame" /><span>Solo questa partita</span></label>
+        </div>
+        <p class="small" id="beastCount" aria-live="polite"></p>
+        <div class="bestiary" id="bestiary"></div>
+      </section>
+
+      <section class="pane" role="tabpanel" id="pane-vista" aria-labelledby="tab-vista" hidden>
+        <label class="check">
+          <input type="checkbox" id="motionPref" />
+          <span><b>Animazioni ridotte</b> Le carte compaiono senza movimento. Se il sistema chiede meno movimento, le animazioni sono già ridotte.</span>
+        </label>
+        <fieldset>
+          <legend class="label">Dimensione del testo</legend>
+          <div class="choices row-choices" id="sizeChoices"></div>
+        </fieldset>
+      </section>
+
+      <section class="pane" role="tabpanel" id="pane-conte" aria-labelledby="tab-conte" hidden>
+        <fieldset>
+          <legend class="label">Stile del Conte</legend>
+          <div class="choices" id="conteChoices"></div>
+        </fieldset>
+        <p class="small">Lo stile cambia solo quanto il Conte va a caso nelle sue scelte: regole e carte restano le stesse. Vale da subito.</p>
+      </section>
+    </dialog>
 
     <div class="veil" id="peek" hidden>
       <div class="sheet peeksheet" role="dialog" aria-modal="true" aria-labelledby="peekTitle">

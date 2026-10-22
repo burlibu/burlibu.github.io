@@ -1,7 +1,9 @@
 // Blasone engine: a six-turn duel of heraldic beasts over the four quarters of
 // a shield. Both sides play one card a turn at the same time; each quarter goes
-// to the higher total and is worth crowns. DOM-free, so node can play whole
-// games (module.exports at the bottom).
+// to the higher total and is worth crowns. Two formats: Classico deals the 16
+// beasts of the base set and the Crepuscolo, Crepuscolo draws 16 from the
+// whole catalogue for the game. The Editto is an optional rule. DOM-free, so
+// node can play whole games (module.exports at the bottom).
 (function (root) {
   const TINCT = {
     oro: { name: "Oro", metal: true },
@@ -30,6 +32,11 @@
     tasso: { name: "Tasso", glyph: "🦡", power: 4, t: "nero", ab: "Tenacia", text: "Le abilità avversarie non possono ridurne la forza." },
     fenice: { name: "Fenice", glyph: "🐦‍🔥", power: 3, t: "oro", ab: "Rinascita", text: "+3 se senza questo potere il suo quarto andrebbe all'avversario." },
     pavone: { name: "Pavone", glyph: "🦚", power: 3, t: "argento", ab: "Ostentazione", text: "Se è la tua prima carta nel quarto, il quarto vale +1 corona solo per te." },
+    // third house: Le Fiere, only in the Crepuscolo format
+    orso: { name: "Orso", glyph: "🐻", power: 4, t: "oro", ab: "Custodia", text: "+1 se, quando è posato, controlli già un quarto confinante." },
+    salamandra: { name: "Salamandra", glyph: "🦎", power: 3, t: "rosso", ab: "Brace", text: "+2 sul Campo d'oro e sul Campo di rosso." },
+    cinghiale: { name: "Cinghiale", glyph: "🐗", power: 3, t: "nero", ab: "Impeto", text: "+2 se è stata la prima carta posata nel suo quarto (anche insieme a una avversaria)." },
+    scorpione: { name: "Scorpione", glyph: "🦂", power: 5, t: "verde", ab: "Famelica", text: "−1 a ogni altra tua carta nel suo quarto." },
   };
 
   // each game deals four fields, one per quarter
@@ -43,6 +50,20 @@
     { id: "stretto", name: "Campo stretto", t: "argento", text: "Al massimo 2 carte per lato." },
     { id: "rovescio", name: "Campo rovesciato", t: "nero", text: "Vince il totale più basso; se un solo lato ha carte, è suo." },
   ];
+
+  const HOUSES = [
+    { id: "base", name: "Bestiario", cards: ["leone", "aquila", "serpe", "drago", "cervo", "unicorno", "lupo", "delfino", "gallo", "cigno", "gufo", "torre"] },
+    { id: "crepuscolo", name: "Case del Crepuscolo", cards: ["volpe", "tasso", "fenice", "pavone"] },
+    { id: "fiere", name: "Le Fiere", cards: ["orso", "salamandra", "cinghiale", "scorpione"] },
+  ];
+  const HOUSE = {};
+  HOUSES.forEach((h) => h.cards.forEach((id) => (HOUSE[id] = h)));
+  const FORMATS = {
+    classico: { name: "Classico", text: "Le sedici carte del Bestiario e del Crepuscolo." },
+    crepuscolo: { name: "Crepuscolo", text: "Sedici carte estratte a sorte dall'intero catalogo, senza doppioni." },
+  };
+  const CLASSIC = HOUSES[0].cards.concat(HOUSES[1].cards);
+  const DECK = 16;
 
   const TURNS = 6;
   const QUARTERS = ["Capo destro", "Capo sinistro", "Punta destra", "Punta sinistra"];
@@ -70,15 +91,21 @@
     return a;
   }
 
-  function create(seed) {
+  // opts: { format: "classico" | "crepuscolo", editto: bool }
+  function create(seed, opts = {}) {
+    const format = FORMATS[opts.format] ? opts.format : "classico";
     const s = {
-      seed, rand: rng(seed), turn: 1, uid: 0, over: null, last: null, log: [],
+      seed, format, rand: rng(seed), turn: 1, uid: 0, over: null, last: null, log: [],
       fields: [], decks: {}, hands: { me: [], foe: [] },
       board: [0, 1, 2, 3].map(() => ({ me: [], foe: [] })),
+      edict: opts.editto ? { me: null, foe: null } : null,
     };
+    // Classico draws nothing extra from the rng, so a seed plays as before;
+    // both sides share the Crepuscolo selection
+    s.pool = format === "classico" ? CLASSIC.slice() : shuffle(s, Object.keys(BEASTS)).slice(0, DECK);
     s.fields = shuffle(s, FIELDS).slice(0, 4);
     for (const side of SIDES) {
-      s.decks[side] = shuffle(s, Object.keys(BEASTS));
+      s.decks[side] = shuffle(s, s.pool);
       for (let i = 0; i < 4; i++) draw(s, side);
     }
     return s;
@@ -90,6 +117,18 @@
 
   const cap = (s, q) => (s.fields[q].id === "stretto" ? 2 : 3);
   const legal = (s, side, q) => !s.over && s.board[q][side].length < cap(s, q);
+  // the Editto can be declared once, from turn II
+  const edictOpen = (s, side) => !!s.edict && !s.edict[side] && s.turn >= 2 && !s.over;
+
+  // what a card remembers from the moment it is laid: the turn (Volpe,
+  // Cinghiale) and, for the Orso, whether you held a neighbouring quarter.
+  // leads are the quarters' owners before this turn's cards
+  function lay(s, side, card, q, leads) {
+    card.at = s.turn;
+    if (card.id === "orso") card.guard = NEAR[q].some((n) => leads[n] === side);
+    s.board[q][side].push(card);
+  }
+  const leads = (s) => evaluate(s).quarters.map((x) => x.lead);
 
   // ---------- scoring: every number is recomputed from the board ----------
   function evaluate(s) {
@@ -120,10 +159,14 @@
           if (c.id === "delfino" && q >= 2) add(2, b.ab);
           if (c.id === "gallo" && q < 2) add(2, b.ab);
           if (c.id === "volpe" && opp.some((o) => o.at < c.at)) add(2, b.ab);
+          if (c.id === "orso" && c.guard) add(1, b.ab);
+          if (c.id === "salamandra" && (f.id === "oro" || f.id === "rosso")) add(2, b.ab);
+          if (c.id === "cinghiale" && !own.concat(opp).some((o) => o.at < c.at)) add(2, b.ab);
           // abilities of the other cards around it (the Tasso shrugs off the enemy's)
           const tough = c.id === "tasso";
           add(own.filter((o) => o !== c && o.id === "cervo").length, "Cervo");
           add(-2 * own.filter((o) => o !== c && o.id === "drago").length, "Drago");
+          add(-own.filter((o) => o !== c && o.id === "scorpione").length, "Scorpione");
           if (!tough) add(-has(q, other(side), "serpe"), "Serpe");
           for (const n of NEAR[q]) {
             add(has(n, side, "cigno"), "Cigno");
@@ -152,9 +195,15 @@
         lead = leader();
       }
       const crowns = (f.id === "argento" ? 2 : 1) + has(q, "me", "torre") + has(q, "foe", "torre");
-      // the Pavone's crown only goes to its own side
-      const bonus = { me: +(sq.me[0]?.id === "pavone"), foe: +(sq.foe[0]?.id === "pavone") };
-      return { q, field: f, crowns, bonus, me: sides.me, foe: sides.foe, lead };
+      // crowns that only go to one side: the Pavone's and the Editto's
+      const extra = {};
+      for (const side of SIDES) {
+        extra[side] = [];
+        if (sq[side][0]?.id === "pavone") extra[side].push("Pavone");
+        if (s.edict && s.edict[side] && s.edict[side].q === q) extra[side].push("Editto");
+      }
+      const bonus = { me: extra.me.length, foe: extra.foe.length };
+      return { q, field: f, crowns, bonus, extra, me: sides.me, foe: sides.foe, lead };
     });
     const score = { me: 0, foe: 0 };
     quarters.forEach((x) => x.lead && (score[x.lead] += x.crowns + x.bonus[x.lead]));
@@ -174,40 +223,57 @@
       return v + p * (x.crowns + x.bonus[side]) - (1 - p) * (x.crowns + x.bonus[other(side)]);
     }, 0);
   }
+  // noise is how loosely the AI plays: 0 always takes the best-looking move
   function choose(s, side, noise = 0.35) {
     let best = null;
+    const before = leads(s);
     s.hands[side].forEach((card, i) => {
-      card.at = s.turn;
       for (let q = 0; q < 4; q++) {
         if (!legal(s, side, q)) continue;
-        s.board[q][side].push(card);
+        lay(s, side, card, q, before);
         const v = value(s, side) + s.rand() * noise;
         s.board[q][side].pop();
         if (!best || v > best.v) best = { i, q, v };
       }
     });
+    // the Editto waits for a contested quarter the move clearly holds once
+    // the board has taken shape, or is spent on the last turn rather than
+    // wasted
+    if (best && edictOpen(s, side)) {
+      lay(s, side, s.hands[side][best.i], best.q, before);
+      const x = evaluate(s).quarters[best.q];
+      s.board[best.q][side].pop();
+      let m = x[side].total - x[other(side)].total;
+      if (x.field.id === "rovescio") m = -m;
+      const contested = x[other(side)].cards.length > 0;
+      best.edict = (s.turn >= 4 && contested && m >= 3) || s.turn === TURNS;
+    }
     return best;
   }
 
-  // both sides commit one card; me plays hand[i] into quarter q
-  function play(s, i, q, foeMove) {
+  // both sides commit one card; me plays hand[i] into quarter q, and with
+  // edict declares the Editto on that same quarter
+  function play(s, i, q, foeMove, edict) {
     const card = s.hands.me[i];
     if (!card || !legal(s, "me", q)) return false;
     const f = foeMove || choose(s, "foe");
     const fc = f && s.hands.foe[f.i];
+    const before = leads(s);
     s.hands.me.splice(i, 1);
-    card.at = s.turn;
-    s.board[q].me.push(card);
+    lay(s, "me", card, q, before);
     if (fc) {
-      fc.at = s.turn;
       s.hands.foe.splice(f.i, 1);
-      s.board[f.q].foe.push(fc);
+      lay(s, "foe", fc, f.q, before);
     }
+    const declared = { me: edict && edictOpen(s, "me"), foe: fc && f.edict && edictOpen(s, "foe") };
+    if (declared.me) s.edict.me = { q, turn: s.turn };
+    if (declared.foe) s.edict.foe = { q: f.q, turn: s.turn };
     s.last = { me: card.uid, foe: fc && fc.uid };
+    const said = (c, at, ed) => `${BEASTS[c.id].name} nel quarto ${ROMAN[at]}${ed ? ", con l'Editto" : ""}`;
     s.log.unshift({
       turn: s.turn,
-      me: `${BEASTS[card.id].name} nel quarto ${ROMAN[q]}`,
-      foe: fc ? `${BEASTS[fc.id].name} nel quarto ${ROMAN[f.q]}` : "nessuna carta",
+      me: said(card, q, declared.me),
+      foe: fc ? said(fc, f.q, declared.foe) : "nessuna carta",
     });
     if (s.turn >= TURNS) return finish(s), true;
     s.turn++;
@@ -227,7 +293,7 @@
     s.over = w;
   }
 
-  const api = { TINCT, BEASTS, FIELDS, TURNS, QUARTERS, ROMAN, NEAR, SIDES, create, legal, cap, evaluate, choose, play };
+  const api = { TINCT, BEASTS, FIELDS, HOUSES, HOUSE, FORMATS, TURNS, QUARTERS, ROMAN, NEAR, SIDES, create, legal, cap, edictOpen, evaluate, choose, play };
   if (typeof module !== "undefined") module.exports = api;
   else root.Blasone = api;
 })(this);
