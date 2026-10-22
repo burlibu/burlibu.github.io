@@ -234,7 +234,13 @@ body { padding-bottom: 190px; }
 /* ---------- end ---------- */
 .veil { position: fixed; inset: 0; z-index: 20; display: grid; place-items: center; padding: 16px; background: rgba(12, 12, 12, 0.8); }
 .veil[hidden] { display: none; }
-.endsheet { width: min(480px, 100%); padding: 36px 36px 32px; text-align: center; border-top: 6px solid var(--ink); animation: lay 0.5s cubic-bezier(0.2, 0.8, 0.2, 1); }
+.endsheet { width: min(560px, 100%); max-height: calc(100vh - 32px); overflow: auto; padding: 36px 36px 32px; text-align: center; border-top: 6px solid var(--ink); }
+/* the end sheet fades in over the final board (no movement when reduced:
+   the global reduced-motion rules switch the transitions off) */
+#end { transition: opacity 0.6s ease; }
+#end .endsheet { transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.6s ease; }
+#end.entering { opacity: 0; }
+#end.entering .endsheet { opacity: 0; transform: translateY(14px); }
 .endsheet .label { color: var(--sepia); }
 .end-seal { width: 120px; height: 120px; margin: 18px auto 8px; }
 .endsheet h2 { font-size: 48px; font-weight: 900; text-transform: uppercase; line-height: 1; }
@@ -247,6 +253,22 @@ body { padding-bottom: 190px; }
 .end-table thead th { font: 700 9px var(--label); letter-spacing: 0.18em; text-transform: uppercase; color: var(--sepia); border-top: 0; border-bottom: 1px solid var(--ink); }
 .end-table small { display: block; font-size: 12px; color: var(--sepia); }
 .end-sum > .label { margin: 16px 0 6px; }
+.end-sum > .small { margin: 0 0 8px; text-align: center; }
+.q-btn { display: block; width: 100%; padding: 0; border: 0; background: none; text-align: left; font: 600 15px var(--text); cursor: pointer; text-decoration: underline dotted rgba(15, 15, 16, 0.5); text-underline-offset: 3px; }
+.q-btn::before { content: "▸ "; font-size: 12px; color: var(--ochre-2); }
+.q-btn[aria-expanded="true"]::before { content: "▾ "; }
+.q-btn:focus-visible { outline: 2px solid var(--ochre); outline-offset: 2px; }
+.q-detail td { background: rgba(200, 138, 59, 0.1); padding: 10px 10px 12px; font-size: 14px; line-height: 1.35; }
+.q-detail p { margin: 0 0 8px; }
+.qd-sides { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 16px; margin-bottom: 8px; }
+.qd-sides .label { color: var(--sepia); margin-bottom: 3px; }
+.qd-sides ul, .qd-crowns { list-style: none; padding: 0; margin: 0; }
+.qd-sides li { padding: 1px 0; }
+.qd-sides small { display: inline; font-size: 12px; color: var(--sepia); }
+.qd-crowns li { padding-left: 14px; position: relative; }
+.qd-crowns li::before { content: "♛"; position: absolute; left: 0; font-size: 10px; color: var(--ochre-2); }
+.end-code { margin: -8px 0 16px !important; }
+code { font: 600 14px/1 ui-monospace, "Cascadia Mono", Consolas, monospace; letter-spacing: 0.04em; }
 .end-weights { list-style: none; padding: 0; font-size: 15px; }
 .end-weights li { padding: 3px 0; }
 .end-weights b { display: inline-block; min-width: 72px; font: 700 10px var(--label); letter-spacing: 0.18em; text-transform: uppercase; }
@@ -275,6 +297,26 @@ body { padding-bottom: 190px; }
 .new-row { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
 .confirm { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; font-style: italic; color: var(--sepia); }
 .confirm[hidden] { display: none; }
+.code-box { display: grid; gap: 8px; padding: 14px 16px; border: 1px solid rgba(15, 15, 16, 0.35); }
+.code-box p:first-child { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; }
+.code-box .label { color: var(--sepia); }
+.code-box .tool { padding: 7px 12px; }
+.code-form { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; }
+.code-form input, .field-in input, .field-in textarea, .report-out { padding: 8px 10px; border: 1px solid var(--ink); background: var(--paper); font: 16px var(--text); color: var(--ink); border-radius: 0; }
+.code-form input { width: 190px; max-width: 100%; font-family: ui-monospace, Consolas, monospace; font-size: 15px; }
+.report { display: grid; gap: 14px; }
+.report-auto { padding: 10px 12px; background: rgba(200, 138, 59, 0.12); font-size: 15px; }
+.report-auto .label { display: block; color: var(--sepia); margin-bottom: 4px; }
+.scale { display: flex; flex-wrap: wrap; gap: 6px; }
+.pick { display: inline-flex; }
+.pick input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.pick span { display: inline-block; min-width: 44px; min-height: 40px; padding: 9px 12px; border: 1px solid rgba(15, 15, 16, 0.4); text-align: center; cursor: pointer; font: 700 12px var(--label); letter-spacing: 0.1em; text-transform: uppercase; }
+.pick input:checked + span { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.pick input:focus-visible + span { outline: 2px solid var(--ochre); outline-offset: 2px; }
+.field-in { display: grid; gap: 6px; }
+.field-in .label { color: var(--sepia); }
+.field-in textarea, .report-out { width: 100%; resize: vertical; }
+.report-out { min-height: 160px; font: 13px/1.4 ui-monospace, Consolas, monospace; }
 .rule-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; }
 .rule-cards article { padding: 14px 16px; border: 1px solid var(--ink); font-size: 16px; line-height: 1.35; }
 .rule-cards .label { margin-bottom: 6px; color: var(--sepia); }
@@ -373,6 +415,8 @@ body { padding-bottom: 190px; }
   .bestiary { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 16px 10px; }
   .end-table { font-size: 14px; }
   .end-table th, .end-table td { padding: 5px 3px; }
+  .endsheet { padding: 26px 16px 22px; }
+  .qd-sides { grid-template-columns: 1fr; }
 }
 /* ---------- coloured cards (menu: "Carte a colori") ----------
    the tincture colours frame, shield, ribbons and ink; the house sets the
