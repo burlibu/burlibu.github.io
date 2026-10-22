@@ -10,6 +10,7 @@
   const params = new URLSearchParams(location.search);
   const preview = params.has("preview");
   const NUM = ["", "I", "II", "III", "IV", "V", "VI"];
+  const VERSION = "0.0.6";
   const KEYS = Object.keys(B.BEASTS);
 
   // ---------- woodcut engraving ----------
@@ -73,8 +74,18 @@
   };
   const SIZES = { 1: "Normale", 1.15: "Grande", 1.3: "Molto grande" };
   const prefs = { format: "classico", editto: false, conte: "standard", motion: false, size: 1, colors: true };
+  // stored prefs are untrusted: copy only known keys holding allowed values
+  const own = (o, k) => typeof k === "string" && Object.prototype.hasOwnProperty.call(o, k);
+  function readPrefs(raw) {
+    if (!raw || typeof raw !== "object" || Array.isArray(raw)) return;
+    if (own(B.FORMATS, raw.format)) prefs.format = raw.format;
+    if (own(CONTE, raw.conte)) prefs.conte = raw.conte;
+    if (own(SIZES, String(raw.size)) && typeof raw.size === "number") prefs.size = raw.size;
+    for (const k of ["editto", "motion", "colors"]) if (typeof raw[k] === "boolean") prefs[k] = raw[k];
+  }
   try {
-    Object.assign(prefs, JSON.parse(localStorage.getItem("blasone.prefs")) || {});
+    const raw = localStorage.getItem("blasone.prefs");
+    if (raw && raw.length < 500) readPrefs(JSON.parse(raw));
   } catch (e) {}
   const save = () => {
     try {
@@ -89,16 +100,27 @@
   }
 
   // ---------- state ----------
-  let s, picked = null, edictArmed = false;
-  function newGame() {
-    const seed = +params.get("seed") || (Math.random() * 1e9) | 0;
-    s = B.create(seed, preview ? {} : { format: prefs.format, editto: prefs.editto });
+  // ?seed= is untrusted too: a whole number in the rng's range, or ignored
+  const seedParam = /^\d{1,10}$/.test(params.get("seed") || "") && +params.get("seed") <= 0xffffffff ? +params.get("seed") : null;
+  let s, picked = null, edictArmed = false, conte = "standard", endTimer = 0;
+  // from: a parsed game code (parseCode) to replay, or nothing for a new game
+  function newGame(from) {
+    const g = from || {
+      seed: seedParam ?? (Math.random() * 1e9) | 0,
+      format: preview ? "classico" : prefs.format,
+      editto: !preview && prefs.editto,
+      conte: preview ? "standard" : prefs.conte,
+    };
+    s = B.create(g.seed, g);
+    conte = g.conte;
     picked = null;
     edictArmed = false;
-    $("end").hidden = true;
-    $("reveal").hidden = true;
+    clearTimeout(endTimer);
+    hideVeil($("end"));
+    $("reveal").textContent = "Le mosse dei due lati si rivelano insieme, a fine turno.";
     render();
   }
+  const gameCode = () => B.code(s, conte);
   const playing = () => s.log.length > 0 && !s.over;
 
   // ---------- board ----------
@@ -150,7 +172,7 @@
     $("scoreMe").textContent = e.score.me;
     $("scoreFoe").textContent = e.score.foe;
     $("turn").textContent = s.over ? "Torneo concluso" : `Turno ${NUM[s.turn]} di ${NUM[B.TURNS]}`;
-    $("reveal").textContent = s.log.length ? `Mosse rivelate · Turno ${NUM[s.log[0].turn]} — Tu: ${s.log[0].me} · Il Conte: ${s.log[0].foe}` : "";
+    if (s.log.length) $("reveal").textContent = `Mosse rivelate insieme · Turno ${NUM[s.log[0].turn]} — Tu: ${s.log[0].me} · Il Conte: ${s.log[0].foe}`;
   }
 
   // ---------- hand ----------
@@ -179,6 +201,7 @@
       ? "Scegli una carta, poi un quarto"
       : `${B.BEASTS[s.hands.me[picked].id].name}: ora scegli un quarto${edictArmed ? ", con l'Editto" : ""}`;
     $("cancelBtn").hidden = picked === null;
+    $("endBtn").hidden = !s.over;
     // the Editto: shown only when the rule is on
     const eb = $("edictBtn"), used = s.edict && s.edict.me;
     eb.hidden = !s.edict;
@@ -196,7 +219,7 @@
     $("foeInfo").textContent = `${n} ${n === 1 ? "carta" : "carte"} in mano · ${s.decks.foe.length} nel mazzo`;
     $("foeHand").innerHTML = Array.from({ length: n }, () => `<span class="back"></span>`).join("");
     $("log").innerHTML = s.log.length
-      ? s.log.map((l) => `<li><b>Turno ${NUM[l.turn]}</b>Tu: ${esc(l.me)}.<br />Il Conte: ${esc(l.foe)}.</li>`).join("")
+      ? s.log.map((l) => `<li><b>Turno ${NUM[l.turn]} · rivelate insieme</b>Tu: ${esc(l.me)}.<br />Il Conte: ${esc(l.foe)}.</li>`).join("")
       : `<li class="empty">Il torneo sta per cominciare. Le prime carte si scoprono insieme.</li>`;
   }
 
@@ -204,7 +227,15 @@
     renderBoard();
     renderHand();
     renderSide();
-    if (s.over) showEnd();
+  }
+
+  // ---------- veils: the end sheet and the peek block the desk behind them ----------
+  const desk = document.querySelector(".desk");
+  const reduced = () => prefs.motion || matchMedia("(prefers-reduced-motion: reduce)").matches;
+  function hideVeil(v) {
+    v.hidden = true;
+    v.classList.remove("entering");
+    desk.inert = !$("end").hidden || !$("peek").hidden;
   }
 
   // ---------- peek: the full sheet of a card on the shield ----------
@@ -222,19 +253,21 @@
       (c.mods.reduce((t, m) => t + m.v, c.base) < 0 ? `<li><span>La forza non scende sotto zero</span><b></b></li>` : "");
     peekFrom = from;
     $("peek").hidden = false;
+    desk.inert = true;
     $("peekClose").focus();
   }
   function closePeek() {
-    $("peek").hidden = true;
+    hideVeil($("peek"));
     if (peekFrom && peekFrom.isConnected) peekFrom.focus();
     peekFrom = null;
   }
   $("peekClose").onclick = closePeek;
   $("peek").addEventListener("click", (e) => e.target === $("peek") && closePeek());
   addEventListener("keydown", (e) => {
-    if (e.key !== "Escape") return;
+    if (e.key !== "Escape" || $("menu").open) return;
     if (!$("peek").hidden) closePeek();
-    else if (picked !== null && !$("menu").open) cancelPick();
+    else if (!$("end").hidden && !$("end").inert) closeEnd();
+    else if (picked !== null) cancelPick();
   });
 
   // ---------- end ----------
@@ -242,15 +275,52 @@
   // weighed most on each side
   const WHO = { me: "Tu", foe: "Il Conte" };
   const named = (why) => (why === "campo" ? "Campi" : why === "tinture" ? "Tinture" : why);
+  const OF = { me: "tua", foe: "del Conte" };
+  // why a quarter went where it went, in words
+  function reason(x) {
+    const a = x.me, z = x.foe, rov = x.field.id === "rovescio";
+    if (!a.cards.length && !z.cards.length) return "Nessuno ha giocato qui.";
+    if (!a.cards.length || !z.cards.length)
+      return `Solo ${x.lead === "me" ? "tu hai" : "il Conte ha"} carte qui: il quarto è ${OF[x.lead]}${rov ? ", anche sul Campo rovesciato" : ""}.`;
+    if (!x.lead) return `Totali pari, ${a.total} a ${z.total}: il quarto non va a nessuno.`;
+    const w = x[x.lead].total, l = x[x.lead === "me" ? "foe" : "me"].total;
+    return rov
+      ? `Campo rovesciato: vince il totale più basso, ${w} contro ${l}. Il quarto è ${OF[x.lead]}.`
+      : `Totale più alto, ${w} contro ${l}: il quarto è ${OF[x.lead]}.`;
+  }
+  // every crown on the quarter, whose it is and whether it was paid
+  function crownLines(x) {
+    const base = x.field.id === "argento" ? 2 : 1, towers = x.crowns - base;
+    const lines = [`Base: ${base}${base === 2 ? " (Campo d'argento)" : ""}, a chi conquista il quarto.`];
+    if (towers) {
+      const by = B.SIDES.map((side) => [side, x[side].cards.filter((c) => c.id === "torre").length]).filter(([, n]) => n);
+      lines.push(`Torri: +${towers} (${by.map(([side, n]) => `${n} ${OF[side]}`).join(", ")}), a chi conquista il quarto.`);
+    }
+    for (const side of B.SIDES)
+      for (const why of x.extra[side])
+        lines.push(`${why} ${OF[side]}: +1 solo ${side === "me" ? "per te" : "per il Conte"}, ${x.lead === side ? "assegnata" : "non assegnata, il quarto non è " + OF[side]}.`);
+    lines.push(x.lead ? `Assegnate: ${x.crowns + x.bonus[x.lead]} ${x.lead === "me" ? "a te" : "al Conte"}.` : "Assegnate: nessuna.");
+    return lines;
+  }
+  function detail(x) {
+    const side = (k) => {
+      const cards = x[k].cards.map((c) => {
+        const mods = c.mods.map((m) => `${signed(m.v)} ${esc(named(m.why) === "Campi" ? x.field.name : named(m.why))}`);
+        return `<li>${esc(B.BEASTS[c.id].name)} <b>${c.power}</b> <small>${c.base} stampata${mods.length ? ", " + mods.join(", ") : ""}</small></li>`;
+      });
+      return `<div><p class="label">${WHO[k]} · totale ${x[k].total}</p><ul>${cards.join("") || "<li><small>nessuna carta</small></li>"}</ul></div>`;
+    };
+    return `<p><b>${esc(x.field.name)}.</b> ${esc(x.field.text)}</p>
+      <div class="qd-sides">${side("me")}${side("foe")}</div>
+      <p><b>Perché.</b> ${esc(reason(x))}</p>
+      <ul class="qd-crowns">${crownLines(x).map((l) => `<li>${esc(l)}</li>`).join("")}</ul>`;
+  }
   function summary(e) {
     const rows = e.quarters.map((x) => {
-      const base = x.field.id === "argento" ? 2 : 1, towers = x.crowns - base;
-      const parts = [`${base} base`];
-      if (towers) parts.push(`${towers} Torr${towers > 1 ? "i" : "e"}`);
-      if (x.lead) x.extra[x.lead].forEach((why) => parts.push(`1 ${why}`));
       const won = x.lead ? x.crowns + x.bonus[x.lead] : 0;
-      return `<tr><th scope="row">${B.ROMAN[x.q]} <small>${esc(x.field.name)}</small></th><td>${x.me.total}</td><td>${x.foe.total}</td>
-        <td>${x.lead ? WHO[x.lead] : "Nessuno"}</td><td>${won ? `${won} <small>(${parts.join(" + ")})</small>` : "—"}</td></tr>`;
+      return `<tr><th scope="row"><button type="button" class="q-btn" aria-expanded="false" aria-controls="qd-${x.q}">${B.ROMAN[x.q]} <small>${esc(x.field.name)}</small></button></th><td>${x.me.total}</td><td>${x.foe.total}</td>
+        <td>${x.lead ? WHO[x.lead] : "Nessuno"}</td><td>${won || "—"}</td></tr>
+        <tr class="q-detail" id="qd-${x.q}" hidden><td colspan="5">${detail(x)}</td></tr>`;
     });
     const weights = B.SIDES.map((side) => {
       const sum = {};
@@ -258,9 +328,16 @@
       const top = Object.entries(sum).filter(([, v]) => v).sort((a, b) => Math.abs(b[1]) - Math.abs(a[1])).slice(0, 3);
       return `<li><b>${WHO[side]}</b> ${top.length ? top.map(([k, v]) => `${esc(k)} ${signed(v)}`).join(" · ") : "nessun effetto"}</li>`;
     });
-    return `<table class="end-table"><thead><tr><th scope="col">Quarto</th><th scope="col">Tu</th><th scope="col">Conte</th><th scope="col">Va a</th><th scope="col">Corone</th></tr></thead>
+    return `<p class="small">Tocca un quarto per vedere carte, totali e corone.</p><table class="end-table"><thead><tr><th scope="col">Quarto</th><th scope="col">Tu</th><th scope="col">Conte</th><th scope="col">Va a</th><th scope="col">Corone</th></tr></thead>
       <tbody>${rows.join("")}</tbody></table>
       <p class="label">Gli effetti che hanno pesato</p><ul class="end-weights">${weights.join("")}</ul>`;
+  }
+  // the last move stays on the board for a moment, then the summary fades in;
+  // it takes focus only once it is there
+  function scheduleEnd() {
+    clearTimeout(endTimer);
+    $("handHint").textContent = "Torneo concluso: il riepilogo si apre tra poco";
+    endTimer = setTimeout(showEnd, 1800);
   }
   function showEnd() {
     const e = B.evaluate(s);
@@ -272,9 +349,29 @@
         : `Corone ${e.score.me} a ${e.score.foe}. ${w === "me" ? "Il tuo blasone entra nell'archivio." : "Il Conte di Sable si tiene lo scudo, per ora."}`;
     $("endSum").innerHTML = summary(e);
     $("endSeal").innerHTML = `<svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="56" fill="${w === "me" ? "#c88a3b" : "#0f0f10"}"/><circle cx="60" cy="60" r="48" fill="none" stroke="${w === "me" ? "#0f0f10" : "#c88a3b"}" stroke-width="1.5"/><circle cx="60" cy="60" r="44" fill="none" stroke="${w === "me" ? "#0f0f10" : "#c88a3b"}" stroke-dasharray="2 4"/><text x="60" y="78" text-anchor="middle" font-family="Playfair Display, serif" font-weight="900" font-style="italic" font-size="52" fill="${w === "me" ? "#0f0f10" : "#d29a4a"}">${w === "me" ? "V" : w === "foe" ? "C" : "P"}</text></svg>`;
-    if (preview) return setTimeout(newGame, 2600);
-    $("end").hidden = false;
-    $("againBtn").focus();
+    $("endCode").textContent = gameCode();
+    if (preview) return (endTimer = setTimeout(newGame, 800));
+    const v = $("end");
+    let done = false;
+    const ready = () => {
+      if (done || v.hidden) return;
+      done = true;
+      v.inert = false;
+      $("againBtn").focus();
+    };
+    desk.inert = true;
+    v.hidden = false;
+    if (reduced()) return ready();
+    v.inert = true;
+    v.classList.add("entering");
+    void v.offsetWidth; // start the transition from the hidden state
+    v.classList.remove("entering");
+    v.addEventListener("transitionend", ready, { once: true });
+    setTimeout(ready, 700);
+  }
+  function closeEnd() {
+    hideVeil($("end"));
+    $("endBtn").focus();
   }
 
   // ---------- input ----------
@@ -304,10 +401,10 @@
     if (row && picked !== null && !s.over) {
       const i = picked, q = +row.dataset.q;
       picked = null;
-      B.play(s, i, q, B.choose(s, "foe", (CONTE[prefs.conte] || CONTE.standard).noise), edictArmed);
+      B.play(s, i, q, B.choose(s, "foe", CONTE[conte].noise), edictArmed);
       edictArmed = false;
-      $("reveal").hidden = false;
       render();
+      if (s.over) return scheduleEnd();
       if (e.detail === 0) $("board").querySelector(`.row.me[data-q="${q}"] .mini:last-of-type`)?.focus();
       return;
     }
@@ -320,10 +417,19 @@
     renderHand();
   };
   $("againBtn").onclick = newGame;
-  $("endClose").onclick = () => {
-    $("end").hidden = true;
-    $("menuBtn").focus();
+  $("endClose").onclick = closeEnd;
+  $("endBtn").onclick = showEnd;
+  $("endReport").onclick = () => {
+    hideVeil($("end"));
+    openMenu("tab-riscontro");
   };
+  $("endSum").addEventListener("click", (e) => {
+    const b = e.target.closest(".q-btn");
+    if (!b) return;
+    const open = b.getAttribute("aria-expanded") !== "true";
+    b.setAttribute("aria-expanded", open);
+    $(b.getAttribute("aria-controls")).hidden = !open;
+  });
 
   // ---------- menu ----------
   const menu = $("menu");
@@ -336,6 +442,7 @@
       $(t.getAttribute("aria-controls")).hidden = !on;
     });
     if (tab.id === "tab-bestiario") renderBestiary();
+    if (tab.id === "tab-riscontro") renderReport();
   }
   tabs.forEach((t) => (t.onclick = () => showTab(t)));
   menu.querySelector('[role="tablist"]').addEventListener("keydown", (e) => {
@@ -347,11 +454,17 @@
     t.focus();
     showTab(t);
   });
-  $("menuBtn").onclick = () => {
+  function openMenu(tabId) {
     $("confirmNew").hidden = true;
+    $("codeMsg").textContent = "";
+    $("gameCode").textContent = gameCode();
+    if (tabId) showTab($(tabId));
     renderBestiary();
+    renderReport();
     menu.showModal();
-  };
+  }
+  $("menuBtn").onclick = () => openMenu();
+  $("version").textContent = VERSION;
   $("menuClose").onclick = () => menu.close();
   // a click on the backdrop lands on the dialog itself
   menu.addEventListener("click", (e) => e.target === menu && menu.close());
@@ -388,17 +501,115 @@
     save();
     applyView();
   };
-  $("newBtn").onclick = () => {
-    if (playing()) {
-      $("confirmNew").hidden = false;
-      return $("confirmYes").focus();
+  // leaving a game in progress asks first
+  let pending = null;
+  function leaveThen(fn) {
+    if (!playing()) {
+      menu.close();
+      return fn();
     }
-    menu.close();
-    newGame();
-  };
+    pending = fn;
+    $("confirmNew").hidden = false;
+    $("confirmYes").focus();
+  }
+  $("newBtn").onclick = () => leaveThen(() => newGame());
   $("confirmYes").onclick = () => {
     menu.close();
-    newGame();
+    if (pending) pending();
+    pending = null;
+  };
+  $("codeForm").onsubmit = (e) => {
+    e.preventDefault();
+    const g = B.parseCode($("codeInput").value);
+    if (!g) {
+      $("codeMsg").textContent = "Codice non valido: numeri, un trattino e tre lettere, come 418273-cns.";
+      return $("codeInput").focus();
+    }
+    leaveThen(() => newGame(g));
+  };
+
+  // ---------- copy and download, both local: nothing leaves the device ----------
+  async function copy(text, msg, out) {
+    try {
+      await navigator.clipboard.writeText(text);
+      $(msg).textContent = "Copiato negli appunti.";
+      if (out) $(out).hidden = true;
+    } catch (e) {
+      // no clipboard (insecure context, refused): show the text selected
+      if (out) {
+        $(out).hidden = false;
+        $(out).value = text;
+        $(out).select();
+      }
+      $(msg).textContent = out ? "Copia non riuscita: il testo è qui sotto, già selezionato." : `Copia non riuscita. Il codice è ${text}`;
+    }
+  }
+  $("copyCode").onclick = () => copy(gameCode(), "codeMsg");
+
+  // ---------- feedback sheet ----------
+  const SCALE = ["1", "2", "3", "4", "5"];
+  const LEVEL = { facile: "troppo facile", giusto: "giusto", difficile: "troppo difficile" };
+  const radios = (box, name, values) =>
+    ($(box).innerHTML = values.map(([v, label]) => `<label class="pick"><input type="radio" name="${name}" value="${v}" /><span>${esc(label)}</span></label>`).join(""));
+  radios("rClarity", "clarity", SCALE.map((v) => [v, v]));
+  radios("rResult", "result", SCALE.map((v) => [v, v]));
+  radios("rLevel", "level", Object.entries(LEVEL));
+  // free text goes out as plain text: no control characters, bounded, and a
+  // leading = + - @ is defused so a spreadsheet won't read it as a formula
+  const clean = (t, max) =>
+    String(t)
+      .replace(/[\u0000-\u0008\u000b-\u001f\u007f]/g, "")
+      .slice(0, max)
+      .split("\n")
+      .map((l) => (/^[=+\-@]/.test(l) ? "'" + l : l))
+      .join("\n")
+      .trim();
+  const picked1 = (name, list) => {
+    const r = $("report").querySelector(`input[name="${name}"]:checked`);
+    return r && own(list, r.value) ? r.value : null;
+  };
+  function edictLine() {
+    if (!s.edict) return "regola non attiva";
+    const u = s.edict.me;
+    return u ? `turno ${NUM[u.turn]}, quarto ${B.ROMAN[u.q]}` : "non usato";
+  }
+  function outcome() {
+    const e = B.evaluate(s);
+    if (!s.over) return `partita in corso, turno ${NUM[s.turn]}, corone ${e.score.me} a ${e.score.foe}`;
+    return `${s.over === "me" ? "vittoria" : s.over === "foe" ? "sconfitta" : "pareggio"}, corone ${e.score.me} a ${e.score.foe}`;
+  }
+  function renderReport() {
+    $("reportAuto").innerHTML =
+      `<span class="label">Compilato da solo</span> Codice <code>${esc(gameCode())}</code> · ${esc(B.FORMATS[s.format].name)} · Conte ${esc(CONTE[conte].name.toLowerCase())} · ` +
+      `Editto: ${esc(edictLine())} · Esito: ${esc(outcome())}`;
+  }
+  function reportText() {
+    const clarity = picked1("clarity", { 1: 1, 2: 1, 3: 1, 4: 1, 5: 1 });
+    const result = picked1("result", { 1: 1, 2: 1, 3: 1, 4: 1, 5: 1 });
+    const level = picked1("level", LEVEL);
+    return [
+      `Blasone ${VERSION} · scheda di riscontro`,
+      `Codice partita: ${gameCode()}`,
+      `Formato: ${B.FORMATS[s.format].name} · Editto: ${s.edict ? "attivo" : "non attivo"} · Conte: ${CONTE[conte].name}`,
+      `Esito: ${outcome()}`,
+      `Editto usato: ${edictLine()}`,
+      `Chiarezza delle abilità (1-5): ${clarity || "—"}`,
+      `Leggibilità del risultato (1-5): ${result || "—"}`,
+      `Difficoltà del Conte: ${level ? LEVEL[level] : "—"}`,
+      `Abilità o regole decisive: ${clean($("rDecisive").value, 200) || "—"}`,
+      `Note:`,
+      clean($("rNotes").value, 1000) || "—",
+    ].join("\n");
+  }
+  $("reportCopy").onclick = () => copy(reportText(), "reportMsg", "reportOut");
+  $("reportSave").onclick = () => {
+    const url = URL.createObjectURL(new Blob([reportText() + "\n"], { type: "text/plain;charset=utf-8" }));
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `blasone-${gameCode()}.txt`;
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    $("reportMsg").textContent = "Scheda scaricata.";
   };
   $("confirmNo").onclick = () => menu.close();
 
@@ -442,6 +653,7 @@
         if (m) {
           B.play(s, m.i, m.q);
           render();
+          if (s.over) scheduleEnd();
         }
       }
       requestAnimationFrame(loop);

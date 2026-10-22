@@ -50,11 +50,12 @@
         <span id="handHint">Scegli una carta, poi un quarto</span>
         <span class="status-tools">
           <button class="tool mini-tool" id="cancelBtn" hidden>Annulla scelta</button>
+          <button class="tool mini-tool" id="endBtn" hidden>Rivedi il riepilogo</button>
           <button class="tool mini-tool" id="edictBtn" aria-pressed="false" hidden>Editto</button>
           <span id="deckInfo">Mazzo: 12</span>
         </span>
       </div>
-      <p class="reveal" id="reveal" aria-live="polite" hidden></p>
+      <p class="reveal" id="reveal" aria-live="polite">Le mosse dei due lati si rivelano insieme, a fine turno.</p>
 
       <main class="table">
         <section class="board-wrap">
@@ -89,9 +90,11 @@
         <h2 id="endTitle">Vittoria</h2>
         <p id="endText"></p>
         <div class="end-sum" id="endSum"></div>
+        <p class="small end-code">Codice partita <code id="endCode"></code></p>
         <div class="end-tools">
           <button class="tool solid" id="againBtn">Nuova partita</button>
           <button class="tool" id="endClose">Guarda lo scudo</button>
+          <button class="tool" id="endReport">Lascia un riscontro</button>
         </div>
       </div>
     </div>
@@ -99,7 +102,7 @@
     <dialog class="sheet menusheet" id="menu" aria-labelledby="menuTitle">
       <header class="menu-head">
         <div>
-          <p class="label">Archivio araldico · Indice</p>
+          <p class="label">Archivio araldico · Indice · v<span id="version"></span></p>
           <h2 id="menuTitle">Menu</h2>
         </div>
         <button class="tool" id="menuClose">Chiudi</button>
@@ -110,6 +113,7 @@
         <button role="tab" id="tab-bestiario" aria-controls="pane-bestiario">Bestiario</button>
         <button role="tab" id="tab-vista" aria-controls="pane-vista">Presentazione</button>
         <button role="tab" id="tab-conte" aria-controls="pane-conte">Conte</button>
+        <button role="tab" id="tab-riscontro" aria-controls="pane-riscontro">Riscontro</button>
       </div>
 
       <section class="pane" role="tabpanel" id="pane-partita" aria-labelledby="tab-partita">
@@ -121,7 +125,17 @@
           <input type="checkbox" id="edictPref" />
           <span><b>Regola dell'Editto</b> Una volta per partita, dal turno II, puoi dichiarare l'Editto insieme alla carta: il quarto in cui la posi vale +1 corona, solo per te e solo se lo conquisti. Il Conte ha lo stesso diritto.</span>
         </label>
-        <p class="small">Formato ed Editto valgono dalla prossima partita.</p>
+        <p class="small">Formato, Editto e stile del Conte valgono dalla prossima partita.</p>
+        <div class="code-box">
+          <p><span class="label">Codice di questa partita</span> <code id="gameCode"></code> <button class="tool" id="copyCode">Copia</button></p>
+          <p class="small">Il codice ricrea la stessa partita: campi, mazzi e risposte del Conte alle stesse mosse. Contiene solo numeri e lettere del gioco, nessun dato personale.</p>
+          <form class="code-form" id="codeForm">
+            <label for="codeInput" class="label">Rigioca un codice</label>
+            <input id="codeInput" maxlength="32" autocomplete="off" spellcheck="false" placeholder="es. 418273-cns" aria-describedby="codeMsg" />
+            <button class="tool" type="submit">Gioca</button>
+          </form>
+          <p class="small" id="codeMsg" aria-live="polite"></p>
+        </div>
         <div class="new-row">
           <button class="tool solid" id="newBtn">Nuova partita</button>
           <span class="confirm" id="confirmNew" hidden>
@@ -144,7 +158,7 @@
 
       <section class="pane" role="tabpanel" id="pane-bestiario" aria-labelledby="tab-bestiario" hidden>
         <div class="bestiary-tools">
-          <label class="search"><span class="label">Cerca</span><input type="search" id="beastSearch" placeholder="Nome della bestia" autocomplete="off" /></label>
+          <label class="search"><span class="label">Cerca</span><input type="search" id="beastSearch" maxlength="40" placeholder="Nome della bestia" autocomplete="off" /></label>
           <div class="tint-filter" id="tintFilter" role="group" aria-label="Filtra per tintura"></div>
           <label class="check inline"><input type="checkbox" id="beastInGame" /><span>Solo questa partita</span></label>
         </div>
@@ -172,7 +186,24 @@
           <legend class="label">Stile del Conte</legend>
           <div class="choices" id="conteChoices"></div>
         </fieldset>
-        <p class="small">Lo stile cambia solo quanto il Conte va a caso nelle sue scelte: regole e carte restano le stesse. Vale da subito.</p>
+        <p class="small">Lo stile cambia solo quanto il Conte va a caso nelle sue scelte: regole e carte restano le stesse. Vale dalla prossima partita, così il codice partita resta valido.</p>
+      </section>
+      <section class="pane" role="tabpanel" id="pane-riscontro" aria-labelledby="tab-riscontro" hidden>
+        <p class="small">Una scheda breve per raccontare com'è andata. <b>Niente viene inviato:</b> la scheda resta su questo dispositivo finché non la copi o la scarichi tu.</p>
+        <form class="report" id="report">
+          <p class="report-auto" id="reportAuto"></p>
+          <fieldset><legend class="label">Le abilità si capiscono?</legend><div class="scale" id="rClarity"></div></fieldset>
+          <fieldset><legend class="label">Il risultato si legge bene?</legend><div class="scale" id="rResult"></div></fieldset>
+          <fieldset><legend class="label">Il Conte ti è sembrato</legend><div class="scale" id="rLevel"></div></fieldset>
+          <label class="field-in"><span class="label">Abilità o regole decisive</span><input id="rDecisive" maxlength="200" autocomplete="off" /></label>
+          <label class="field-in"><span class="label">Note</span><textarea id="rNotes" maxlength="1000" rows="4"></textarea></label>
+          <div class="new-row">
+            <button class="tool solid" type="button" id="reportCopy">Copia la scheda</button>
+            <button class="tool" type="button" id="reportSave">Scarica .txt</button>
+          </div>
+          <p class="small" id="reportMsg" aria-live="polite"></p>
+          <textarea class="report-out" id="reportOut" readonly hidden aria-label="Testo della scheda da copiare"></textarea>
+        </form>
       </section>
     </dialog>
 

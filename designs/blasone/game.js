@@ -282,6 +282,23 @@
     return true;
   }
 
+  // ---------- game codes: one game, reproducible from a short string ----------
+  // seed, format, Editto and the Conte's style, e.g. "418273-cns". The same
+  // code and the same moves give the same game (the AI draws from s.rand).
+  const CONTI = ["prudente", "standard", "variabile"];
+  const code = (s, conte) => `${s.seed}-${s.format === "classico" ? "c" : "r"}${s.edict ? "e" : "n"}${conte[0]}`;
+  // untrusted text in, a validated game or null out
+  function parseCode(text) {
+    const m = /^(\d{1,10})-([cr])([en])([psv])$/.exec(String(text).trim().toLowerCase().slice(0, 32));
+    if (!m || +m[1] > 0xffffffff) return null;
+    return {
+      seed: +m[1],
+      format: m[2] === "c" ? "classico" : "crepuscolo",
+      editto: m[3] === "e",
+      conte: CONTI.find((c) => c[0] === m[4]),
+    };
+  }
+
   function finish(s) {
     const e = evaluate(s);
     let w = e.score.me > e.score.foe ? "me" : e.score.foe > e.score.me ? "foe" : null;
@@ -293,7 +310,7 @@
     s.over = w;
   }
 
-  const api = { TINCT, BEASTS, FIELDS, HOUSES, HOUSE, FORMATS, TURNS, QUARTERS, ROMAN, NEAR, SIDES, create, legal, cap, edictOpen, evaluate, choose, play };
+  const api = { TINCT, BEASTS, FIELDS, HOUSES, HOUSE, FORMATS, TURNS, QUARTERS, ROMAN, NEAR, SIDES, create, legal, cap, edictOpen, evaluate, choose, play, code, parseCode };
   if (typeof module !== "undefined") module.exports = api;
   else root.Blasone = api;
 })(this);
