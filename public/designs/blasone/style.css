@@ -374,6 +374,85 @@ body { padding-bottom: 190px; }
   .end-table { font-size: 14px; }
   .end-table th, .end-table td { padding: 5px 3px; }
 }
+/* ---------- coloured cards (menu: "Carte a colori") ----------
+   the tincture colours frame, shield, ribbons and ink; the house sets the
+   paper, the inner rule and the corner ornaments. Off, the cards stay as
+   they were: black ink on plain stock. */
+.t-oro { --tc: #a87a24; --tc-d: #6a4b12; --tc-l: #ecd591; }
+.t-argento { --tc: #767b83; --tc-d: #43474d; --tc-l: #dcdee1; }
+.t-rosso { --tc: #93301f; --tc-d: #5a1a10; --tc-l: #e6b7a6; }
+.t-azzurro { --tc: #335f82; --tc-d: #1b3850; --tc-l: #b6cbdc; }
+.t-verde { --tc: #44703a; --tc-d: #264222; --tc-l: #c2d4b0; }
+.t-nero { --tc: #3c3936; --tc-d: #141313; --tc-l: #bdb6ac; }
+.h-base { --paper-c: #efe2c3; --stain: rgba(150, 100, 40, 0.16); --corner: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2'%3E%3Cpath d='M2 23V2h21'/%3E%3Ccircle cx='9' cy='9' r='4'/%3E%3Cpath d='M9 2v14M2 9h14M5 5l8 8'/%3E%3C/svg%3E"); }
+.h-crepuscolo { --paper-c: #dcd0b8; --stain: rgba(70, 58, 84, 0.2); --corner: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M1 1h22l-3 3H4v16l-3 3z'/%3E%3Cpath d='M7 7h8l-8 8z'/%3E%3Ccircle cx='17' cy='6' r='1.4'/%3E%3Ccircle cx='6' cy='17' r='1.4'/%3E%3C/svg%3E"); }
+.h-fiere { --paper-c: #e8d3a6; --stain: rgba(125, 72, 20, 0.22); --corner: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M1 1h22l-5 2 3 1.5-6 1.5H6v9l-1.5 6-1-3.5L2 23z'/%3E%3Cpath d='M8 8l7 1.5-3.5 1.5 2.5 3.5-6-1.5z'/%3E%3C/svg%3E"); }
+.corners, .pwr-shield, .ink, .house { display: none; }
+
+:root[data-cards="colore"] .card {
+  border: 2px solid var(--tc-d);
+  border-radius: 8px;
+  background:
+    radial-gradient(circle at 16% 10%, var(--stain), transparent 22%),
+    radial-gradient(circle at 88% 64%, var(--stain), transparent 16%),
+    radial-gradient(ellipse at 40% 108%, var(--stain), transparent 45%),
+    var(--grain), var(--paper-c);
+  background-size: auto, auto, auto, 240px, auto;
+  /* edges browned by handling */
+  box-shadow: inset 0 0 16px rgba(90, 55, 15, 0.38), 5px 5px 0 var(--tc-d);
+  grid-template-rows: auto auto 1fr auto;
+}
+:root[data-cards="colore"] .card[aria-pressed="true"] { box-shadow: inset 0 0 16px rgba(90, 55, 15, 0.38), 9px 9px 0 var(--tc); }
+:root[data-cards="colore"] .card::before { inset: 5px; border: 3px double var(--tc); border-radius: 5px; }
+:root[data-cards="colore"] .card.h-crepuscolo::before { border: 1px solid var(--tc-d); box-shadow: inset 0 0 0 3px var(--paper-c), inset 0 0 0 4px var(--tc); }
+:root[data-cards="colore"] .card.h-fiere::before { border: 2px dashed var(--tc); }
+:root[data-cards="colore"] .card.h-crepuscolo { box-shadow: inset 0 0 22px rgba(40, 32, 48, 0.42), 5px 5px 0 var(--tc-d); }
+:root[data-cards="colore"] .card.h-fiere { box-shadow: inset 0 0 12px rgba(110, 60, 10, 0.5), inset 0 0 0 1px rgba(90, 55, 15, 0.3), 5px 5px 0 var(--tc-d); }
+
+:root[data-cards="colore"] .corners { display: block; position: absolute; inset: 0; pointer-events: none; }
+:root[data-cards="colore"] .corners i { position: absolute; width: 22px; height: 22px; background: var(--tc-d); -webkit-mask: var(--corner) center / contain no-repeat; mask: var(--corner) center / contain no-repeat; }
+.corners i:nth-child(1) { top: 2px; left: 2px; }
+.corners i:nth-child(2) { top: 2px; right: 2px; transform: scaleX(-1); }
+.corners i:nth-child(3) { bottom: 2px; right: 2px; transform: scale(-1); }
+.corners i:nth-child(4) { bottom: 2px; left: 2px; transform: scaleY(-1); }
+
+/* strength in a shield of arms */
+:root[data-cards="colore"] .card .pwr { position: relative; display: grid; place-items: center; width: 38px; height: 44px; font-size: 25px; line-height: 1; color: var(--paper); }
+:root[data-cards="colore"] .pwr-shield { display: block; position: absolute; inset: 0; width: 100%; height: 100%; fill: var(--tc); stroke: var(--tc-d); stroke-width: 2.5; }
+:root[data-cards="colore"] .pwr > span { position: relative; margin-top: -4px; text-shadow: 0 1px 0 var(--tc-d); }
+/* plate and tincture on a scroll */
+:root[data-cards="colore"] .card-top { align-items: center; position: relative; }
+:root[data-cards="colore"] .card-top .label { padding: 3px 12px; background: var(--tc-l); color: var(--tc-d); text-align: center; clip-path: polygon(0 0, 100% 0, 92% 50%, 100% 100%, 0 100%, 8% 50%); }
+/* the engraving re-inked in the tincture */
+:root[data-cards="colore"] .card .art { border-color: var(--tc-d); background: rgba(255, 252, 240, 0.4); }
+:root[data-cards="colore"] .card .art img, :root[data-cards="colore"] .mini img { visibility: hidden; }
+:root[data-cards="colore"] .ink { display: block; position: absolute; inset: 6px; background: linear-gradient(160deg, var(--tc), var(--tc-d) 70%); -webkit-mask: var(--art) center / contain no-repeat; mask: var(--art) center / contain no-repeat; }
+:root[data-cards="colore"] .h-crepuscolo .art { border-radius: 50% 50% 0 0 / 34% 34% 0 0; border-left: 1px solid var(--tc-d); border-right: 1px solid var(--tc-d); }
+:root[data-cards="colore"] .h-fiere .art { border-style: dashed; }
+/* name on a banner, ability in a cartouche */
+:root[data-cards="colore"] .card h4 { padding: 5px 12px 4px; margin: 0 -3px; background: var(--tc); color: var(--paper); clip-path: polygon(0 0, 100% 0, 97% 50%, 100% 100%, 0 100%, 3% 50%); }
+:root[data-cards="colore"] .card .ab { margin-top: 6px; padding: 6px 7px; border: 1px solid var(--tc); border-radius: 3px; background: rgba(255, 252, 240, 0.35); color: #3b2c17; }
+:root[data-cards="colore"] .card .ab i { color: var(--tc-d); }
+:root[data-cards="colore"] .house { display: block; justify-self: center; margin-top: 8px; padding: 3px 14px; background: var(--tc-l); color: var(--tc-d); font: 700 8px var(--label); letter-spacing: 0.18em; text-transform: uppercase; clip-path: polygon(0 0, 100% 0, 94% 50%, 100% 100%, 0 100%, 6% 50%); }
+:root[data-cards="colore"] .fig-house { display: none; }
+:root[data-cards="colore"] .card .art svg.tinct { filter: drop-shadow(0 0 0 var(--tc-d)); }
+/* the small laid cards: tinted ink and a tincture rule on top */
+:root[data-cards="colore"] .mini { border-color: var(--tc-d); border-radius: 3px; background: var(--grain), var(--paper-c); background-size: 240px, auto; box-shadow: inset 0 3px 0 var(--tc), inset 0 0 8px rgba(90, 55, 15, 0.3); }
+:root[data-cards="colore"] .mini .ink { inset: 6px 4px auto; height: 58px; }
+:root[data-cards="colore"] .mini:hover { box-shadow: inset 0 3px 0 var(--tc), 3px 3px 0 var(--tc-d); }
+@media (max-width: 720px) {
+  :root[data-cards="colore"] .hand .card { border-radius: 5px; box-shadow: inset 0 0 10px rgba(90, 55, 15, 0.38), 3px 3px 0 var(--tc-d); }
+  :root[data-cards="colore"] .hand .card[aria-pressed="true"] { box-shadow: inset 0 0 10px rgba(90, 55, 15, 0.38), 4px 4px 0 var(--tc); }
+  :root[data-cards="colore"] .hand .card::before { inset: 2px; border-width: 2px; border-radius: 3px; }
+  :root[data-cards="colore"] .hand .corners i { width: 11px; height: 11px; }
+  :root[data-cards="colore"] .hand .card .pwr { width: 24px; height: 28px; font-size: 15px; }
+  :root[data-cards="colore"] .hand .ink { inset: 3px; }
+  :root[data-cards="colore"] .hand .card h4 { padding: 3px 4px 2px; margin: 0 -2px; font-size: 10px; clip-path: none; }
+  :root[data-cards="colore"] .hand .card .ab { margin-top: 3px; padding: 3px; }
+  :root[data-cards="colore"] .hand .house { display: none; }
+  :root[data-cards="colore"] .mini .ink { inset: 4px 2px auto; height: 40px; }
+}
+
 /* text size from the menu: the whole page scales, its sizes are in px */
 body { zoom: var(--zoom, 1); }
 :root[data-motion="ridotto"] *, :root[data-motion="ridotto"] *::before, :root[data-motion="ridotto"] *::after { animation: none !important; transition: none !important; }

@@ -51,6 +51,13 @@
     return c.toDataURL();
   }
   KEYS.forEach((k) => (ART[k] = engrave(B.BEASTS[k].glyph)));
+  // the coloured cards re-ink the same engraving through a mask, so each
+  // beast's art is also a custom property (.art-<id> { --art })
+  const artCss = document.createElement("style");
+  artCss.textContent = KEYS.map((k) => `.art-${k}{--art:url(${ART[k]})}`).join("");
+  document.head.appendChild(artCss);
+  // the classes that colour a card: its tincture and its house
+  const skin = (id) => `t-${B.BEASTS[id].t} h-${B.HOUSE[id].id} art-${id}`;
 
   const esc = (t) => String(t).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
   const tinct = (t, cls = "tinct") =>
@@ -65,7 +72,7 @@
     variabile: { name: "Variabile", noise: 2, text: "Spesso tenta mosse azzardate: imprevedibile, e più facile da battere." },
   };
   const SIZES = { 1: "Normale", 1.15: "Grande", 1.3: "Molto grande" };
-  const prefs = { format: "classico", editto: false, conte: "standard", motion: false, size: 1 };
+  const prefs = { format: "classico", editto: false, conte: "standard", motion: false, size: 1, colors: true };
   try {
     Object.assign(prefs, JSON.parse(localStorage.getItem("blasone.prefs")) || {});
   } catch (e) {}
@@ -76,6 +83,8 @@
   };
   function applyView() {
     document.documentElement.dataset.motion = prefs.motion ? "ridotto" : "";
+    // without it the cards are printed in black ink only, as at first
+    document.documentElement.dataset.cards = prefs.colors ? "colore" : "";
     document.documentElement.style.setProperty("--zoom", SIZES[prefs.size] ? prefs.size : 1);
   }
 
@@ -98,8 +107,8 @@
   function mini(c, q, side, k, fresh) {
     const b = B.BEASTS[c.id], d = c.power - c.base;
     const why = c.mods.map((m) => `${signed(m.v)} ${m.why}`).join(", ");
-    return `<button type="button" class="mini ${fresh || ""}" data-q="${q}" data-side="${side}" data-k="${k}" title="${esc(b.name)} · forza ${c.power}${why ? " (" + esc(why) + ")" : ""}" aria-label="${esc(b.name)}, forza ${c.power}. Apri la carta">
-      ${tinct(b.t)}<img src="${ART[c.id]}" alt="" />
+    return `<button type="button" class="mini ${skin(c.id)} ${fresh || ""}" data-q="${q}" data-side="${side}" data-k="${k}" title="${esc(b.name)} · forza ${c.power}${why ? " (" + esc(why) + ")" : ""}" aria-label="${esc(b.name)}, forza ${c.power}. Apri la carta">
+      ${tinct(b.t)}<img src="${ART[c.id]}" alt="" /><span class="ink"></span>
       <span class="pw">${c.power}${d ? `<small class="${d > 0 ? "up" : "dn"}">${signed(d)}</small>` : ""}</span></button>`;
   }
 
@@ -146,15 +155,18 @@
 
   // ---------- hand ----------
   // the printed face, shared by the hand and the peek sheet
+  // corners, shield, ink and house ribbon only show on the coloured cards
   function face(id) {
     const b = B.BEASTS[id];
-    return `<span class="card-top"><b class="pwr">${b.power}</b><span class="label">${plateNo(id)}<br />${B.TINCT[b.t].name}</span></span>
-      <span class="art"><img src="${ART[id]}" alt="" />${tinct(b.t)}</span>
-      <span><h4>${esc(b.name)}</h4><p class="ab"><i>${esc(b.ab)}.</i> ${esc(b.text)}</p></span>`;
+    return `<span class="corners" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+      <span class="card-top"><b class="pwr"><svg class="pwr-shield" viewBox="0 0 40 46" aria-hidden="true"><use href="#shield"/></svg><span>${b.power}</span></b><span class="label">${plateNo(id)}<br />${B.TINCT[b.t].name}</span></span>
+      <span class="art"><img src="${ART[id]}" alt="" /><span class="ink"></span>${tinct(b.t)}</span>
+      <span class="card-body"><h4>${esc(b.name)}</h4><p class="ab"><i>${esc(b.ab)}.</i> ${esc(b.text)}</p></span>
+      <span class="house">${esc(B.HOUSE[id].name)}</span>`;
   }
   function card(c, i) {
     const b = B.BEASTS[c.id];
-    return `<button class="card" data-i="${i}" aria-pressed="${picked === i}" aria-label="${esc(b.name)}, forza ${b.power}, ${B.TINCT[b.t].name}. ${esc(b.ab)}: ${esc(b.text)}">${face(c.id)}</button>`;
+    return `<button class="card ${skin(c.id)}" data-i="${i}" aria-pressed="${picked === i}" aria-label="${esc(b.name)}, forza ${b.power}, ${B.TINCT[b.t].name}. ${esc(b.ab)}: ${esc(b.text)}">${face(c.id)}</button>`;
   }
   function renderHand() {
     const hand = $("hand");
@@ -200,6 +212,7 @@
   function peek(q, side, k, from) {
     const x = B.evaluate(s).quarters[q], c = x[side].cards[k];
     $("peekLabel").textContent = `Quarto ${B.ROMAN[q]} · ${x.field.name} · ${side === "me" ? "tua" : "del Conte"} · turno ${NUM[c.at]}`;
+    $("peekCard").className = "card " + skin(c.id);
     $("peekCard").innerHTML = face(c.id);
     $("peekTitle").textContent = `Forza ${c.power}`;
     const named = (why) => (why === "campo" ? x.field.name : why === "tinture" ? "Legge delle tinture" : why);
@@ -363,6 +376,12 @@
     prefs.editto = e.target.checked;
     save();
   };
+  $("colorPref").checked = prefs.colors;
+  $("colorPref").onchange = (e) => {
+    prefs.colors = e.target.checked;
+    save();
+    applyView();
+  };
   $("motionPref").checked = prefs.motion;
   $("motionPref").onchange = (e) => {
     prefs.motion = e.target.checked;
@@ -407,8 +426,8 @@
     $("beastCount").textContent = `${list.length} ${list.length === 1 ? "bestia" : "bestie"} su ${KEYS.length}`;
     $("bestiary").innerHTML = list
       .map(
-        (id) => `<figure class="beast"><div class="card">${face(id)}</div>
-        <figcaption class="label">${esc(B.HOUSE[id].name)}${s.pool.includes(id) ? ` · <b>in partita</b>` : ""}</figcaption></figure>`
+        (id) => `<figure class="beast"><div class="card ${skin(id)}">${face(id)}</div>
+        <figcaption class="label"><span class="fig-house">${esc(B.HOUSE[id].name)}${s.pool.includes(id) ? " · " : ""}</span>${s.pool.includes(id) ? `<b>in partita</b>` : ""}</figcaption></figure>`
       )
       .join("");
   }
