@@ -57,6 +57,28 @@
       </div>
       <p class="reveal" id="reveal" aria-live="polite">Le mosse dei due lati si rivelano insieme, a fine turno.</p>
 
+      <!-- Draft delle Casate: eight cards face up, picked in turn before the duel -->
+      <section class="sheet draft" id="draft" hidden aria-labelledby="draftTitle">
+        <p class="label">Draft delle Casate · prima del duello</p>
+        <h2 id="draftTitle">Scegli le tue quattro carte</h2>
+        <p class="small">Le dodici carte del Bestiario sono nel mazzo di tutti e due. Queste otto vengono dalle altre casate: scegli a turno con il Conte, nell'ordine qui sotto. Ogni bestia va a un solo lato.</p>
+        <ol class="draft-order" id="draftOrder" aria-label="Ordine delle scelte"></ol>
+        <div class="draft-offer" id="draftOffer" role="group" aria-label="Carte scoperte"></div>
+        <p class="draft-msg" id="draftMsg" aria-live="polite"></p>
+        <div class="draft-recap" id="draftRecap" hidden></div>
+      </section>
+
+      <!-- Prova dell'Araldo: the goal of the prepared position -->
+      <section class="sheet goal" id="goal" hidden aria-labelledby="goalTitle">
+        <div>
+          <p class="label" id="goalLabel"></p>
+          <h2 id="goalTitle"></h2>
+          <p id="goalText"></p>
+          <p class="small hint" id="hintText" hidden></p>
+        </div>
+        <button class="tool" id="hintBtn" aria-expanded="false" aria-controls="hintText">Suggerimento</button>
+      </section>
+
       <main class="table">
         <section class="board-wrap">
           <div class="sheet ochre under" aria-hidden="true"></div>
@@ -93,6 +115,7 @@
         <p class="small end-code">Codice partita <code id="endCode"></code></p>
         <div class="end-tools">
           <button class="tool solid" id="againBtn">Nuova partita</button>
+          <button class="tool solid" id="endNext" hidden>Prossima prova</button>
           <button class="tool" id="endClose">Guarda lo scudo</button>
           <button class="tool" id="endReport">Lascia un riscontro</button>
         </div>
@@ -109,6 +132,7 @@
       </header>
       <div class="tabs" role="tablist" aria-label="Sezioni del menu">
         <button role="tab" id="tab-partita" aria-controls="pane-partita">Partita</button>
+        <button role="tab" id="tab-prove" aria-controls="pane-prove">Prove</button>
         <button role="tab" id="tab-regole" aria-controls="pane-regole">Regole</button>
         <button role="tab" id="tab-bestiario" aria-controls="pane-bestiario">Bestiario</button>
         <button role="tab" id="tab-vista" aria-controls="pane-vista">Presentazione</button>
@@ -138,12 +162,12 @@
         </div>
         <div class="new-row">
           <button class="tool solid" id="newBtn">Nuova partita</button>
-          <span class="confirm" id="confirmNew" hidden>
-            <span>La partita in corso andrà persa.</span>
-            <button class="tool solid" id="confirmYes">Ricomincia</button>
-            <button class="tool" id="confirmNo">Continua a giocare</button>
-          </span>
         </div>
+      </section>
+
+      <section class="pane" role="tabpanel" id="pane-prove" aria-labelledby="tab-prove" hidden>
+        <p class="small">Le Prove dell'Araldo sono situazioni preparate, da uno a tre turni, con un obiettivo preciso. Niente pesca a caso: il Conte risponde sempre allo stesso modo alle stesse mosse, e la sua mano è scoperta. Ogni prova ha un suggerimento e, alla fine, la spiegazione delle mosse decisive.</p>
+        <ol class="trial-list" id="trialList"></ol>
       </section>
 
       <section class="pane" role="tabpanel" id="pane-regole" aria-labelledby="tab-regole" hidden>
@@ -153,6 +177,8 @@
           <article><p class="label">III · Le tinture</p><p>Metalli: oro e argento. Colori: rosso, azzurro, verde, nero. Una carta prende +1 se è di classe opposta alla tua carta giocata più di recente in quel quarto. La prima carta non ne prende.</p></article>
           <article><p class="label">IV · Le corone</p><p>Ogni quarto va al totale più alto e vale una corona, due sul Campo d'argento. Ogni Torre aggiunge una corona per chi conquista il quarto; Pavone ed Editto ne aggiungono una solo al proprio lato. Vince chi ha più corone; in parità conta la forza totale.</p></article>
           <article><p class="label">V · Casi speciali</p><p>Se in un quarto ha carte un solo lato, il quarto è suo, anche sul Campo rovesciato. La forza di una carta non scende sotto zero. Quarti confinanti: quelli separati da una sola piega. Tocca una carta sullo scudo per vedere da dove viene la sua forza.</p></article>
+          <article><p class="label">VI · Reazione</p><p>Basilisco e Arpia reagiscono alle carte avversarie posate nel loro quarto in un turno successivo al loro. Non reagiscono a una carta posata nello stesso turno, non innescano altre reazioni e il Tasso le ignora. L'effetto resta scritto nel dettaglio della carta colpita.</p></article>
+          <article><p class="label">VII · Draft e Prove</p><p>Nel Draft delle Casate il mazzo è il Bestiario più quattro carte scelte a turno con il Conte tra otto scoperte. Le Prove dell'Araldo, nel menu, sono situazioni brevi con un obiettivo da raggiungere.</p></article>
         </div>
       </section>
 
@@ -205,6 +231,11 @@
           <textarea class="report-out" id="reportOut" readonly hidden aria-label="Testo della scheda da copiare"></textarea>
         </form>
       </section>
+      <p class="confirm menu-confirm" id="confirmNew" hidden>
+        <span>La partita in corso andrà persa.</span>
+        <button class="tool solid" id="confirmYes">Ricomincia</button>
+        <button class="tool" id="confirmNo">Continua a giocare</button>
+      </p>
     </dialog>
 
     <div class="veil" id="peek" hidden>

@@ -2,27 +2,35 @@
 // are engraved at load: each one's emoji is drawn to a canvas and re-inked as
 // woodcut hatching (wavy engraving lines whose weight follows the shading,
 // cross-hatching in the darks, a heavy contour). In ?preview two AIs play.
-// The menu (a native <dialog>) holds the game options, the rules, the
-// bestiary and the display settings; the choices are kept in localStorage.
+// The menu (a native <dialog>) holds the game options, the Prove dell'Araldo,
+// the rules, the bestiary and the display settings; the choices are kept in
+// localStorage. A Draft game opens on the draft sheet before the duel.
 (() => {
   const B = window.Blasone;
   const $ = (id) => document.getElementById(id);
   const params = new URLSearchParams(location.search);
   const preview = params.has("preview");
   const NUM = ["", "I", "II", "III", "IV", "V", "VI"];
-  const VERSION = "0.0.6";
+  const VERSION = "0.0.7";
   const KEYS = Object.keys(B.BEASTS);
 
   // ---------- woodcut engraving ----------
   const ART = {};
+  // glyph: one emoji, or parts [emoji, x, y, size, mirrored] drawn in order
   function engrave(glyph, S = 256) {
     const c = document.createElement("canvas");
     c.width = c.height = S;
     const x = c.getContext("2d", { willReadFrequently: true });
-    x.font = `${Math.round(S * 0.8)}px "Segoe UI Emoji","Apple Color Emoji","Noto Color Emoji",sans-serif`;
     x.textAlign = "center";
     x.textBaseline = "middle";
-    x.fillText(glyph, S / 2, S * 0.54);
+    for (const [g, px, py, size, flip] of Array.isArray(glyph) ? glyph : [[glyph, 0.5, 0.54, 0.8]]) {
+      x.save();
+      x.font = `${Math.round(S * size)}px "Segoe UI Emoji","Apple Color Emoji","Noto Color Emoji",sans-serif`;
+      x.translate(S * px, S * py);
+      if (flip) x.scale(-1, 1);
+      x.fillText(g, 0, 0);
+      x.restore();
+    }
     const src = x.getImageData(0, 0, S, S).data;
     const out = x.createImageData(S, S);
     const o = out.data;
@@ -102,8 +110,9 @@
   // ---------- state ----------
   // ?seed= is untrusted too: a whole number in the rng's range, or ignored
   const seedParam = /^\d{1,10}$/.test(params.get("seed") || "") && +params.get("seed") <= 0xffffffff ? +params.get("seed") : null;
-  let s, picked = null, edictArmed = false, conte = "standard", endTimer = 0;
-  // from: a parsed game code (parseCode) to replay, or nothing for a new game
+  let s, picked = null, edictArmed = false, conte = "standard", endTimer = 0, draftSeen = false;
+  // from: a parsed game code (parseCode) to replay, { trial: n }, or nothing
+  // for a new game with the menu's options
   function newGame(from) {
     const g = from || {
       seed: seedParam ?? (Math.random() * 1e9) | 0,
@@ -111,17 +120,33 @@
       editto: !preview && prefs.editto,
       conte: preview ? "standard" : prefs.conte,
     };
-    s = B.create(g.seed, g);
-    conte = g.conte;
+    // a trial that fails its checks falls back to a plain game
+    s = B.create(g.seed, g) || B.create((Math.random() * 1e9) | 0, {});
+    // the Conte plays trials with no noise, so they always answer the same way
+    conte = s.trial !== undefined ? "prudente" : own(CONTE, g.conte) ? g.conte : "standard";
     picked = null;
     edictArmed = false;
+    draftSeen = false;
     clearTimeout(endTimer);
     hideVeil($("end"));
-    $("reveal").textContent = "Le mosse dei due lati si rivelano insieme, a fine turno.";
+    $("hintText").hidden = true;
+    $("hintBtn").setAttribute("aria-expanded", "false");
+    $("draftMsg").textContent = "";
+    $("reveal").textContent =
+      g.trial !== undefined && s.trial === undefined
+        ? "Questa prova non è disponibile: comincia una partita normale."
+        : s.trial !== undefined
+        ? `Prova dell'Araldo: ${B.TRIALS[s.trial].goalText}`
+        : s.draft
+        ? "Prima del duello, il draft: scegli quattro carte tra le otto scoperte."
+        : "Le mosse dei due lati si rivelano insieme, a fine turno.";
     render();
   }
   const gameCode = () => B.code(s, conte);
-  const playing = () => s.log.length > 0 && !s.over;
+  const playing = () => (s.log.length > 0 || (s.draft && s.draft.notes.length > 0)) && !s.over;
+  const drafting = () => !!B.draftTurn(s);
+  const formatName = () => (s.trial !== undefined ? `Prova dell'Araldo ${s.trial + 1}` : B.FORMATS[s.format].name);
+  const names = (ids) => ids.map((id) => B.BEASTS[id].name).join(", ");
 
   // ---------- board ----------
   const signed = (v) => `${v > 0 ? "+" : "−"}${Math.abs(v)}`;
@@ -139,7 +164,7 @@
     const html = e.quarters
       .map((x) => {
         const f = x.field, q = x.q;
-        const open = B.legal(s, "me", q);
+        const open = B.legal(s, "me", q), waiting = drafting();
         const fresh = (c, side) => (s.last && s.last[side] === c.uid ? "fresh-" + side : "");
         const crown = `<svg aria-hidden="true"><use href="#crown"/></svg>`;
         const extra = B.SIDES.flatMap((side) =>
@@ -148,7 +173,7 @@
           )
         ).join("");
         const crowns = crown.repeat(x.crowns) + extra;
-        return `<article class="plate ${open || s.over ? "" : "shut"}" aria-label="Quarto ${B.ROMAN[q]}, ${esc(f.name)}">
+        return `<article class="plate ${open || s.over || waiting ? "" : "shut"}" aria-label="Quarto ${B.ROMAN[q]}, ${esc(f.name)}">
           <header class="plate-head">
             <span class="numeral">${B.ROMAN[q]}</span>
             <div class="field">${tinct(f.t, "esc")}<div><h3><small>${B.QUARTERS[q]}</small>${esc(f.name)}</h3><p>${esc(f.text)}</p></div></div>
@@ -161,7 +186,7 @@
             <span class="me-tot"><b class="tot">${x.me.total}</b> <span class="label">Tu</span></span>
           </div>
           <div class="row me ${open ? "open" : ""}" data-q="${q}">${x.me.cards.map((c, k) => mini(c, q, "me", k, fresh(c, "me"))).join("")}<button class="slot" data-q="${q}" ${open && picked !== null ? "" : "disabled"} aria-label="Gioca nel quarto ${B.ROMAN[q]}">
-            ${open ? `<span class="empty">${x.me.cards.length ? "" : "Posa qui"}</span>` : s.over ? "" : `<span class="empty">Pieno</span>`}
+            ${open ? `<span class="empty">${x.me.cards.length ? "" : "Posa qui"}</span>` : s.over || waiting ? "" : `<span class="empty">Pieno</span>`}
           </button></div>
         </article>`;
       })
@@ -171,7 +196,7 @@
     board.classList.toggle("picking", picked !== null);
     $("scoreMe").textContent = e.score.me;
     $("scoreFoe").textContent = e.score.foe;
-    $("turn").textContent = s.over ? "Torneo concluso" : `Turno ${NUM[s.turn]} di ${NUM[B.TURNS]}`;
+    $("turn").textContent = s.over ? (s.trial !== undefined ? "Prova conclusa" : "Torneo concluso") : drafting() ? "Draft delle Casate" : `Turno ${NUM[s.turn]} di ${NUM[B.TURNS]}`;
     if (s.log.length) $("reveal").textContent = `Mosse rivelate insieme · Turno ${NUM[s.log[0].turn]} — Tu: ${s.log[0].me} · Il Conte: ${s.log[0].foe}`;
   }
 
@@ -194,9 +219,16 @@
     const hand = $("hand");
     hand.innerHTML = s.hands.me.map(card).join("");
     hand.classList.toggle("locked", !!s.over);
-    $("deckInfo").textContent = `Mazzo: ${s.decks.me.length} · ${B.FORMATS[s.format].name}`;
+    $("deckInfo").textContent =
+      s.trial !== undefined
+        ? `${formatName()} · nessuna pesca`
+        : drafting()
+        ? `${formatName()} · scelta ${s.draft.picks.me.length + 1} di 4`
+        : `Mazzo: ${s.decks.me.length} · ${formatName()}`;
     $("handHint").textContent = s.over
-      ? "Torneo concluso"
+      ? s.trial !== undefined ? "Prova conclusa" : "Torneo concluso"
+      : drafting()
+      ? "Draft: scegli una carta tra le otto scoperte"
       : picked === null
       ? "Scegli una carta, poi un quarto"
       : `${B.BEASTS[s.hands.me[picked].id].name}: ora scegli un quarto${edictArmed ? ", con l'Editto" : ""}`;
@@ -215,18 +247,115 @@
 
   // ---------- side sheet ----------
   function renderSide() {
-    const n = s.hands.foe.length;
-    $("foeInfo").textContent = `${n} ${n === 1 ? "carta" : "carte"} in mano · ${s.decks.foe.length} nel mazzo`;
-    $("foeHand").innerHTML = Array.from({ length: n }, () => `<span class="back"></span>`).join("");
-    $("log").innerHTML = s.log.length
-      ? s.log.map((l) => `<li><b>Turno ${NUM[l.turn]} · rivelate insieme</b>Tu: ${esc(l.me)}.<br />Il Conte: ${esc(l.foe)}.</li>`).join("")
-      : `<li class="empty">Il torneo sta per cominciare. Le prime carte si scoprono insieme.</li>`;
+    const n = s.hands.foe.length, fh = $("foeHand");
+    // in a trial the Conte's hand is face up
+    const open = s.trial !== undefined;
+    $("foeInfo").textContent = open
+      ? `Mano scoperta · ${n} ${n === 1 ? "carta" : "carte"} · nessuna pesca`
+      : `${n} ${n === 1 ? "carta" : "carte"} in mano · ${s.decks.foe.length} nel mazzo`;
+    fh.classList.toggle("open", open);
+    if (open) {
+      fh.removeAttribute("aria-hidden");
+      fh.setAttribute("aria-label", "La mano del Conte, scoperta");
+      fh.setAttribute("role", "list");
+    } else {
+      fh.setAttribute("aria-hidden", "true");
+      fh.removeAttribute("role");
+    }
+    fh.innerHTML = open
+      ? s.hands.foe
+          .map((c) => {
+            const b = B.BEASTS[c.id];
+            return `<span class="chip ${skin(c.id)}" role="listitem" title="${esc(b.ab)}: ${esc(b.text)}">${tinct(b.t)}<img src="${ART[c.id]}" alt="" /><span class="ink"></span><b>${esc(b.name)}</b> ${b.power}</span>`;
+          })
+          .join("")
+      : Array.from({ length: n }, () => `<span class="back"></span>`).join("");
+    const d = s.draft && !drafting() ? `<li><b>Draft · prima del duello</b>Tu: ${esc(names(s.draft.picks.me))}.<br />Il Conte: ${esc(names(s.draft.picks.foe))}.</li>` : "";
+    $("log").innerHTML =
+      s.log.map((l) => `<li><b>Turno ${NUM[l.turn]} · rivelate insieme</b>Tu: ${esc(l.me)}.<br />Il Conte: ${esc(l.foe)}.</li>`).join("") + d ||
+      `<li class="empty">${drafting() ? "Il draft è in corso: le carte scelte entrano nei mazzi." : "Il torneo sta per cominciare. Le prime carte si scoprono insieme."}</li>`;
   }
+
+  // ---------- draft sheet ----------
+  function renderDraft() {
+    const d = s.draft, box = $("draft");
+    box.hidden = !d || draftSeen;
+    if (box.hidden) return;
+    const turn = B.draftTurn(s);
+    const who = (id) => (d.picks.me.includes(id) ? "me" : d.picks.foe.includes(id) ? "foe" : null);
+    $("draftOrder").innerHTML = B.DRAFT_ORDER.map((side, k) => {
+      const n = d.notes[k];
+      return `<li class="${side}${n ? " done" : k === d.notes.length ? " now" : ""}"><span class="label">${k + 1} · ${side === "me" ? "Tu" : "Conte"}</span>${n ? esc(B.BEASTS[n.id].name) : k === d.notes.length ? "tocca a te" : ""}</li>`;
+    }).join("");
+    $("draftOffer").innerHTML = d.offer
+      .map((id) => {
+        const b = B.BEASTS[id], w = who(id);
+        const state = w === "me" ? "Scelta da te" : w === "foe" ? "Scelta dal Conte" : "Libera";
+        return `<figure class="beast offer ${w ? "taken " + w : ""}"><button type="button" class="card ${skin(id)}" data-id="${id}" ${w || turn !== "me" ? "disabled" : ""} aria-label="${esc(b.name)}, forza ${b.power}, ${B.TINCT[b.t].name}. ${esc(b.ab)}: ${esc(b.text)} ${state}.">${face(id)}</button>
+          <figcaption class="label">${w === "me" ? "<b>Tua</b>" : w === "foe" ? "<b>Del Conte</b>" : "Libera"} · ${esc(B.HOUSE[id].name)}</figcaption></figure>`;
+      })
+      .join("");
+    $("draftRecap").hidden = !!turn;
+    if (!turn)
+      $("draftRecap").innerHTML = `<p class="label">Le scelte del Conte, spiegate</p>
+        <ul>${d.notes.filter((n) => n.side === "foe").map((n) => `<li><b>${esc(B.BEASTS[n.id].name)}</b> ${esc(n.why)}</li>`).join("")}</ul>
+        <p>Il tuo mazzo: le dodici carte del Bestiario, più ${esc(names(d.picks.me))}. Il Conte ha lo stesso Bestiario, più le sue quattro.</p>
+        <button class="tool solid" id="duelBtn">Al duello</button>`;
+  }
+  $("draftOffer").addEventListener("click", (e) => {
+    const b = e.target.closest("button[data-id]");
+    if (!b || b.disabled) return;
+    const from = s.draft.notes.length;
+    if (!B.pick(s, b.dataset.id, CONTE[conte].noise)) return;
+    const foe = s.draft.notes.slice(from + 1).map((n) => B.BEASTS[n.id].name);
+    $("draftMsg").textContent =
+      `Hai scelto ${B.BEASTS[b.dataset.id].name}.` + (foe.length ? ` Il Conte sceglie ${foe.join(" e ")}.` : "") + (drafting() ? " Tocca a te." : " Draft concluso: i mazzi sono pronti.");
+    render();
+    (drafting() ? $("draftOffer").querySelector("button:not(:disabled)") : $("duelBtn"))?.focus();
+  });
+  $("draftRecap").addEventListener("click", (e) => {
+    if (!e.target.closest("#duelBtn")) return;
+    draftSeen = true;
+    render();
+    $("hand").querySelector(".card")?.focus();
+  });
+
+  // ---------- trial goal ----------
+  let solved = [];
+  try {
+    const raw = localStorage.getItem("blasone.prove");
+    const v = raw && raw.length < 100 ? JSON.parse(raw) : null;
+    // stored data is untrusted: only known trial numbers, once each
+    if (Array.isArray(v)) solved = [...new Set(v.filter((n) => Number.isInteger(n) && n >= 0 && n < B.TRIALS.length))];
+  } catch (e) {}
+  // every pass writes the clean list back
+  function markSolved(n) {
+    if (!solved.includes(n)) solved.push(n);
+    try {
+      localStorage.setItem("blasone.prove", JSON.stringify(solved));
+    } catch (e) {}
+  }
+  function renderGoal() {
+    const t = s.trial !== undefined && B.TRIALS[s.trial];
+    $("goal").hidden = !t;
+    if (!t) return;
+    $("goalLabel").textContent = `Prova dell'Araldo ${s.trial + 1} di ${B.TRIALS.length} · ${t.level}${solved.includes(s.trial) ? " · superata" : ""}`;
+    $("goalTitle").textContent = t.name;
+    $("goalText").textContent = t.goalText;
+    $("hintText").textContent = t.hint;
+  }
+  $("hintBtn").onclick = () => {
+    const open = $("hintText").hidden;
+    $("hintText").hidden = !open;
+    $("hintBtn").setAttribute("aria-expanded", open);
+  };
 
   function render() {
     renderBoard();
     renderHand();
     renderSide();
+    renderDraft();
+    renderGoal();
   }
 
   // ---------- veils: the end sheet and the peek block the desk behind them ----------
@@ -250,11 +379,19 @@
     $("peekMods").innerHTML =
       `<li><span>Forza stampata</span><b>${c.base}</b></li>` +
       c.mods.map((m) => `<li><span>${esc(named(m.why))}</span><b>${signed(m.v)}</b></li>`).join("") +
-      (c.mods.reduce((t, m) => t + m.v, c.base) < 0 ? `<li><span>La forza non scende sotto zero</span><b></b></li>` : "");
+      (c.mods.reduce((t, m) => t + m.v, c.base) < 0 ? `<li><span>La forza non scende sotto zero</span><b></b></li>` : "") +
+      reactions(x, side, c);
     peekFrom = from;
     $("peek").hidden = false;
     desk.inert = true;
     $("peekClose").focus();
+  }
+  // what a Basilisco or an Arpia has done to the cards laid after it
+  function reactions(x, side, c) {
+    if (c.id !== "basilisco" && c.id !== "arpia") return "";
+    const name = B.BEASTS[c.id].name;
+    const hit = x[side === "me" ? "foe" : "me"].cards.filter((o) => o.mods.some((m) => m.why === name));
+    return `<li><span>Reazione: ${hit.length ? esc(hit.map((o) => `${B.BEASTS[o.id].name} (turno ${NUM[o.at]})`).join(", ")) : "nessuna carta colpita finora"}</span><b></b></li>`;
   }
   function closePeek() {
     hideVeil($("peek"));
@@ -336,7 +473,7 @@
   // it takes focus only once it is there
   function scheduleEnd() {
     clearTimeout(endTimer);
-    $("handHint").textContent = "Torneo concluso: il riepilogo si apre tra poco";
+    $("handHint").textContent = `${s.trial !== undefined ? "Prova conclusa" : "Torneo concluso"}: il riepilogo si apre tra poco`;
     endTimer = setTimeout(showEnd, 1800);
   }
   function showEnd() {
@@ -348,6 +485,16 @@
         ? `Corone ${e.score.me} a ${e.score.foe} e forza pari: il Conte ti stringe la mano.`
         : `Corone ${e.score.me} a ${e.score.foe}. ${w === "me" ? "Il tuo blasone entra nell'archivio." : "Il Conte di Sable si tiene lo scudo, per ora."}`;
     $("endSum").innerHTML = summary(e);
+    const t = s.trial !== undefined && B.TRIALS[s.trial];
+    $("againBtn").textContent = t ? "Riprova" : "Nuova partita";
+    $("endLabel").textContent = t ? `Esito della prova · ${t.name}` : "Esito del torneo · Plate 06";
+    $("endNext").hidden = !t || s.trial + 1 >= B.TRIALS.length;
+    if (t) {
+      if (s.goal) markSolved(s.trial);
+      $("endTitle").textContent = s.goal ? "Prova superata" : "Prova non superata";
+      $("endText").textContent = `${t.goalText} ${s.goal ? "Obiettivo raggiunto" : "Obiettivo mancato"}: corone ${e.score.me} a ${e.score.foe}.`;
+      $("endSum").innerHTML = `<div class="trial-why"><p class="label">Le mosse decisive</p><p>${esc(t.why)}</p></div>` + $("endSum").innerHTML;
+    }
     $("endSeal").innerHTML = `<svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="56" fill="${w === "me" ? "#c88a3b" : "#0f0f10"}"/><circle cx="60" cy="60" r="48" fill="none" stroke="${w === "me" ? "#0f0f10" : "#c88a3b"}" stroke-width="1.5"/><circle cx="60" cy="60" r="44" fill="none" stroke="${w === "me" ? "#0f0f10" : "#c88a3b"}" stroke-dasharray="2 4"/><text x="60" y="78" text-anchor="middle" font-family="Playfair Display, serif" font-weight="900" font-style="italic" font-size="52" fill="${w === "me" ? "#0f0f10" : "#d29a4a"}">${w === "me" ? "V" : w === "foe" ? "C" : "P"}</text></svg>`;
     $("endCode").textContent = gameCode();
     if (preview) return (endTimer = setTimeout(newGame, 800));
@@ -416,7 +563,9 @@
     edictArmed = !edictArmed;
     renderHand();
   };
-  $("againBtn").onclick = newGame;
+  // a trial is tried again; otherwise a new game with the menu's options
+  $("againBtn").onclick = () => newGame(s.trial !== undefined ? { trial: s.trial } : undefined);
+  $("endNext").onclick = () => newGame({ trial: s.trial + 1 });
   $("endClose").onclick = closeEnd;
   $("endBtn").onclick = showEnd;
   $("endReport").onclick = () => {
@@ -443,7 +592,17 @@
     });
     if (tab.id === "tab-bestiario") renderBestiary();
     if (tab.id === "tab-riscontro") renderReport();
+    if (tab.id === "tab-prove") renderTrials();
   }
+  function renderTrials() {
+    $("trialList").innerHTML = B.TRIALS.map(
+      (t, n) => `<li><button type="button" class="trial-btn" data-n="${n}"><span class="label">${n + 1} · ${esc(t.level)}${solved.includes(n) ? " · <b>superata</b>" : ""}</span><b>${esc(t.name)}</b><span>${esc(t.goalText)}</span></button></li>`
+    ).join("");
+  }
+  $("trialList").addEventListener("click", (e) => {
+    const b = e.target.closest(".trial-btn");
+    if (b) leaveThen(() => newGame({ trial: +b.dataset.n }));
+  });
   tabs.forEach((t) => (t.onclick = () => showTab(t)));
   menu.querySelector('[role="tablist"]').addEventListener("keydown", (e) => {
     const i = tabs.indexOf(document.activeElement);
@@ -461,6 +620,7 @@
     if (tabId) showTab($(tabId));
     renderBestiary();
     renderReport();
+    renderTrials();
     menu.showModal();
   }
   $("menuBtn").onclick = () => openMenu();
@@ -511,6 +671,7 @@
     pending = fn;
     $("confirmNew").hidden = false;
     $("confirmYes").focus();
+    $("confirmNew").scrollIntoView({ block: "nearest" });
   }
   $("newBtn").onclick = () => leaveThen(() => newGame());
   $("confirmYes").onclick = () => {
@@ -522,7 +683,7 @@
     e.preventDefault();
     const g = B.parseCode($("codeInput").value);
     if (!g) {
-      $("codeMsg").textContent = "Codice non valido: numeri, un trattino e tre lettere, come 418273-cns.";
+      $("codeMsg").textContent = "Codice non valido: numeri, un trattino e tre lettere, come 418273-cns, oppure una prova, come prova-2.";
       return $("codeInput").focus();
     }
     leaveThen(() => newGame(g));
@@ -573,15 +734,20 @@
     const u = s.edict.me;
     return u ? `turno ${NUM[u.turn]}, quarto ${B.ROMAN[u.q]}` : "non usato";
   }
+  function draftLine() {
+    const d = s.draft;
+    return drafting() ? "in corso" : `tu ${names(d.picks.me)}; il Conte ${names(d.picks.foe)}`;
+  }
   function outcome() {
     const e = B.evaluate(s);
+    if (s.trial !== undefined && s.over) return `${s.goal ? "prova superata" : "prova non superata"}, corone ${e.score.me} a ${e.score.foe}`;
     if (!s.over) return `partita in corso, turno ${NUM[s.turn]}, corone ${e.score.me} a ${e.score.foe}`;
     return `${s.over === "me" ? "vittoria" : s.over === "foe" ? "sconfitta" : "pareggio"}, corone ${e.score.me} a ${e.score.foe}`;
   }
   function renderReport() {
     $("reportAuto").innerHTML =
-      `<span class="label">Compilato da solo</span> Codice <code>${esc(gameCode())}</code> · ${esc(B.FORMATS[s.format].name)} · Conte ${esc(CONTE[conte].name.toLowerCase())} · ` +
-      `Editto: ${esc(edictLine())} · Esito: ${esc(outcome())}`;
+      `<span class="label">Compilato da solo</span> Codice <code>${esc(gameCode())}</code> · ${esc(formatName())} · Conte ${esc(CONTE[conte].name.toLowerCase())} · ` +
+      `Editto: ${esc(edictLine())}${s.draft ? ` · Draft: ${esc(draftLine())}` : ""} · Esito: ${esc(outcome())}`;
   }
   function reportText() {
     const clarity = picked1("clarity", { 1: 1, 2: 1, 3: 1, 4: 1, 5: 1 });
@@ -590,7 +756,8 @@
     return [
       `Blasone ${VERSION} · scheda di riscontro`,
       `Codice partita: ${gameCode()}`,
-      `Formato: ${B.FORMATS[s.format].name} · Editto: ${s.edict ? "attivo" : "non attivo"} · Conte: ${CONTE[conte].name}`,
+      `Formato: ${formatName()} · Editto: ${s.edict ? "attivo" : "non attivo"} · Conte: ${CONTE[conte].name}`,
+      ...(s.draft ? [`Draft: ${draftLine()}`] : []),
       `Esito: ${outcome()}`,
       `Editto usato: ${edictLine()}`,
       `Chiarezza delle abilità (1-5): ${clarity || "—"}`,
@@ -662,5 +829,6 @@
   }
 
   applyView();
-  newGame();
+  // ?codice= opens a game code (a link to a game); untrusted, so parseCode decides
+  newGame((!preview && B.parseCode(params.get("codice") || "")) || undefined);
 })();

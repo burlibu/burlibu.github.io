@@ -345,6 +345,52 @@ code { font: 600 14px/1 ui-monospace, "Cascadia Mono", Consolas, monospace; lett
 .peek-mods li:first-child { border-top: 1px solid var(--ink); }
 .peek-mods b { font: 900 18px var(--serif); font-variant-numeric: lining-nums; }
 
+/* ---------- draft sheet ---------- */
+.draft { padding: 22px 26px 26px; margin-bottom: 26px; }
+.draft h2, .goal h2 { font-size: 30px; font-weight: 900; text-transform: uppercase; line-height: 1; margin: 6px 0 8px; }
+.draft > .label, .goal .label { color: var(--sepia); }
+.draft-order { list-style: none; padding: 0; margin: 16px 0 18px; display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 6px; }
+.draft-order li { min-height: 46px; padding: 5px 6px; border: 1px solid rgba(15, 15, 16, 0.35); font: 600 14px/1.15 var(--serif); }
+.draft-order li .label { display: block; font-size: 8px; letter-spacing: 0.14em; color: var(--sepia); }
+.draft-order li.foe { background: rgba(15, 15, 16, 0.06); }
+.draft-order li.done { border-color: var(--ink); }
+.draft-order li.now { border: 2px solid var(--ochre-2); font-style: italic; }
+.draft-offer { display: grid; grid-template-columns: repeat(4, minmax(0, 190px)); justify-content: center; gap: 20px 22px; }
+.draft-offer .card { width: 100%; }
+.beast.offer .card { cursor: pointer; }
+.beast.offer .card:disabled { cursor: default; }
+.beast.offer.taken .card { opacity: 0.5; filter: grayscale(0.6); }
+.beast.offer.taken.me .card { opacity: 1; filter: none; outline: 3px solid var(--ochre-2); outline-offset: 3px; }
+.draft-msg { min-height: 1.4em; margin: 16px 0 0; font-style: italic; }
+.draft-recap { margin-top: 14px; padding: 14px 16px; border: 1px solid var(--ink); display: grid; gap: 8px; justify-items: start; }
+.draft-recap ul { padding-left: 18px; font-size: 16px; }
+.draft-recap li { margin: 3px 0; }
+/* ---------- trial goal and list ---------- */
+.goal[hidden] { display: none; }
+.goal { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px 24px; padding: 18px 24px; margin-bottom: 26px; border-left: 6px solid var(--ochre-2); }
+.goal p { font-size: 17px; }
+.goal .hint { margin-top: 8px; padding-top: 8px; border-top: 1px dashed rgba(15, 15, 16, 0.4); }
+.goal .tool { flex: none; }
+.trial-list { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 10px; }
+.trial-btn { width: 100%; height: 100%; display: grid; gap: 4px; align-content: start; padding: 12px 14px; border: 1px solid rgba(15, 15, 16, 0.4); background: none; text-align: left; font: 15px/1.3 var(--body, inherit); color: var(--sepia); }
+.trial-btn b { font: 700 18px var(--serif); color: var(--ink); }
+.trial-btn .label { color: var(--sepia); }
+.trial-btn .label b { font: inherit; color: var(--ink); }
+.trial-btn:hover { border-color: var(--ink); background: rgba(200, 138, 59, 0.12); }
+.trial-btn:focus-visible { outline: 2px solid var(--ochre); outline-offset: 2px; }
+.trial-why { margin-bottom: 16px; padding: 12px 14px; border: 1px solid var(--ink); font-size: 16px; line-height: 1.4; }
+.trial-why .label { margin-bottom: 4px; color: var(--sepia); }
+.menu-confirm { margin: 0 28px 24px; padding: 12px 14px; border: 1px solid var(--ink); background: rgba(200, 138, 59, 0.12); }
+/* the Conte's hand, face up in a trial */
+.backs.open { flex-wrap: wrap; }
+.chip { position: relative; display: inline-flex; align-items: center; gap: 6px; padding: 4px 8px 4px 4px; border: 1px solid var(--ink); background: var(--paper); font-size: 14px; }
+.chip img { width: 26px; height: 26px; object-fit: contain; }
+.chip svg.tinct { width: 12px; height: 14px; }
+.chip .ink { display: none; }
+:root[data-cards="colore"] .chip { border-color: var(--tc-d); background: var(--paper-c); box-shadow: inset 0 3px 0 var(--tc); }
+:root[data-cards="colore"] .chip img { visibility: hidden; }
+:root[data-cards="colore"] .chip .ink { display: block; position: absolute; left: 22px; top: 4px; width: 26px; height: 26px; }
+
 @media (max-width: 1100px) {
   .table { grid-template-columns: 1fr; }
   .side { display: grid; grid-template-columns: 1fr 1fr; gap: 0 24px; }
@@ -408,6 +454,13 @@ code { font: 600 14px/1 ui-monospace, "Cascadia Mono", Consolas, monospace; lett
   .status { font-size: 10px; }
   .reveal { font-size: 14px; }
   .menu-head { padding: 16px 16px 10px; }
+  .draft { padding: 16px; }
+  .draft h2, .goal h2 { font-size: 22px; }
+  .draft-order { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .draft-offer { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px 10px; }
+  .draft-offer .card { width: 100%; min-width: 0; }
+  .goal { flex-direction: column; padding: 14px 16px; }
+  .menu-confirm { margin: 0 16px 16px; }
   .menu-head h2 { font-size: 26px; }
   .tabs { padding: 0 10px; }
   .tabs [role="tab"] { padding: 8px 8px; font-size: 10px; letter-spacing: 0.1em; }
@@ -431,6 +484,7 @@ code { font: 600 14px/1 ui-monospace, "Cascadia Mono", Consolas, monospace; lett
 .h-base { --paper-c: #efe2c3; --stain: rgba(150, 100, 40, 0.16); --corner: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2'%3E%3Cpath d='M2 23V2h21'/%3E%3Ccircle cx='9' cy='9' r='4'/%3E%3Cpath d='M9 2v14M2 9h14M5 5l8 8'/%3E%3C/svg%3E"); }
 .h-crepuscolo { --paper-c: #dcd0b8; --stain: rgba(70, 58, 84, 0.2); --corner: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M1 1h22l-3 3H4v16l-3 3z'/%3E%3Cpath d='M7 7h8l-8 8z'/%3E%3Ccircle cx='17' cy='6' r='1.4'/%3E%3Ccircle cx='6' cy='17' r='1.4'/%3E%3C/svg%3E"); }
 .h-fiere { --paper-c: #e8d3a6; --stain: rgba(125, 72, 20, 0.22); --corner: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M1 1h22l-5 2 3 1.5-6 1.5H6v9l-1.5 6-1-3.5L2 23z'/%3E%3Cpath d='M8 8l7 1.5-3.5 1.5 2.5 3.5-6-1.5z'/%3E%3C/svg%3E"); }
+.h-veglie { --paper-c: #e2dccd; --stain: rgba(40, 70, 82, 0.18); --corner: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M1 1h22v2H3v20H1z'/%3E%3Cpath d='M6 12c3-5 9-5 12 0-3 5-9 5-12 0z' fill='none' stroke='black' stroke-width='1.8'/%3E%3Ccircle cx='12' cy='12' r='2.2'/%3E%3C/svg%3E"); }
 .corners, .pwr-shield, .ink, .house { display: none; }
 
 :root[data-cards="colore"] .card {
@@ -451,6 +505,8 @@ code { font: 600 14px/1 ui-monospace, "Cascadia Mono", Consolas, monospace; lett
 :root[data-cards="colore"] .card.h-crepuscolo::before { border: 1px solid var(--tc-d); box-shadow: inset 0 0 0 3px var(--paper-c), inset 0 0 0 4px var(--tc); }
 :root[data-cards="colore"] .card.h-fiere::before { border: 2px dashed var(--tc); }
 :root[data-cards="colore"] .card.h-crepuscolo { box-shadow: inset 0 0 22px rgba(40, 32, 48, 0.42), 5px 5px 0 var(--tc-d); }
+:root[data-cards="colore"] .card.h-veglie::before { border: 3px dotted var(--tc); }
+:root[data-cards="colore"] .card.h-veglie { box-shadow: inset 0 0 18px rgba(20, 50, 62, 0.36), 5px 5px 0 var(--tc-d); }
 :root[data-cards="colore"] .card.h-fiere { box-shadow: inset 0 0 12px rgba(110, 60, 10, 0.5), inset 0 0 0 1px rgba(90, 55, 15, 0.3), 5px 5px 0 var(--tc-d); }
 
 :root[data-cards="colore"] .corners { display: block; position: absolute; inset: 0; pointer-events: none; }
@@ -473,6 +529,7 @@ code { font: 600 14px/1 ui-monospace, "Cascadia Mono", Consolas, monospace; lett
 :root[data-cards="colore"] .ink { display: block; position: absolute; inset: 6px; background: linear-gradient(160deg, var(--tc), var(--tc-d) 70%); -webkit-mask: var(--art) center / contain no-repeat; mask: var(--art) center / contain no-repeat; }
 :root[data-cards="colore"] .h-crepuscolo .art { border-radius: 50% 50% 0 0 / 34% 34% 0 0; border-left: 1px solid var(--tc-d); border-right: 1px solid var(--tc-d); }
 :root[data-cards="colore"] .h-fiere .art { border-style: dashed; }
+:root[data-cards="colore"] .h-veglie .art { border-top: 3px double var(--tc-d); border-bottom: 3px double var(--tc-d); }
 /* name on a banner, ability in a cartouche */
 :root[data-cards="colore"] .card h4 { padding: 5px 12px 4px; margin: 0 -3px; background: var(--tc); color: var(--paper); clip-path: polygon(0 0, 100% 0, 97% 50%, 100% 100%, 0 100%, 3% 50%); }
 :root[data-cards="colore"] .card .ab { margin-top: 6px; padding: 6px 7px; border: 1px solid var(--tc); border-radius: 3px; background: rgba(255, 252, 240, 0.35); color: #3b2c17; }
