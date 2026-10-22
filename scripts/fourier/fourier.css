@@ -1,0 +1,64 @@
+.iso{--fx-paper:#fffef8;--fx-paper-edge:#e9e6d8}
+.iso[data-theme="dark"]{--fx-paper:#1a1a17;--fx-paper-edge:#2b2a24}
+.fx-paper{fill:var(--fx-paper);stroke:none}
+.fx-void{fill:var(--anatomy-shade-0);stroke:none}
+.fx-hole{fill:var(--anatomy-shade-1);stroke:none}
+.fx-spoke{fill:var(--anatomy-top);stroke:var(--anatomy-mid);stroke-width:var(--anatomy-weight);vector-effect:non-scaling-stroke;stroke-linejoin:round}
+.fx-trace{stroke-width:1.1px}
+.fx-ghost{stroke-dasharray:.01 2.2;stroke-width:1px}
+.fx-wire{stroke-width:.7px}
+.fx-wound{stroke-width:.75px}
+.fx-spectrum{stroke-width:.9px}
+.fx-stage{touch-action:pan-y;cursor:grab;outline:none}
+.fx-stage:active{cursor:grabbing}
+.fx-stage[data-fig="2"]{cursor:default}
+.fx-stage:focus-visible{outline:1px solid var(--anatomy-muted);outline-offset:6px}
+
+/* controls under each plate */
+.fx-controls{display:grid;grid-template-columns:auto minmax(140px,1fr) auto;align-items:center;gap:12px 22px;margin:22px 0 0;padding-top:14px;border-top:1px solid var(--anatomy-faint);font:12px/1.3 var(--anatomy-mono);color:var(--anatomy-text)}
+.fx-seg{display:flex;flex-wrap:wrap;gap:4px}
+.fx-seg button{font:inherit;color:var(--anatomy-text);background:transparent;border:1px solid var(--anatomy-lo);padding:6px 9px;cursor:pointer;letter-spacing:.02em}
+.fx-seg button:hover{border-color:var(--anatomy-mid);color:var(--anatomy-strong)}
+.fx-seg button[aria-checked="true"]{border-color:var(--anatomy-strong);color:var(--anatomy-strong);background:var(--anatomy-page)}
+.fx-seg button:focus-visible{outline:1px solid var(--anatomy-strong);outline-offset:2px}
+.fx-control{display:grid;grid-template-columns:1fr auto;align-items:center;gap:4px 10px}
+.fx-control span{color:var(--anatomy-strong)}
+.fx-control output{color:var(--anatomy-muted);font-variant-numeric:tabular-nums}
+.fx-control input{grid-column:1/-1;width:100%;accent-color:var(--anatomy-strong);margin:0}
+.fx-wide{grid-column:1/-1}
+/* the seven coefficients as bars: the spectrum of the chosen signal */
+.fx-coefs{display:flex;align-items:flex-end;gap:5px;height:42px}
+.fx-coefs span{display:grid;grid-template-rows:1fr auto;justify-items:center;height:100%;width:12px}
+.fx-coefs i{align-self:end;width:6px;height:var(--h,0%);min-height:1px;background:var(--anatomy-hi);transition:height .45s var(--anatomy-ease),opacity .3s}
+.fx-coefs i[data-neg]{background:transparent;box-shadow:inset 0 0 0 1px var(--anatomy-hi)}
+.fx-coefs i[data-cos]{border-radius:3px 3px 0 0}
+.fx-coefs b{font-weight:400;font-size:10px;color:var(--anatomy-muted);margin-top:3px}
+.fx-coefs span[data-off] i{opacity:.18}
+@media (max-width:640px){.fx-controls{grid-template-columns:1fr}.fx-coefs{justify-content:flex-start}}
+@media (prefers-reduced-motion:reduce){.fx-coefs i{transition:none}}
+
+/* prose */
+.fx-prose{color:var(--anatomy-text);font-size:15.5px;line-height:1.7}
+.fx-prose p{margin:0 0 1em;max-width:66ch}
+.fx-prose em{font-style:normal;color:var(--anatomy-strong)}
+.fx-head{margin-bottom:28px}
+.fx-kicker{font:11px/1.4 var(--anatomy-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--anatomy-muted);margin:0 0 10px!important}
+.fx-prose h1{font:500 clamp(34px,6vw,52px)/1.05 ui-serif,Georgia,"Times New Roman",serif;color:var(--anatomy-strong);letter-spacing:-.01em;margin:0 0 22px}
+.fx-prose h2{display:flex;align-items:baseline;gap:14px;font:500 24px/1.25 ui-serif,Georgia,"Times New Roman",serif;color:var(--anatomy-strong);margin:64px 0 16px}
+.fx-prose h2 span{font:11px/1 var(--anatomy-mono);color:var(--anatomy-muted);border:1px solid var(--anatomy-lo);padding:5px 7px;transform:translateY(-3px)}
+.fx-math{overflow-x:auto;overflow-y:hidden;margin:6px 0 20px;padding:4px 0;color:var(--anatomy-strong)}
+.fx-math .katex-display{margin:0}
+.fx-prose .katex{font-size:1.06em;color:var(--anatomy-strong)}
+.fx-table{overflow-x:auto;margin:8px 0 22px}
+.fx-table table{border-collapse:collapse;width:100%;min-width:520px;font-size:14px}
+.fx-table th{font:11px/1.3 var(--anatomy-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--anatomy-muted);text-align:left;font-weight:400;padding:8px 10px 8px 0;border-bottom:1px solid var(--anatomy-mid)}
+.fx-table td{padding:9px 14px 9px 0;border-bottom:1px solid var(--anatomy-faint);vertical-align:middle}
+.fx-table td:last-child{color:var(--anatomy-text)}
+.fx-prose .iso-figure{margin:30px 0 36px}
+
+/* home tile: just the machine */
+.fx-preview body{overflow:hidden}
+.fx-preview .iso-page{width:100%;margin:0}
+.fx-preview .fx-prose > :not(section:first-of-type),.fx-preview section:first-of-type > :not(.fx-fig1){display:none}
+.fx-preview .fx-controls,.fx-preview .iso-legend,.fx-preview [data-corner="hint"]{display:none}
+.fx-preview .iso-figure{margin:0}

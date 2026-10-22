@@ -57,6 +57,7 @@ const more = [
   ["/fcq", "Quantistica", <QuantumFace />],
   ["/dispatch", "Fire Dispatch HQ", <Preview name="dispatch" />],
   ["/biplano", "Biplano", <Preview name="biplano" />],
+  ["/fourier", "Fourier", <Preview name="fourier" />],
 ];
 
 function Tile({ to, label, preview, ...props }) {
@@ -176,6 +177,7 @@ function App() {
         <Route path="/ardesia" element={<DesignFrame name="ardesia" title="Ardesia" />} />
         <Route path="/dispatch" element={<DesignFrame name="dispatch" title="Fire Dispatch HQ" />} />
         <Route path="/biplano" element={<DesignFrame name="biplano" title="Biplano" />} />
+        <Route path="/fourier" element={<DesignFrame name="fourier" title="La trasformata di Fourier" />} />
         <Route path="/contact"element={<Contact />} />
         <Route path="/resources" element={<Resources />} />
         <Route
