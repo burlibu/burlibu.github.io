@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="it">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Benchmark dei modelli AI</title>
+    <meta name="description" content="Indice di capacità, risultati sui benchmark, prezzi e contesto dei modelli linguistici, da Epoch AI, OpenRouter e Artificial Analysis, aggiornati ogni giorno." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <nav class="rail" aria-label="Viste">
+      <a class="brand" href="#classifica" aria-label="Benchmark dei modelli AI, classifica">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 20h18M5 17l4-6 4 3 6-9" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" /><circle cx="19" cy="5" r="2" fill="currentColor" /></svg>
+      </a>
+      <a class="nav" href="#classifica" data-view="classifica" title="Classifica ECI">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2" /></svg><span>Classifica</span>
+      </a>
+      <a class="nav" href="#benchmark" data-view="benchmark" title="Benchmark">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" /><circle cx="12" cy="12" r="3" /><path d="M12 2v3M12 19v3M2 12h3M19 12h3" /></svg><span>Benchmark</span>
+      </a>
+      <a class="nav" href="#prezzi" data-view="prezzi" title="Prezzi e contesto">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7h18v10H3z" /><circle cx="12" cy="12" r="2.5" /><path d="M6 10v4M18 10v4" /></svg><span>Prezzi</span>
+      </a>
+      <a class="nav" href="#aa" data-view="aa" title="Artificial Analysis" id="navAa">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20 12 4l8 16M7.5 13h9" /></svg><span>AA</span>
+      </a>
+      <a class="nav nav-end" href="#fonti" data-view="fonti" title="Fonti e metodo">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 3h10l4 4v14H5z" /><path d="M15 3v4h4M8 12h8M8 16h8" /></svg><span>Fonti</span>
+      </a>
+    </nav>
+
+    <main class="canvas">
+      <p class="loading" id="loading" role="status">Carico i dati…</p>
+
+      <!-- ===================== CLASSIFICA ===================== -->
+      <section class="view" id="v-classifica" aria-labelledby="h-classifica" hidden>
+        <header class="head">
+          <div>
+            <h1 id="h-classifica">Benchmark dei modelli AI</h1>
+            <p class="date" data-updated></p>
+          </div>
+          <div class="head-actions">
+            <a class="pill" href="data.json" download>Scarica i dati</a>
+            <a class="pill" href="#fonti">Fonti e metodo</a>
+          </div>
+        </header>
+        <p class="finding" id="finding"></p>
+        <dl class="kpis" id="kpis"></dl>
+
+        <div class="row">
+          <article class="card" aria-labelledby="h-top">
+            <header class="card-head">
+              <h2 id="h-top">Classifica per indice ECI</h2>
+              <span class="note">intervallo al 90%</span>
+            </header>
+            <ol class="rank" id="rank"></ol>
+            <a class="more" href="#tutti">Tutti i 0 modelli</a>
+          </article>
+          <article class="card" aria-labelledby="h-front">
+            <header class="card-head">
+              <h2 id="h-front">La frontiera</h2>
+              <ul class="legend" id="frontLegend"></ul>
+            </header>
+            <div class="chart" id="frontChart"></div>
+            <div class="chart-foot">
+              <div class="ranges" role="group" aria-label="Periodo" id="frontRange"></div>
+              <span class="note" id="frontNote"></span>
+            </div>
+          </article>
+        </div>
+
+        <h2 class="section" id="tutti">Tutti i modelli</h2>
+        <div class="toolbar">
+          <label class="vh" for="q">Cerca un modello</label>
+          <input class="search" id="q" type="search" placeholder="Cerca modello o organizzazione" autocomplete="off" />
+          <label class="vh" for="fOpen">Pesi</label>
+          <select id="fOpen">
+            <option value="">Pesi: tutti</option>
+            <option value="0">Pesi chiusi</option>
+            <option value="1">Pesi aperti</option>
+          </select>
+          <label class="vh" for="fOrg">Organizzazione</label>
+          <select id="fOrg"><option value="">Tutte le organizzazioni</option></select>
+          <label class="vh" for="fYear">Anno</label>
+          <select id="fYear"><option value="">Tutti gli anni</option></select>
+          <details class="cols" id="colsBox">
+            <summary class="pill">Colonne</summary>
+            <div class="cols-pop">
+              <p class="note">Benchmark mostrati in tabella</p>
+              <div id="colsList"></div>
+            </div>
+          </details>
+          <span class="count" id="tCount" aria-live="polite"></span>
+        </div>
+        <div class="table-wrap">
+          <table class="data" id="tModels">
+            <thead></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <div class="pager"><button class="pill" id="tMore" type="button">Mostra altri</button></div>
+      </section>
+
+      <!-- ===================== BENCHMARK ===================== -->
+      <section class="view" id="v-benchmark" aria-labelledby="h-benchmark" hidden>
+        <header class="head">
+          <div>
+            <h1 id="h-benchmark">Benchmark</h1>
+            <p class="date" data-updated></p>
+          </div>
+        </header>
+        <p class="finding" id="bFinding"></p>
+        <div class="row row-bench">
+          <article class="card" aria-labelledby="h-blist">
+            <header class="card-head">
+              <h2 id="h-blist">Tutti i benchmark</h2>
+              <span class="note" id="bCount"></span>
+            </header>
+            <label class="vh" for="bq">Cerca un benchmark</label>
+            <input class="search search-in" id="bq" type="search" placeholder="Cerca benchmark" autocomplete="off" />
+            <ul class="blist" id="blist"></ul>
+          </article>
+          <div class="stack">
+            <dl class="kpis kpis-in" id="bKpis"></dl>
+            <article class="card" aria-labelledby="h-bchart">
+              <header class="card-head">
+                <h2 id="h-bchart">Punteggio per data di uscita</h2>
+                <ul class="legend" id="bLegend"></ul>
+              </header>
+              <div class="chart" id="bChart"></div>
+              <div class="chart-foot"><span class="note" id="bNote"></span></div>
+            </article>
+          </div>
+        </div>
+        <h2 class="section" id="bTableTitle">Risultati</h2>
+        <div class="table-wrap">
+          <table class="data" id="tBench">
+            <thead></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ===================== PREZZI ===================== -->
+      <section class="view" id="v-prezzi" aria-labelledby="h-prezzi" hidden>
+        <header class="head">
+          <div>
+            <h1 id="h-prezzi">Prezzi e contesto</h1>
+            <p class="date" id="pDate"></p>
+          </div>
+        </header>
+        <p class="finding" id="pFinding"></p>
+        <div class="row">
+          <article class="card" aria-labelledby="h-pcheap">
+            <header class="card-head">
+              <h2 id="h-pcheap">Frontiera prezzo-capacità</h2>
+              <span class="note">nessuno è più capace spendendo meno</span>
+            </header>
+            <ol class="rank" id="pRank"></ol>
+          </article>
+          <article class="card" aria-labelledby="h-pchart">
+            <header class="card-head">
+              <h2 id="h-pchart">Prezzo e capacità</h2>
+              <ul class="legend" id="pLegend"></ul>
+            </header>
+            <div class="chart" id="pChart"></div>
+            <div class="chart-foot"><span class="note">Prezzo medio = (input × 3 + output) ÷ 4, in dollari per milione di token, scala logaritmica</span></div>
+          </article>
+        </div>
+        <h2 class="section">Listino</h2>
+        <div class="toolbar">
+          <label class="vh" for="pq">Cerca un modello</label>
+          <input class="search" id="pq" type="search" placeholder="Cerca modello o fornitore" autocomplete="off" />
+          <label class="vh" for="pProv">Fornitore</label>
+          <select id="pProv"><option value="">Tutti i fornitori</option></select>
+          <label class="vh" for="pFree">Gratuiti</label>
+          <select id="pFree">
+            <option value="">Gratuiti e a pagamento</option>
+            <option value="paid">Solo a pagamento</option>
+            <option value="free">Solo gratuiti</option>
+          </select>
+          <label class="vh" for="pMod">Modalità</label>
+          <select id="pMod"><option value="">Tutte le modalità</option></select>
+          <label class="check"><input type="checkbox" id="pEci" /> Solo con indice ECI</label>
+          <span class="count" id="pCount" aria-live="polite"></span>
+        </div>
+        <div class="table-wrap">
+          <table class="data" id="tPrice">
+            <thead></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <div class="pager"><button class="pill" id="pMore" type="button">Mostra altri</button></div>
+      </section>
+
+      <!-- ===================== ARTIFICIAL ANALYSIS ===================== -->
+      <section class="view" id="v-aa" aria-labelledby="h-aa" hidden>
+        <header class="head">
+          <div>
+            <h1 id="h-aa">Artificial Analysis</h1>
+            <p class="date" id="aaDate"></p>
+          </div>
+        </header>
+        <div id="aaBody"></div>
+      </section>
+
+      <!-- ===================== FONTI ===================== -->
+      <section class="view" id="v-fonti" aria-labelledby="h-fonti" hidden>
+        <header class="head">
+          <div>
+            <h1 id="h-fonti">Fonti e metodo</h1>
+            <p class="date" data-updated></p>
+          </div>
+        </header>
+        <div class="sources" id="sources"></div>
+        <div class="method">
+          <article class="card">
+            <h2>Come si aggiorna</h2>
+            <p>Ogni mattina un'azione di GitHub scarica le fonti, ricostruisce <a href="data.json">data.json</a> e ripubblica il sito. Se una fonte non risponde resta la copia del giorno prima, segnata come non aggiornata. Il listino di OpenRouter viene anche riletto dal browser a ogni visita.</p>
+          </article>
+          <article class="card">
+            <h2>L'indice ECI</h2>
+            <p>L'Epoch Capabilities Index mette su un'unica scala i risultati di decine di benchmark, pesando ciascuno per la sua difficoltà, così modelli valutati su prove diverse restano confrontabili. L'intervallo accanto a ogni valore è al 90%: due modelli i cui intervalli si sovrappongono non sono distinguibili.</p>
+          </article>
+          <article class="card">
+            <h2>Cosa non dicono</h2>
+            <p>I punteggi dipendono da come il modello è stato interrogato (sforzo di ragionamento, strumenti, numero di tentativi) e alcuni vengono dai produttori stessi. I prezzi sono quelli di listino del fornitore più economico su OpenRouter, non il costo per compito: un modello che ragiona più a lungo spende più token.</p>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <dialog class="sheet" id="sheet" aria-labelledby="sheetTitle">
+      <header class="sheet-head">
+        <div>
+          <h2 id="sheetTitle"></h2>
+          <p class="note" id="sheetSub"></p>
+        </div>
+        <button class="pill" type="button" id="sheetClose">Chiudi</button>
+      </header>
+      <div id="sheetBody"></div>
+    </dialog>
+
+    <div class="tip" id="tip" role="tooltip" hidden></div>
+
+    <script src="../preview.js"></script>
+    <script src="script.js"></script>
+  </body>
+</html>
