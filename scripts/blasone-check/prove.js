@@ -13,7 +13,7 @@
   $("menuBtn").click();
   $("tab-prove").click();
   const marks = [...$("trialList").querySelectorAll(".trial-btn")].map((b) => /superata/.test(b.textContent));
-  ok("prove salvate malevole filtrate: solo la 2", marks.length === 6 && marks.filter(Boolean).length === 1 && marks[1]);
+  ok("prove salvate malevole filtrate: solo la 2", marks.length === Blasone.TRIALS.length && marks.filter(Boolean).length === 1 && marks[1]);
   ok("nessun markup iniettato dalle prove salvate", !document.querySelector("img[src='x']") && !window.__pwned);
   $("menuClose").click();
   // the winning move: the Cigno into quarter I

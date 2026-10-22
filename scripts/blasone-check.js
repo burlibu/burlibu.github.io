@@ -24,7 +24,7 @@ function page(name, prefs, check, prove = "[]") {
   return path.join(tmp, name);
 }
 // a raw "__proto__" key, which JSON.stringify of an object literal can't write
-const hostile = '{"__proto__":{"polluted":1},"format":"<img src=x onerror=window.__pwned=1>","size":"1.3","conte":"constructor","editto":"si","colors":false}';
+const hostile = '{"__proto__":{"polluted":1},"format":"<img src=x onerror=window.__pwned=1>","size":"1.3","conte":"constructor","editto":"si","rivalita":"si","colors":false}';
 
 (async () => {
   const extra = {

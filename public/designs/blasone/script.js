@@ -11,7 +11,7 @@
   const params = new URLSearchParams(location.search);
   const preview = params.has("preview");
   const NUM = ["", "I", "II", "III", "IV", "V", "VI"];
-  const VERSION = "0.0.7";
+  const VERSION = "0.0.8";
   const KEYS = Object.keys(B.BEASTS);
 
   // ---------- woodcut engraving ----------
@@ -100,7 +100,7 @@
     variabile: { name: "Variabile", noise: 2, text: "Spesso tenta mosse azzardate: imprevedibile, e più facile da battere." },
   };
   const SIZES = { 1: "Normale", 1.15: "Grande", 1.3: "Molto grande" };
-  const prefs = { format: "classico", editto: false, conte: "standard", motion: false, size: 1, colors: true };
+  const prefs = { format: "classico", editto: false, rivalita: false, conte: "standard", motion: false, size: 1, colors: true };
   // stored prefs are untrusted: copy only known keys holding allowed values
   const own = (o, k) => typeof k === "string" && Object.prototype.hasOwnProperty.call(o, k);
   function readPrefs(raw) {
@@ -108,7 +108,7 @@
     if (own(B.FORMATS, raw.format)) prefs.format = raw.format;
     if (own(CONTE, raw.conte)) prefs.conte = raw.conte;
     if (own(SIZES, String(raw.size)) && typeof raw.size === "number") prefs.size = raw.size;
-    for (const k of ["editto", "motion", "colors"]) if (typeof raw[k] === "boolean") prefs[k] = raw[k];
+    for (const k of ["editto", "rivalita", "motion", "colors"]) if (typeof raw[k] === "boolean") prefs[k] = raw[k];
   }
   try {
     const raw = localStorage.getItem("blasone.prefs");
@@ -137,6 +137,7 @@
       seed: seedParam ?? (Math.random() * 1e9) | 0,
       format: preview ? "classico" : prefs.format,
       editto: !preview && prefs.editto,
+      rivalita: !preview && prefs.rivalita,
       conte: preview ? "standard" : prefs.conte,
     };
     // a trial that fails its checks falls back to a plain game
@@ -159,6 +160,8 @@
         : s.draft
         ? "Prima del duello, il draft: scegli quattro carte tra le otto scoperte."
         : "Le mosse dei due lati si rivelano insieme, a fine turno.";
+    // the rule is explained before the first move
+    if (s.rivalry) $("reveal").textContent += " " + RIVAL_RULE;
     render();
   }
   const gameCode = () => B.code(s, conte);
@@ -166,6 +169,8 @@
   const drafting = () => !!B.draftTurn(s);
   const formatName = () => (s.trial !== undefined ? `Prova dell'Araldo ${s.trial + 1}` : B.FORMATS[s.format].name);
   const names = (ids) => ids.map((id) => B.BEASTS[id].name).join(", ");
+  const RIVAL_RULE = "Rivalità di Casata attiva: se in un quarto avete entrambi una carta della stessa casata (il Bestiario non conta), il quarto vale +1 corona per chi lo conquista.";
+  const houseNames = (ids) => ids.map((h) => B.HOUSES.find((x) => x.id === h).name).join(", ");
 
   // ---------- board ----------
   const signed = (v) => `${v > 0 ? "+" : "−"}${Math.abs(v)}`;
@@ -191,7 +196,11 @@
             (why) => `<span class="bonus" title="${why}: +1 corona solo se ${side === "me" ? "tu conquisti" : "il Conte conquista"} il quarto">+${crown}<span>${side === "me" ? "Tu" : "C"} · ${why}</span></span>`
           )
         ).join("");
-        const crowns = crown.repeat(x.crowns) + extra;
+        // the Rivalità in words and a sword mark, not by colour alone
+        const rival = x.rival
+          ? `<span class="bonus rival" title="Rivalità di Casata (${esc(houseNames(x.rivalry))}): +1 corona per chi conquista il quarto">+${crown}<span>⚔ Rivalità</span></span>`
+          : "";
+        const crowns = crown.repeat(x.crowns) + rival + extra;
         return `<article class="plate ${open || s.over || waiting ? "" : "shut"}" aria-label="Quarto ${B.ROMAN[q]}, ${esc(f.name)}">
           <header class="plate-head">
             <span class="numeral">${B.ROMAN[q]}</span>
@@ -358,7 +367,7 @@
     const t = s.trial !== undefined && B.TRIALS[s.trial];
     $("goal").hidden = !t;
     if (!t) return;
-    $("goalLabel").textContent = `Prova dell'Araldo ${s.trial + 1} di ${B.TRIALS.length} · ${t.level}${solved.includes(s.trial) ? " · superata" : ""}`;
+    $("goalLabel").textContent = `Prova dell'Araldo ${s.trial + 1}${s.trial < B.TRIALS_SET ? ` di ${B.TRIALS_SET}` : ""} · ${t.level}${solved.includes(s.trial) ? " · superata" : ""}`;
     $("goalTitle").textContent = t.name;
     $("goalText").textContent = t.goalText;
     $("hintText").textContent = t.hint;
@@ -452,10 +461,11 @@
       const by = B.SIDES.map((side) => [side, x[side].cards.filter((c) => c.id === "torre").length]).filter(([, n]) => n);
       lines.push(`Torri: +${towers} (${by.map(([side, n]) => `${n} ${OF[side]}`).join(", ")}), a chi conquista il quarto.`);
     }
+    if (x.rival) lines.push(`Rivalità di Casata (${houseNames(x.rivalry)}): +1, a chi conquista il quarto, una sola per quarto.`);
     for (const side of B.SIDES)
       for (const why of x.extra[side])
         lines.push(`${why} ${OF[side]}: +1 solo ${side === "me" ? "per te" : "per il Conte"}, ${x.lead === side ? "assegnata" : "non assegnata, il quarto non è " + OF[side]}.`);
-    lines.push(x.lead ? `Assegnate: ${x.crowns + x.bonus[x.lead]} ${x.lead === "me" ? "a te" : "al Conte"}.` : "Assegnate: nessuna.");
+    lines.push(x.lead ? `Assegnate: ${B.prize(x, x.lead)} ${x.lead === "me" ? "a te" : "al Conte"}.` : "Assegnate: nessuna.");
     return lines;
   }
   function detail(x) {
@@ -473,7 +483,7 @@
   }
   function summary(e) {
     const rows = e.quarters.map((x) => {
-      const won = x.lead ? x.crowns + x.bonus[x.lead] : 0;
+      const won = x.lead ? B.prize(x, x.lead) : 0;
       return `<tr><th scope="row"><button type="button" class="q-btn" aria-expanded="false" aria-controls="qd-${x.q}">${B.ROMAN[x.q]} <small>${esc(x.field.name)}</small></button></th><td>${x.me.total}</td><td>${x.foe.total}</td>
         <td>${x.lead ? WHO[x.lead] : "Nessuno"}</td><td>${won || "—"}</td></tr>
         <tr class="q-detail" id="qd-${x.q}" hidden><td colspan="5">${detail(x)}</td></tr>`;
@@ -668,6 +678,11 @@
     prefs.editto = e.target.checked;
     save();
   };
+  $("rivalPref").checked = prefs.rivalita;
+  $("rivalPref").onchange = (e) => {
+    prefs.rivalita = e.target.checked;
+    save();
+  };
   $("colorPref").checked = prefs.colors;
   $("colorPref").onchange = (e) => {
     prefs.colors = e.target.checked;
@@ -702,7 +717,7 @@
     e.preventDefault();
     const g = B.parseCode($("codeInput").value);
     if (!g) {
-      $("codeMsg").textContent = "Codice non valido: numeri, un trattino e tre lettere, come 418273-cns, oppure una prova, come prova-2.";
+      $("codeMsg").textContent = "Codice non valido: numeri, un trattino e tre o quattro lettere, come 418273-cns o 418273-dnsr, oppure una prova, come prova-2.";
       return $("codeInput").focus();
     }
     leaveThen(() => newGame(g));
@@ -766,7 +781,7 @@
   function renderReport() {
     $("reportAuto").innerHTML =
       `<span class="label">Compilato da solo</span> Codice <code>${esc(gameCode())}</code> · ${esc(formatName())} · Conte ${esc(CONTE[conte].name.toLowerCase())} · ` +
-      `Editto: ${esc(edictLine())}${s.draft ? ` · Draft: ${esc(draftLine())}` : ""} · Esito: ${esc(outcome())}`;
+      `Editto: ${esc(edictLine())} · Rivalità: ${s.rivalry ? "attiva" : "non attiva"}${s.draft ? ` · Draft: ${esc(draftLine())}` : ""} · Esito: ${esc(outcome())}`;
   }
   function reportText() {
     const clarity = picked1("clarity", { 1: 1, 2: 1, 3: 1, 4: 1, 5: 1 });
@@ -775,7 +790,7 @@
     return [
       `Blasone ${VERSION} · scheda di riscontro`,
       `Codice partita: ${gameCode()}`,
-      `Formato: ${formatName()} · Editto: ${s.edict ? "attivo" : "non attivo"} · Conte: ${CONTE[conte].name}`,
+      `Formato: ${formatName()} · Editto: ${s.edict ? "attivo" : "non attivo"} · Rivalità: ${s.rivalry ? "attiva" : "non attiva"} · Conte: ${CONTE[conte].name}`,
       ...(s.draft ? [`Draft: ${draftLine()}`] : []),
       `Esito: ${outcome()}`,
       `Editto usato: ${edictLine()}`,

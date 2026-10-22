@@ -149,7 +149,11 @@
           <input type="checkbox" id="edictPref" />
           <span><b>Regola dell'Editto</b> Una volta per partita, dal turno II, puoi dichiarare l'Editto insieme alla carta: il quarto in cui la posi vale +1 corona, solo per te e solo se lo conquisti. Il Conte ha lo stesso diritto.</span>
         </label>
-        <p class="small">Formato, Editto e stile del Conte valgono dalla prossima partita.</p>
+        <label class="check">
+          <input type="checkbox" id="rivalPref" />
+          <span><b>Rivalità di Casata</b> <i>Sperimentale.</i> Un quarto dove entrambi avete una carta della stessa casata (il Bestiario non conta) vale +1 corona per chi lo conquista. Nel Draft aggiunge all'offerta la Compagnia dei Confini.</span>
+        </label>
+        <p class="small">Formato, Editto, Rivalità e stile del Conte valgono dalla prossima partita.</p>
         <div class="code-box">
           <p><span class="label">Codice di questa partita</span> <code id="gameCode"></code> <button class="tool" id="copyCode">Copia</button></p>
           <p class="small">Il codice ricrea la stessa partita: campi, mazzi e risposte del Conte alle stesse mosse. Contiene solo numeri e lettere del gioco, nessun dato personale.</p>
@@ -166,7 +170,7 @@
       </section>
 
       <section class="pane" role="tabpanel" id="pane-prove" aria-labelledby="tab-prove" hidden>
-        <p class="small">Le Prove dell'Araldo sono situazioni preparate, da uno a tre turni, con un obiettivo preciso. Niente pesca a caso: il Conte risponde sempre allo stesso modo alle stesse mosse, e la sua mano è scoperta. Ogni prova ha un suggerimento e, alla fine, la spiegazione delle mosse decisive.</p>
+        <p class="small">Le Prove dell'Araldo sono situazioni preparate, da uno a tre turni, con un obiettivo preciso. Niente pesca a caso: il Conte risponde sempre allo stesso modo alle stesse mosse, e la sua mano è scoperta. Ogni prova ha un suggerimento e, alla fine, la spiegazione delle mosse decisive. Le prove 7 e 8 sono facoltative e si giocano con la Rivalità di Casata.</p>
         <ol class="trial-list" id="trialList"></ol>
       </section>
 
@@ -179,6 +183,7 @@
           <article><p class="label">V · Casi speciali</p><p>Se in un quarto ha carte un solo lato, il quarto è suo, anche sul Campo rovesciato. La forza di una carta non scende sotto zero. Quarti confinanti: quelli separati da una sola piega. Tocca una carta sullo scudo per vedere da dove viene la sua forza.</p></article>
           <article><p class="label">VI · Reazione</p><p>Basilisco e Arpia reagiscono alle carte avversarie posate nel loro quarto in un turno successivo al loro. Non reagiscono a una carta posata nello stesso turno, non innescano altre reazioni e il Tasso le ignora. L'effetto resta scritto nel dettaglio della carta colpita.</p></article>
           <article><p class="label">VII · Draft e Prove</p><p>Nel Draft delle Casate il mazzo è il Bestiario più quattro carte scelte a turno con il Conte tra otto scoperte. Le Prove dell'Araldo, nel menu, sono situazioni brevi con un obiettivo da raggiungere.</p></article>
+          <article><p class="label">VIII · Rivalità di Casata</p><p>Regola facoltativa. Se in un quarto entrambi i lati hanno una carta della stessa casata, il quarto vale +1 corona per chi lo conquista: una sola per quarto, anche con più coppie. Il Bestiario, comune a tutti i mazzi, non conta. Si vede dalla mano, prima che le carte siano posate, e sullo scudo è segnata con ⚔ Rivalità. Nel Draft porta con sé la Compagnia dei Confini.</p></article>
         </div>
       </section>
 
