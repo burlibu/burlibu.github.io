@@ -41,11 +41,12 @@
     scorpione: { name: "Scorpione", glyph: "🦂", power: 5, t: "verde", ab: "Famelica", text: "−1 a ogni altra tua carta nel suo quarto." },
     // fourth house: Compagnia delle Veglie, only in the Draft delle Casate. A
     // Reazione answers the enemy cards laid in its quarter after it. Beasts
-    // with no emoji of their own are drawn from parts: [glyph, x, y, size,
-    // mirrored], in fractions of the plate. The Grifone is an eagle over a
-    // feline body, the Basilisco a cock with a serpent's tail, as heralds draw them
-    grifone: { name: "Grifone", glyph: [["🐈", 0.58, 0.64, 0.62], ["🦅", 0.34, 0.4, 0.5]], power: 4, t: "oro", ab: "Custode", text: "+2 se controlli entrambi i quarti confinanti." },
-    basilisco: { name: "Basilisco", glyph: [["🐍", 0.6, 0.7, 0.62, true], ["🐓", 0.42, 0.44, 0.6]], power: 3, t: "verde", ab: "Sguardo", text: "Reazione: −2 a ogni carta avversaria posata nel suo quarto dopo di lui." },
+    // with no emoji of their own have a drawing (img, transparent PNG in
+    // art/) and, until it loads or if it fails, emoji parts: [glyph, x, y,
+    // size, mirrored], in fractions of the plate. The Grifone is an eagle over
+    // a feline body, the Basilisco a cock with a serpent's tail, as heralds draw them
+    grifone: { name: "Grifone", img: "art/grifone.png", glyph: [["🐈", 0.58, 0.64, 0.62], ["🦅", 0.34, 0.4, 0.5]], power: 4, t: "oro", ab: "Custode", text: "+2 se controlli entrambi i quarti confinanti." },
+    basilisco: { name: "Basilisco", img: "art/basilisco.png", glyph: [["🐍", 0.6, 0.7, 0.62, true], ["🐓", 0.42, 0.44, 0.6]], power: 3, t: "verde", ab: "Sguardo", text: "Reazione: −2 a ogni carta avversaria posata nel suo quarto dopo di lui." },
     balena: { name: "Balena", glyph: "🐋", power: 4, t: "azzurro", ab: "Corrente", text: "+1 per ogni quarto confinante in cui hai almeno una carta (al massimo +2)." },
     arpia: { name: "Arpia", glyph: "🐦‍⬛", power: 4, t: "nero", ab: "Rimprovero", text: "Reazione: le carte avversarie posate nel suo quarto dopo di lei perdono il +1 della legge delle tinture." },
   };

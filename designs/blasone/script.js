@@ -16,14 +16,16 @@
 
   // ---------- woodcut engraving ----------
   const ART = {};
-  // glyph: one emoji, or parts [emoji, x, y, size, mirrored] drawn in order
+  // glyph: one emoji, parts [emoji, x, y, size, mirrored] drawn in order, or
+  // a loaded <img> (transparent background) drawn to fill the plate
   function engrave(glyph, S = 256) {
     const c = document.createElement("canvas");
     c.width = c.height = S;
     const x = c.getContext("2d", { willReadFrequently: true });
     x.textAlign = "center";
     x.textBaseline = "middle";
-    for (const [g, px, py, size, flip] of Array.isArray(glyph) ? glyph : [[glyph, 0.5, 0.54, 0.8]]) {
+    if (glyph instanceof HTMLImageElement) x.drawImage(glyph, 0, 0, S, S);
+    else for (const [g, px, py, size, flip] of Array.isArray(glyph) ? glyph : [[glyph, 0.5, 0.54, 0.8]]) {
       x.save();
       x.font = `${Math.round(S * size)}px "Segoe UI Emoji","Apple Color Emoji","Noto Color Emoji",sans-serif`;
       x.translate(S * px, S * py);
@@ -63,8 +65,25 @@
   // the coloured cards re-ink the same engraving through a mask, so each
   // beast's art is also a custom property (.art-<id> { --art })
   const artCss = document.createElement("style");
-  artCss.textContent = KEYS.map((k) => `.art-${k}{--art:url(${ART[k]})}`).join("");
+  const inkAll = () => (artCss.textContent = KEYS.map((k) => `.art-${k}{--art:url(${ART[k]})}`).join(""));
+  inkAll();
   document.head.appendChild(artCss);
+  // beasts with a drawing of their own (img) show their emoji parts first and
+  // are engraved again from the drawing once it loads; if it fails, the parts stay
+  KEYS.filter((k) => B.BEASTS[k].img).forEach((k) => {
+    const im = new Image();
+    im.onload = () => {
+      try {
+        ART[k] = engrave(im);
+      } catch (e) {
+        return;
+      }
+      inkAll();
+      render();
+      if (menu.open) renderBestiary();
+    };
+    im.src = B.BEASTS[k].img;
+  });
   // the classes that colour a card: its tincture and its house
   const skin = (id) => `t-${B.BEASTS[id].t} h-${B.HOUSE[id].id} art-${id}`;
 
