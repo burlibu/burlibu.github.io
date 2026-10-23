@@ -1,0 +1,134 @@
+/* Addobbi cavallereschi: the knightly trim over the printed sheets. Every rule
+   here hangs off :root[data-decor="sfarzo"] (menu: Presentazione), so turning
+   it off, or deleting this file, gives back the plain paper table. The gilt
+   frames, the corner fleurs and the wood live in style.css, shared with the
+   cover. */
+
+/* the table: walnut planks under a warm lamp */
+:root[data-decor="sfarzo"] body {
+  background: radial-gradient(ellipse at 45% 0%, rgba(255, 196, 120, 0.16), transparent 55%), radial-gradient(ellipse at 50% 40%, transparent 35%, rgba(0, 0, 0, 0.62)), var(--wood), #2c1b0d;
+  background-size: auto, auto, 700px, auto;
+  background-attachment: fixed;
+}
+
+/* tourney bunting across the top: one pennant per tincture, on a gold cord */
+:root[data-decor="sfarzo"] .bunting {
+  display: block;
+  position: relative;
+  height: 46px;
+  margin: calc(clamp(14px, 3vw, 44px) * -1) 0 18px;
+}
+:root[data-decor="sfarzo"] .bunting::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, #93301f 0 60px, #c9a043 60px 120px, #335f82 120px 180px, #c8ccd2 180px 240px, #44703a 240px 300px, #2b2826 300px 360px) 0 4px / 360px 42px repeat-x;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='46'%3E%3Cpath d='M6 4h48L30 44z'/%3E%3C/svg%3E") 0 0 / 60px 46px repeat-x;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='46'%3E%3Cpath d='M6 4h48L30 44z'/%3E%3C/svg%3E") 0 0 / 60px 46px repeat-x;
+  filter: drop-shadow(0 3px 0 rgba(0, 0, 0, 0.45));
+}
+:root[data-decor="sfarzo"] .bunting::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 3px;
+  height: 3px;
+  background: var(--gold);
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.5);
+}
+
+/* masthead: gilt frame, an illuminated initial, a blackletter title */
+:root[data-decor="sfarzo"] .gilt { display: block; }
+:root[data-decor="sfarzo"] .mast { border-top: 0; background: radial-gradient(ellipse at 30% 50%, transparent 55%, rgba(150, 100, 40, 0.18)), var(--grain), #f1e6cc; background-size: auto, 240px, auto; }
+:root[data-decor="sfarzo"] .mast h1 { font-family: "Grenze Gotisch", var(--serif); font-weight: 900; text-transform: none; letter-spacing: 0; line-height: 0.85; color: #1f1e21; text-shadow: 0 2px 0 rgba(193, 139, 44, 0.55); }
+:root[data-decor="sfarzo"] .initial { background: radial-gradient(circle at 40% 35%, #a3263a, #5c0f1d 70%); border: 0; outline: 3px solid #c18b2c; outline-offset: -8px; box-shadow: 0 0 0 3px #1f1e21, inset 0 0 0 1px #f0cf78; }
+:root[data-decor="sfarzo"] .initial span { font-family: "Grenze Gotisch", var(--serif); color: #f0cf78; -webkit-text-stroke: 1px #5a3c0c; transform: translateY(-4px); }
+:root[data-decor="sfarzo"] .mast-score { border-color: #c18b2c; }
+:root[data-decor="sfarzo"] .crown.big { color: #c18b2c; filter: drop-shadow(0 1px 0 #5a3c0c); }
+
+/* the herald's line: a ribbon pinned under the masthead */
+:root[data-decor="sfarzo"] .reveal { border-left: 0; padding-left: 18px; background: linear-gradient(90deg, rgba(193, 139, 44, 0.22), rgba(193, 139, 44, 0.04) 70%, transparent); box-shadow: inset 4px 0 0 #c18b2c; font-style: italic; }
+
+/* the shield: a gilt frame, the board diapered like an engraved field */
+:root[data-decor="sfarzo"] .board-gilt { inset: -12px; border-width: 7px; }
+:root[data-decor="sfarzo"] .board-gilt i { width: 64px; height: 64px; }
+:root[data-decor="sfarzo"] .board-gilt i:nth-child(1) { top: -14px; left: -14px; }
+:root[data-decor="sfarzo"] .board-gilt i:nth-child(2) { top: -14px; right: -14px; }
+:root[data-decor="sfarzo"] .board-gilt i:nth-child(3) { bottom: -14px; right: -14px; }
+:root[data-decor="sfarzo"] .board-gilt i:nth-child(4) { bottom: -14px; left: -14px; }
+:root[data-decor="sfarzo"] .board-wrap .under { transform: translate(-22px, 22px); }
+:root[data-decor="sfarzo"] .board {
+  background:
+    repeating-linear-gradient(45deg, rgba(91, 74, 54, 0.07) 0 1px, transparent 1px 26px),
+    repeating-linear-gradient(-45deg, rgba(91, 74, 54, 0.07) 0 1px, transparent 1px 26px),
+    radial-gradient(ellipse at 50% 50%, transparent 50%, rgba(150, 100, 40, 0.2)),
+    var(--grain), #f3ead6;
+  background-size: auto, auto, auto, 240px, auto;
+}
+/* each quarter shows its field behind the play: a large hatched shield */
+:root[data-decor="sfarzo"] .plate > * { position: relative; z-index: 1; }
+:root[data-decor="sfarzo"] .plate > .wm { display: block; position: absolute; z-index: 0; left: 50%; top: 56%; width: min(46%, 220px); height: auto; aspect-ratio: 40 / 46; transform: translate(-50%, -50%); opacity: 0.13; pointer-events: none; }
+:root[data-decor="sfarzo"] .plate-head { border-bottom: 3px double var(--ink); }
+:root[data-decor="sfarzo"] .numeral { background: linear-gradient(170deg, #f0cf78, #a87a24 55%, #5a3c0c); -webkit-background-clip: text; background-clip: text; color: transparent; -webkit-text-stroke: 1px #3b2a0c; }
+:root[data-decor="sfarzo"] .crowns svg { color: #b8862c; filter: drop-shadow(0 1px 0 rgba(60, 35, 8, 0.4)); }
+:root[data-decor="sfarzo"] .band .lead.me, :root[data-decor="sfarzo"] .band .lead.foe { background: var(--gold); }
+/* a gilt boss where the two folds cross */
+:root[data-decor="sfarzo"] .board > .boss {
+  display: grid;
+  place-items: center;
+  position: absolute;
+  z-index: 4;
+  left: 50%;
+  top: 50%;
+  width: 52px;
+  height: 52px;
+  margin: -26px 0 0 -26px;
+  border-radius: 50%;
+  background: var(--gold);
+  box-shadow: 0 0 0 2px #1f1e21, 0 0 0 5px #f3ead6, 0 0 0 6px rgba(15, 15, 16, 0.45), inset 0 0 0 3px rgba(90, 60, 12, 0.6);
+  pointer-events: none;
+}
+:root[data-decor="sfarzo"] .boss svg { width: 26px; height: 20px; color: #3b2a0c; }
+
+/* the Conte's sheet and the reference: gilt rule inside the ochre */
+:root[data-decor="sfarzo"] .side { outline: 2px solid rgba(90, 60, 12, 0.7); outline-offset: -9px; }
+:root[data-decor="sfarzo"] .seal { background: radial-gradient(circle at 40% 35%, #2e2d31, #0f0f10); box-shadow: 0 0 0 3px #e3b65a, 0 0 0 4px var(--ink), 0 0 0 7px rgba(15, 15, 16, 0.25); }
+:root[data-decor="sfarzo"] .codex { background: radial-gradient(ellipse at 50% 30%, transparent 55%, rgba(150, 100, 40, 0.2)), var(--grain), #f1e6cc; background-size: auto, 240px, auto; }
+
+/* the hand rests on crimson velvet with a gold braid and fringe */
+:root[data-decor="sfarzo"] .hand-wrap::before {
+  height: 176px;
+  background:
+    linear-gradient(#f0cf78, #8a5f17) 0 0 / 100% 5px no-repeat,
+    repeating-linear-gradient(90deg, #c18b2c 0 2px, rgba(193, 139, 44, 0.35) 2px 3px, transparent 3px 6px) 0 5px / 100% 14px no-repeat,
+    radial-gradient(ellipse at 50% 0%, #8a1a2c, #560c18 55%, #2a050b),
+    #3a0a12;
+  box-shadow: 0 -10px 24px rgba(0, 0, 0, 0.5);
+}
+:root[data-decor="sfarzo"] .hand-ribbon {
+  display: block;
+  position: absolute;
+  left: 22px;
+  bottom: 126px;
+  padding: 7px 26px 6px 18px;
+  background: var(--gold);
+  color: #2a1a05;
+  font-size: 10px;
+  clip-path: polygon(0 0, 100% 0, 90% 50%, 100% 100%, 0 100%);
+}
+
+/* the draft sheet and the trial goal get a gilt rule too */
+:root[data-decor="sfarzo"] .draft, :root[data-decor="sfarzo"] .goal { outline: 2px solid #c18b2c; outline-offset: -8px; }
+
+@media (max-width: 720px) {
+  :root[data-decor="sfarzo"] .bunting { height: 30px; margin-bottom: 10px; }
+  :root[data-decor="sfarzo"] .bunting::before { background-size: 240px 26px; -webkit-mask-size: 40px 30px; mask-size: 40px 30px; background: linear-gradient(90deg, #93301f 0 40px, #c9a043 40px 80px, #335f82 80px 120px, #c8ccd2 120px 160px, #44703a 160px 200px, #2b2826 200px 240px) 0 4px / 240px 26px repeat-x; }
+  :root[data-decor="sfarzo"] .board-gilt { inset: -8px; border-width: 4px; }
+  :root[data-decor="sfarzo"] .board-gilt i { width: 40px; height: 40px; }
+  :root[data-decor="sfarzo"] .board-wrap .under { transform: translate(-12px, 12px); }
+  :root[data-decor="sfarzo"] .board > .boss { width: 34px; height: 34px; margin: -17px 0 0 -17px; }
+  :root[data-decor="sfarzo"] .boss svg { width: 18px; height: 14px; }
+  :root[data-decor="sfarzo"] .hand-wrap::before { height: 100%; }
+  :root[data-decor="sfarzo"] .hand-ribbon { display: none; }
+}
