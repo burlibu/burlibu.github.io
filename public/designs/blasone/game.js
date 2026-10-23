@@ -4,7 +4,8 @@
 // 16 beasts of the base set and the Crepuscolo, Crepuscolo draws 16 from the
 // first three houses, the Draft delle Casate adds four picks to the base set.
 // The Prove dell'Araldo are short prepared positions with a goal. The Editto
-// and the Rivalità di Casata are optional rules. DOM-free, so node can play whole games
+// and the Rivalità di Casata are optional rules. The Laboratorio is an
+// experimental format made of modules (LAB), each one a letter in the code. DOM-free, so node can play whole games
 // (module.exports at the bottom).
 (function (root) {
   const TINCT = {
@@ -54,7 +55,40 @@
     stambecco: { name: "Stambecco", glyph: "🐐", power: 3, t: "oro", ab: "Balzo", text: "+2 nei quarti di punta (III e IV)." },
     lontra: { name: "Lontra", glyph: "🦦", power: 3, t: "azzurro", ab: "Compagnia", text: "+1 per ogni altra tua carta di un'altra casata nel suo quarto (al massimo +2)." },
     tartaruga: { name: "Tartaruga", glyph: "🐢", power: 4, t: "argento", ab: "Pazienza", text: "+2 se nel suo quarto hanno carte entrambi i lati e nel turno in corso non vi è stata posata nessuna carta." },
+    // the Laboratorio's houses, only in the Laboratorio format, one module
+    // each (see LAB). Casata delle Ore: time and parity, read from at
+    gazza: { name: "Gazza", glyph: [["🐦‍⬛", 0.5, 0.54, 0.8, true]], power: 2, t: "nero", ab: "Aritmetica", text: "+2 se la sua forza stampata è pari." },
+    cavalletta: { name: "Cavalletta", glyph: "🦗", power: 2, t: "verde", ab: "Salto", text: "+2 se è stata posata in un turno pari." },
+    civetta: { name: "Civetta delle Ore", glyph: [["🦉", 0.42, 0.58, 0.64], ["⌛", 0.8, 0.26, 0.3]], power: 2, t: "argento", ab: "Meridiana", text: "+1 se posata nei turni I–II, +2 nei III–IV, +1 nei V–VI." },
+    picchio: { name: "Picchio", glyph: [["🪵", 0.5, 0.78, 0.5], ["🐦", 0.5, 0.4, 0.56]], power: 1, t: "rosso", ab: "Ritmo", text: "+1 se la tua carta precedente nel suo quarto è stata posata nel turno prima." },
+    // Compagnia dei Colori: the exact tinctures in the quarter
+    cardellino: { name: "Cardellino", glyph: "🐤", power: 2, t: "oro", ab: "Stormo", text: "+2 per ogni altra tua carta d'oro nel suo quarto, al massimo +4." },
+    ermellino: { name: "Ermellino", glyph: "🦨", power: 2, t: "argento", ab: "Campo netto", text: "+2 se l'avversario non ha carte rosse nel suo quarto." },
+    gambero: { name: "Gambero", glyph: "🦞", power: 3, t: "rosso", ab: "Specchio", text: "+2 se l'avversario non ha carte della sua tintura nel suo quarto." },
+    tessitore: { name: "Tessitore", glyph: [["🪺", 0.5, 0.74, 0.56], ["🐦", 0.54, 0.36, 0.5, true]], power: 2, t: "verde", ab: "Trama", text: "+1 a ogni tua carta verde nel suo quarto, lui compreso." },
+    // the Tre Regni: the families' cycle, and the Pellicano's shield
+    albatros: { name: "Albatros", glyph: "🕊️", power: 3, t: "argento", ab: "Picchiata", text: "+1 se nel suo quarto c'è una carta Terrestre avversaria." },
+    squalo: { name: "Squalo", glyph: "🦈", power: 4, t: "azzurro", ab: "Fauci", text: "+1 se nel suo quarto c'è una carta Volante avversaria." },
+    bufalo: { name: "Bufalo", glyph: "🐃", power: 4, t: "nero", ab: "Guado", text: "+1 se nel suo quarto c'è una carta Marino avversaria." },
+    pellicano: { name: "Pellicano Custode", glyph: [["🦢", 0.52, 0.56, 0.74, true], ["🐟", 0.2, 0.44, 0.26]], power: 2, t: "argento", ab: "Riparo", text: "Ogni tua carta nel suo quarto ignora il primo punto di malus da abilità avversarie. Non protegge dai campi." },
+    // Compagnia della Giostra: order of laying, the wager, variety
+    cicogna: { name: "Cicogna", glyph: "🦩", power: 3, t: "argento", ab: "Primogenitura", text: "+2 se è la prima tua carta nel suo quarto." },
+    lepre: { name: "Lepre", glyph: "🐇", power: 3, t: "rosso", ab: "Ultimo suggello", text: "+2 se posata nel turno VI in un quarto dove anche l'avversario ha carte." },
+    ariete: { name: "Ariete", glyph: "🐏", power: 4, t: "oro", ab: "Scommessa", text: "Posandolo puoi scommettere sul quarto: se lo conquisti, +1 corona solo per te; se no, −2." },
+    pappagallo: { name: "Pappagallo", glyph: "🦜", power: 2, t: "verde", ab: "Varietà", text: "+1 se nel suo quarto hai carte di più casate dell'avversario (il Bestiario conta)." },
   };
+  // the family of every beast: a printed label; with the Tre Regni (module g)
+  // Volante beats Terrestre, Terrestre beats Marino, Marino beats Volante
+  const FAMILIES = {
+    volante: { name: "Volante", ids: ["aquila", "gallo", "cigno", "gufo", "pavone", "gazza", "civetta", "picchio", "cardellino", "tessitore", "cicogna", "pappagallo", "albatros", "pellicano"] },
+    marino: { name: "Marino", ids: ["delfino", "balena", "lontra", "tartaruga", "gambero", "squalo"] },
+    terrestre: { name: "Terrestre", ids: ["leone", "cervo", "lupo", "tasso", "orso", "cinghiale", "volpe", "pantera", "stambecco", "cavalletta", "ermellino", "lepre", "ariete", "bufalo"] },
+    draconico: { name: "Draconico", ids: ["drago", "serpe", "salamandra", "scorpione", "basilisco"] },
+    arcano: { name: "Arcano", ids: ["unicorno", "fenice", "grifone", "arpia"] },
+    costrutto: { name: "Costrutto", ids: ["torre"] },
+  };
+  for (const [f, o] of Object.entries(FAMILIES)) o.ids.forEach((id) => (BEASTS[id].fam = f));
+  const BEATS = { volante: "terrestre", terrestre: "marino", marino: "volante" };
 
   // each game deals four fields, one per quarter
   const FIELDS = [
@@ -74,6 +108,10 @@
     { id: "fiere", name: "Le Fiere", cards: ["orso", "salamandra", "cinghiale", "scorpione"] },
     { id: "veglie", name: "Compagnia delle Veglie", cards: ["grifone", "basilisco", "balena", "arpia"] },
     { id: "confini", name: "Compagnia dei Confini", cards: ["pantera", "stambecco", "lontra", "tartaruga"] },
+    { id: "ore", name: "Casata delle Ore", lab: true, cards: ["gazza", "cavalletta", "civetta", "picchio"] },
+    { id: "colori", name: "Compagnia dei Colori", lab: true, cards: ["cardellino", "ermellino", "gambero", "tessitore"] },
+    { id: "regni", name: "Tre Regni", lab: true, cards: ["albatros", "squalo", "bufalo", "pellicano"] },
+    { id: "giostra", name: "Compagnia della Giostra", lab: true, cards: ["cicogna", "lepre", "ariete", "pappagallo"] },
   ];
   const HOUSE = {};
   HOUSES.forEach((h) => h.cards.forEach((id) => (HOUSE[id] = h)));
@@ -81,7 +119,47 @@
     classico: { name: "Classico", text: "Le sedici carte del Bestiario e del Crepuscolo." },
     crepuscolo: { name: "Crepuscolo", text: "Sedici carte estratte a sorte dal Bestiario, dal Crepuscolo e dalle Fiere, senza doppioni." },
     draft: { name: "Draft delle Casate", text: "Le dodici carte del Bestiario per tutti e due, più quattro scelte a turno con il Conte tra otto carte scoperte delle altre casate." },
+    lab: { name: "Laboratorio", text: "Sperimentale. Il Bestiario più i moduli scelti qui sotto: nuove casate e nuove regole, da provare una alla volta." },
   };
+  // the Laboratorio's modules, in their canonical order (the order of the
+  // letters in a game code). A house module adds its four beasts to the pool
+  const LAB = {
+    o: { name: "Casata delle Ore", house: "ore", wave: 1, text: "Quattro bestie che contano il tempo: turni pari, finestre del torneo, ritmo di posa, forza pari." },
+    c: { name: "Compagnia dei Colori", house: "colori", wave: 1, text: "Quattro bestie che leggono le tinture del quarto." },
+    g: { name: "Tre Regni", house: "regni", wave: 1, text: "Le famiglie in gioco: Volante prevale su Terrestre, Terrestre su Marino, Marino su Volante (+1). Con Albatros, Squalo, Bufalo e il Pellicano Custode." },
+    q: { name: "Compagnia della Giostra", house: "giostra", wave: 2, text: "Prima carta, ultimo turno, la Scommessa dell'Ariete, la varietà di casate." },
+    p: { name: "Presidio", wave: 2, text: "+1 corona a chi conduce un quarto alla fine di almeno 5 turni su 6, anche se alla fine non lo conquista." },
+    b: { name: "Obiettivo di torneo", wave: 2, text: "Un obiettivo comune, estratto a inizio partita, vale una corona." },
+    m: { name: "Campo mutevole", wave: 2, text: "Un campo cambia regola dal turno IV. Il cambio è annunciato dall'inizio e vale anche per le carte già posate." },
+  };
+  const LAB_ORDER = Object.keys(LAB).join("");
+  // pairs not allowed in the same game: two prizes for holding ground
+  const LAB_BANNED = ["pb"];
+  // untrusted text in (prefs, codes): the modules in canonical order, no
+  // repeats, no banned pair, or null
+  function validLab(t) {
+    if (typeof t !== "string" || t.length > LAB_ORDER.length || !/^[a-z]*$/.test(t)) return null;
+    let at = -1;
+    for (const k of t) {
+      const i = LAB_ORDER.indexOf(k);
+      if (i <= at) return null;
+      at = i;
+    }
+    return LAB_BANNED.some(([a, b]) => t.includes(a) && t.includes(b)) ? null : t;
+  }
+  const labOn = (s, k) => !!s.lab && s.lab.includes(k);
+  // the Obiettivo di torneo: one of these, drawn at the start and fixed, once,
+  // at the end of the turn it is first met
+  const GOALS = [
+    { id: "punta", name: "La prima punta", text: "Il primo quarto di punta (III o IV) condotto da qualcuno a fine turno vale +1 corona a chi lo conquista." },
+    { id: "ovunque", name: "Su tutto lo scudo", text: "Il primo lato con carte in tutti e quattro i quarti a fine turno riceve +1 corona." },
+    { id: "sigillo", name: "Il Sigillo", text: "Il primo quarto con la stessa casata su entrambi i lati a fine turno (il Bestiario non conta) vale +1 corona a chi lo conquista." },
+  ];
+  // turns led out of six for the Presidio crown: 5, not the 4 first proposed,
+  // which paid a fifth of all crowns in AI games (5 pays a tenth)
+  const PRESIDIO = 5;
+  const SHIFT_TURN = 4; // the Campo mutevole changes from this turn
+  const TINCT_FIELDS = ["oro", "rosso", "azzurro", "verde", "nero"];
   const CLASSIC = HOUSES[0].cards.concat(HOUSES[1].cards);
   // the Crepuscolo's list is fixed, so its games stay the same as houses are added
   const CREPUSCOLO = HOUSES.slice(0, 3).flatMap((h) => h.cards);
@@ -92,7 +170,7 @@
   // the Rivalità on, so a 0.0.7 draft code plays as before
   const COMMON = HOUSES[0].cards;
   const DRAFTABLE = HOUSES.slice(1, 4).flatMap((h) => h.cards);
-  const DRAFT_RIVAL = HOUSES.slice(1).flatMap((h) => h.cards);
+  const DRAFT_RIVAL = HOUSES.slice(1, 5).flatMap((h) => h.cards);
   const OFFER = 8;
   const ORDER = ["me", "foe", "foe", "me", "me", "foe", "foe", "me"];
   // the Conte's draft ranking: the share of quarters each beast wins where it
@@ -125,8 +203,8 @@
     return a;
   }
 
-  // opts: { format: "classico" | "crepuscolo" | "draft", editto: bool,
-  // rivalita: bool }, or
+  // opts: { format: "classico" | "crepuscolo" | "draft" | "lab", editto: bool,
+  // rivalita: bool, lab: module letters (Laboratorio only) }, or
   // { trial: n } for the Prova dell'Araldo n (0-based, null if invalid)
   function create(seed, opts = {}) {
     if (opts.trial !== undefined) return trialGame(opts.trial);
@@ -138,14 +216,32 @@
       edict: opts.editto ? { me: null, foe: null } : null,
       rivalry: !!opts.rivalita,
     };
+    // the Laboratorio: an invalid module list is no game. The other formats
+    // draw nothing for it, so their seeds play as before
+    if (format === "lab") {
+      s.lab = validLab(opts.lab === undefined ? "" : opts.lab);
+      if (s.lab === null) return null;
+    }
     // Classico draws nothing extra from the rng, so a seed plays as before;
     // both sides share the Crepuscolo selection. A draft deals after the picks
     if (format === "draft") {
       const offer = shuffle(s, s.rivalry ? DRAFT_RIVAL : DRAFTABLE).slice(0, OFFER);
       s.draft = { offer, picks: { me: [], foe: [] }, notes: [] };
       s.pool = COMMON.concat(offer);
+    } else if (format === "lab") {
+      // the Bestiario plus the houses switched on, sixteen drawn and shared;
+      // with no house on, the Classico's sixteen
+      const extra = HOUSES.filter((h) => h.lab && [...s.lab].some((k) => LAB[k].house === h.id)).flatMap((h) => h.cards);
+      s.pool = extra.length ? shuffle(s, COMMON.concat(extra)).slice(0, DECK) : CLASSIC.slice();
     } else s.pool = format === "classico" ? CLASSIC.slice() : shuffle(s, CREPUSCOLO).slice(0, DECK);
     s.fields = shuffle(s, FIELDS).slice(0, 4);
+    if (labOn(s, "p")) s.hold = s.fields.map(() => ({ me: 0, foe: 0 }));
+    if (labOn(s, "b")) s.goal = { id: GOALS[Math.floor(s.rand() * GOALS.length)].id, q: null, sides: null };
+    if (labOn(s, "m")) {
+      const qs = [0, 1, 2, 3].filter((q) => TINCT_FIELDS.includes(s.fields[q].id));
+      const to = TINCT_FIELDS.filter((id) => !s.fields.some((f) => f.id === id));
+      s.shift = { q: qs[Math.floor(s.rand() * qs.length)], to: to[Math.floor(s.rand() * to.length)] };
+    }
     if (!s.draft) deal(s, { me: s.pool, foe: s.pool });
     return s;
   }
@@ -201,8 +297,10 @@
   // what a card remembers from the moment it is laid: the turn (Volpe,
   // Cinghiale) and, for the Orso, whether you held a neighbouring quarter.
   // leads are the quarters' owners before this turn's cards
-  function lay(s, side, card, q, leads) {
+  function lay(s, side, card, q, leads, bet) {
     card.at = s.turn;
+    // the Ariete's wager, declared with the card
+    if (card.id === "ariete") card.bet = !!bet;
     if (card.id === "orso") card.guard = NEAR[q].some((n) => leads[n] === side);
     s.board[q][side].push(card);
   }
@@ -220,10 +318,17 @@
     }
     const score = { me: 0, foe: 0 };
     quarters.forEach((x) => x.lead && (score[x.lead] += prize(x, x.lead)));
-    return { quarters, score };
+    // the Presidio pays whoever led long enough, won or not at the end
+    quarters.forEach((x) => SIDES.forEach((side) => (score[side] += x.presidio[side])));
+    const goalSides = s.goal && s.goal.sides ? s.goal.sides : [];
+    goalSides.forEach((side) => score[side]++);
+    return { quarters, score, goalSides };
   }
   // the crowns a quarter pays the side that takes it
-  const prize = (x, side) => x.crowns + x.rival + x.bonus[side];
+  const prize = (x, side) => x.crowns + x.rival + x.goal + x.bonus[side];
+  // the field in force: the Campo mutevole turns from SHIFT_TURN
+  const fieldAt = (s, q) => (s.shift && s.shift.q === q && s.turn >= SHIFT_TURN ? FIELDS.find((f) => f.id === s.shift.to) : s.fields[q]);
+  const FOE_MALUS = ["Serpe", "Gufo", "Basilisco", "Arpia"];
   // Rivalità di Casata: the houses with a card on both sides of a quarter.
   // The Bestiario is common to every deck, so it is no house to fight over
   function rivals(sq) {
@@ -237,7 +342,7 @@
     const has = (q, side, id) => B[q][side].filter((c) => c.id === id).length;
     const rivalry = rivals(sq);
     {
-      const f = s.fields[q];
+      const f = fieldAt(s, q);
       const sides = {};
       for (const side of SIDES) {
         const own = sq[side], opp = sq[other(side)];
@@ -280,6 +385,28 @@
           // the turn in course is s.turn: once a turn is revealed the next one
           // begins, except after the last, so a card laid on turn VI counts
           if (c.id === "tartaruga" && opp.length && !own.concat(opp).some((o) => o.at >= s.turn)) add(2, b.ab);
+          // the Laboratorio's beasts
+          const tints = (list, t) => list.filter((o) => BEASTS[o.id].t === t).length;
+          const fams = (list, f) => list.some((o) => BEASTS[o.id].fam === f);
+          if (c.id === "gazza" && b.power % 2 === 0) add(2, b.ab);
+          if (c.id === "cavalletta" && c.at % 2 === 0) add(2, b.ab);
+          if (c.id === "civetta") add(c.at <= 2 ? 1 : c.at <= 4 ? 2 : 1, b.ab);
+          if (c.id === "picchio" && k > 0 && own[k - 1].at === c.at - 1) add(1, b.ab);
+          if (c.id === "cardellino") add(Math.min(4, 2 * own.filter((o) => o !== c && BEASTS[o.id].t === "oro").length), b.ab);
+          if (c.id === "ermellino" && !tints(opp, "rosso")) add(2, b.ab);
+          if (c.id === "gambero" && !tints(opp, b.t)) add(2, b.ab);
+          if (b.t === "verde") add(own.filter((o) => o.id === "tessitore").length, "Tessitore");
+          if (c.id === "albatros" && fams(opp, "terrestre")) add(1, b.ab);
+          if (c.id === "squalo" && fams(opp, "volante")) add(1, b.ab);
+          if (c.id === "bufalo" && fams(opp, "marino")) add(1, b.ab);
+          if (c.id === "cicogna" && k === 0) add(2, b.ab);
+          if (c.id === "lepre" && c.at === TURNS && opp.length) add(2, b.ab);
+          if (c.id === "pappagallo") {
+            const houses = (list) => new Set(list.map((o) => HOUSE[o.id].id)).size;
+            if (houses(own) > houses(opp)) add(1, b.ab);
+          }
+          // Tre Regni: the family that beats one on the other side, +1 once
+          if (labOn(s, "g") && BEATS[b.fam] && fams(opp, BEATS[b.fam])) add(1, `Vantaggio: ${FAMILIES[b.fam].name} su ${FAMILIES[BEATS[b.fam]].name}`);
           add(own.filter((o) => o !== c && o.id === "cervo").length, "Cervo");
           add(-2 * own.filter((o) => o !== c && o.id === "drago").length, "Drago");
           add(-own.filter((o) => o !== c && o.id === "scorpione").length, "Scorpione");
@@ -288,6 +415,8 @@
             add(has(n, side, "cigno"), "Cigno");
             if (!tough) add(-has(n, other(side), "gufo"), "Gufo");
           }
+          // the Pellicano's shield: the first point of the enemy's maluses
+          if (own.some((o) => o.id === "pellicano") && mods.some((m) => m.v < 0 && FOE_MALUS.includes(m.why))) add(1, "Riparo del Pellicano");
           return { ...c, base: b.power, mods };
         });
         sides[side] = { cards };
@@ -310,6 +439,15 @@
         sides[loser].cards.forEach((c) => c.id === "fenice" && c.mods.push({ v: 3, why: "Rinascita" }));
         lead = leader();
       }
+      // the Ariete's wager, lost by a side that doesn't take the quarter: −2,
+      // read once from the result before it (both may lose on a tie)
+      const bets = {};
+      SIDES.forEach((side) => (bets[side] = sides[side].cards.find((c) => c.bet)));
+      const lost = SIDES.filter((side) => bets[side] && lead !== side);
+      if (lost.length) {
+        lost.forEach((side) => bets[side].mods.push({ v: -2, why: "Scommessa persa" }));
+        lead = leader();
+      }
       const crowns = (f.id === "argento" ? 2 : 1) + has(q, "me", "torre") + has(q, "foe", "torre");
       // crowns that only go to one side: the Pavone's and the Editto's
       const extra = {};
@@ -317,11 +455,18 @@
         extra[side] = [];
         if (sq[side][0]?.id === "pavone") extra[side].push("Pavone");
         if (s.edict && s.edict[side] && s.edict[side].q === q) extra[side].push("Editto");
+        if (bets[side] && lead === side) extra[side].push("Ariete");
       }
       const bonus = { me: extra.me.length, foe: extra.foe.length };
       // one Rivalità crown at most, to whoever takes the quarter
       const rival = s.rivalry && rivalry.length ? 1 : 0;
-      return { q, field: f, crowns, rival, rivalry, bonus, extra, me: sides.me, foe: sides.foe, lead };
+      // Presidio: turns led so far, and the crown once the threshold is met
+      const hold = s.hold ? s.hold[q] : { me: 0, foe: 0 };
+      const presidio = { me: +(hold.me >= PRESIDIO), foe: +(hold.foe >= PRESIDIO) };
+      // the Obiettivo di torneo, when it fixed this quarter
+      const goal = s.goal && s.goal.q === q ? 1 : 0;
+      const shift = s.shift && s.shift.q === q ? { to: FIELDS.find((x) => x.id === s.shift.to), from: SHIFT_TURN, done: s.turn >= SHIFT_TURN } : null;
+      return { q, field: f, crowns, rival, rivalry, goal, hold, presidio, shift, bonus, extra, me: sides.me, foe: sides.foe, lead };
     }
   }
 
@@ -353,19 +498,24 @@
     s.hands[side].forEach((card, i) => {
       for (let q = 0; q < 4; q++) {
         if (!legal(s, side, q)) continue;
-        lay(s, side, card, q, before);
-        const v = value(s, side) + watch(s, side, card, q) + s.rand() * noise;
-        s.board[q][side].pop();
-        if (!best || v > best.v) best = { i, q, v };
+        // the Ariete is tried with and without the wager
+        for (const bet of card.id === "ariete" ? [false, true] : [false]) {
+          lay(s, side, card, q, before, bet);
+          const v = value(s, side) + watch(s, side, card, q) + s.rand() * noise;
+          s.board[q][side].pop();
+          if (!best || v > best.v) best = { i, q, v, bet };
+        }
+        delete card.bet;
       }
     });
     // the Editto waits for a contested quarter the move clearly holds once
     // the board has taken shape, or is spent on the last turn rather than
     // wasted
-    if (best && edictOpen(s, side)) {
+    if (best && edictOpen(s, side) && !best.bet) {
       lay(s, side, s.hands[side][best.i], best.q, before);
       const x = evaluate(s).quarters[best.q];
       s.board[best.q][side].pop();
+      delete s.hands[side][best.i].bet;
       let m = x[side].total - x[other(side)].total;
       if (x.field.id === "rovescio") m = -m;
       const contested = x[other(side)].cards.length > 0;
@@ -375,24 +525,27 @@
   }
 
   // both sides commit one card; me plays hand[i] into quarter q, and with
-  // edict declares the Editto on that same quarter
-  function play(s, i, q, foeMove, edict) {
+  // edict declares the Editto on that same quarter, with bet the Ariete's
+  // wager. The Editto and the wager can't go on the same card
+  function play(s, i, q, foeMove, edict, bet) {
     const card = s.hands.me[i];
     if (!card || !legal(s, "me", q)) return false;
+    if (bet && (card.id !== "ariete" || (edict && edictOpen(s, "me")))) return false;
     const f = foeMove || choose(s, "foe");
     const fc = f && s.hands.foe[f.i];
     const before = leads(s);
     s.hands.me.splice(i, 1);
-    lay(s, "me", card, q, before);
+    lay(s, "me", card, q, before, bet);
     if (fc) {
       s.hands.foe.splice(f.i, 1);
-      lay(s, "foe", fc, f.q, before);
+      lay(s, "foe", fc, f.q, before, f.bet && !f.edict);
     }
     const declared = { me: edict && edictOpen(s, "me"), foe: fc && f.edict && edictOpen(s, "foe") };
     if (declared.me) s.edict.me = { q, turn: s.turn };
     if (declared.foe) s.edict.foe = { q: f.q, turn: s.turn };
     s.last = { me: card.uid, foe: fc && fc.uid };
-    const said = (c, at, ed) => `${BEASTS[c.id].name} nel quarto ${ROMAN[at]}${ed ? ", con l'Editto" : ""}`;
+    history(s);
+    const said = (c, at, ed) => `${BEASTS[c.id].name} nel quarto ${ROMAN[at]}${ed ? ", con l'Editto" : ""}${c.bet ? ", con la Scommessa" : ""}`;
     s.log.unshift({
       turn: s.turn,
       me: said(card, q, declared.me),
@@ -405,27 +558,53 @@
     return true;
   }
 
+  // what the Laboratorio remembers at the end of each turn, after the reveal:
+  // who led each quarter (Presidio) and when the Obiettivo was first met
+  function history(s) {
+    if (!s.hold && !(s.goal && s.goal.q === null && !s.goal.sides)) return;
+    const e = evaluate(s);
+    if (s.hold) e.quarters.forEach((x) => x.lead && s.hold[x.q][x.lead]++);
+    const g = s.goal;
+    if (!g || g.q !== null || g.sides) return;
+    if (g.id === "punta") {
+      const x = e.quarters.find((x) => x.q >= 2 && x.lead);
+      if (x) g.q = x.q;
+    } else if (g.id === "sigillo") {
+      const x = e.quarters.find((x) => x.rivalry.length);
+      if (x) g.q = x.q;
+    } else {
+      const all = SIDES.filter((side) => s.board.every((sq) => sq[side].length));
+      if (all.length) g.sides = all;
+    }
+  }
+
   // ---------- game codes: one game, reproducible from a short string ----------
   // seed, format, Editto and the Conte's style, e.g. "418273-cns", then "r"
-  // if the Rivalità is on ("418273-dnsr"), or a trial, "prova-3". The same code and the same moves (and draft picks) give
+  // if the Rivalità is on ("418273-dnsr"), then for the Laboratorio its
+  // modules after a dash ("418273-lns-ocg"), or a trial, "prova-3". The same code and the same moves (and draft picks) give
   // the same game (the AI draws from s.rand).
   const CONTI = ["prudente", "standard", "variabile"];
-  const LETTER = { classico: "c", crepuscolo: "r", draft: "d" };
-  const code = (s, conte) => (s.trial !== undefined ? `prova-${s.trial + 1}` : `${s.seed}-${LETTER[s.format]}${s.edict ? "e" : "n"}${conte[0]}${s.rivalry ? "r" : ""}`);
+  const LETTER = { classico: "c", crepuscolo: "r", draft: "d", lab: "l" };
+  const code = (s, conte) =>
+    s.trial !== undefined ? `prova-${s.trial + 1}` : `${s.seed}-${LETTER[s.format]}${s.edict ? "e" : "n"}${conte[0]}${s.rivalry ? "r" : ""}${s.lab ? "-" + s.lab : ""}`;
   // untrusted text in, a validated game or null out
   function parseCode(text) {
     const t = String(text).trim().toLowerCase().slice(0, 32);
     const p = /^prova-(\d)$/.exec(t);
     if (p) return +p[1] >= 1 && +p[1] <= TRIALS.length ? { trial: +p[1] - 1, conte: "prudente" } : null;
-    const m = /^(\d{1,10})-([crd])([en])([psv])(r?)$/.exec(t);
+    const m = /^(\d{1,10})-([crdl])([en])([psv])(r?)(?:-([a-z]+))?$/.exec(t);
     if (!m || +m[1] > 0xffffffff) return null;
-    return {
+    // modules only with the Laboratorio, and only a valid list
+    if (m[6] !== undefined && (m[2] !== "l" || !validLab(m[6]))) return null;
+    const g = {
       seed: +m[1],
       format: Object.keys(LETTER).find((f) => LETTER[f] === m[2]),
       editto: m[3] === "e",
       conte: CONTI.find((c) => c[0] === m[4]),
       rivalita: m[5] === "r",
     };
+    if (m[2] === "l") g.lab = m[6] || "";
+    return g;
   }
 
   function finish(s) {
@@ -623,7 +802,7 @@
     return s;
   }
 
-  const api = { TINCT, BEASTS, FIELDS, HOUSES, HOUSE, FORMATS, TRIALS, COMMON, DRAFT_ORDER: ORDER, TURNS, QUARTERS, ROMAN, NEAR, SIDES, create, legal, cap, edictOpen, evaluate, prize, choose, play, TRIALS_SET, code, parseCode, draftTurn, draftLeft, draftChoice, pick, validTrial, goalMet };
+  const api = { LAB, LAB_ORDER, validLab, FAMILIES, BEATS, GOALS, PRESIDIO, SHIFT_TURN, TINCT, BEASTS, FIELDS, HOUSES, HOUSE, FORMATS, TRIALS, COMMON, DRAFT_ORDER: ORDER, TURNS, QUARTERS, ROMAN, NEAR, SIDES, create, legal, cap, edictOpen, evaluate, prize, choose, play, TRIALS_SET, code, parseCode, draftTurn, draftLeft, draftChoice, pick, validTrial, goalMet };
   if (typeof module !== "undefined") module.exports = api;
   else root.Blasone = api;
 })(this);

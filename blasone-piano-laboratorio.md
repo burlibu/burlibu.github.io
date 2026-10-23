@@ -2,7 +2,7 @@
 
 **Versione di partenza:** 0.0.8 (implementata)  
 **Versione proposta:** 0.0.10-lab, indipendente dalla 0.0.9 (*Duello tra Araldi*), che resta pianificata a parte  
-**Stato:** proposta  
+**Stato:** ondate 1 e 2 implementate (vedi «Esito dell'implementazione» in fondo); ondate 3 e 4 da fare  
 **Fonte:** tutte le idee di `blasone-idee-meccaniche.md`, sezioni 1–29 e «Ispirazioni da altri generi»
 
 ## Obiettivo
@@ -405,4 +405,52 @@ Ogni passo si chiude con `node scripts/blasone-check.js`, `node scripts/blasone-
 | 0.0.7 | Implementata | Draft delle Casate, Prove dell'Araldo, Compagnia delle Veglie e Reazione. |
 | 0.0.8 | Implementata | Compagnia dei Confini, Rivalità di Casata, due prove facoltative. |
 | 0.0.9 | Pianificata | Duello locale per due persone con mosse nascoste. |
-| 0.0.10-lab | Proposta | Laboratorio dell'Araldo: tutte le meccaniche del repertorio come moduli sperimentali, in quattro ondate. |
+| 0.0.10-lab | Ondate 1–2 implementate | Laboratorio dell'Araldo: tutte le meccaniche del repertorio come moduli sperimentali, in quattro ondate. |
+
+## Esito dell'implementazione (ondate 1 e 2)
+
+### Cosa c'è
+
+- Formato **Laboratorio** (`lab`, lettera `l` nel codice) con sette moduli: `o` Casata delle Ore, `c` Compagnia dei Colori, `g` Tre Regni, `q` Compagnia della Giostra, `p` Presidio, `b` Obiettivo di torneo, `m` Campo mutevole. Si scelgono in Menu → Partita, sotto i formati, e si salvano in `blasone.prefs` come `lab`.
+- Sedici bestie nuove in quattro casate (`lab: true` in `HOUSES`), con la famiglia stampata su tutte le carte, vecchie e nuove. Il bestiario cerca anche per famiglia, casata e «laboratorio».
+- Codici: `418273-lns-ocg`. `validLab()` accetta solo lettere note, in ordine canonico, senza doppioni e senza Presidio con Obiettivo; lo usano engine, codici e preferenze.
+- Scommessa dell'Ariete: pulsante «Scommetti sul quarto» accanto all'Editto, solo con l'Ariete scelto; Editto e Scommessa sulla stessa carta sono rifiutati da `play()`. Il Conte prova ogni Ariete con e senza Scommessa.
+- Sullo scudo: sotto il nome del campo il cambio annunciato del Campo mutevole e i turni di Presidio; tra le corone le voci Obiettivo, Presidio e Ariete. Nel Prontuario il ciclo delle famiglie, l'Obiettivo e la regola del Presidio. Nel riepilogo una riga per ciascuna.
+- Scheda Riscontro: moduli attivi e la domanda «Regola nuova che hai dovuto ricontrollare nel bestiario».
+
+### Decisioni e deviazioni dal piano
+
+- **Presidio a 5 turni su 6, non 4.** Con 4 su 6 il Presidio pagava 1,24 corone a partita, il 20% del totale, oltre il limite di un sesto. Con 5 su 6 paga 0,53 corone, il 10%. La versione a segnali resta da provare.
+- **Pellicano:** il Riparo vale +1 se la carta ha almeno un malus di Serpe, Gufo, Basilisco o Arpia. Non tocca Drago, Scorpione, campi né la Scommessa persa.
+- **Ariete in parità:** la Scommessa è persa (nessuno conquista il quarto), quindi −2, e il quarto passa all'altro lato.
+- **Obiettivo «La prima punta»:** se III e IV sono condotti per la prima volta nello stesso turno, vale il III.
+- **Disegni delle nuove bestie:** per ora parti di emoji incise come le altre (la Civetta con una clessidra, il Picchio su un ceppo, il Tessitore su un nido, il Pellicano con un pesce). I PNG dedicati in `art/` sono ancora da fare.
+- Versione mostrata nel menu: `0.0.10-lab`.
+
+### Bilanciamento (AI contro AI)
+
+| Moduli | Partite | Tu / Conte | Corone a partita | Corone del modulo |
+|---|---:|---|---:|---|
+| nessuno (= Classico) | 1500 | 49 / 49 | 4,92 | — |
+| `o` | 5000 | 50 / 48 | 4,63 | — |
+| `c` | 1500 | 52 / 46 | 4,68 | — |
+| `g` | 1500 | 52 / 45 | 4,62 | 3,4 vantaggi e 0,4 Ripari a partita |
+| `q` | 5000 | 52 / 47 | 5,32 | Ariete 0,54 (10%); scommesse perse 51% |
+| `p` | 1500 | 49 / 49 | 5,45 | Presidio 0,53 (10%) |
+| `b` | 1500 | 48 / 50 | 5,50 | Obiettivo 0,70 (13%) |
+| `m` | 1500 | 50 / 47 | 4,87 | — |
+| `ocgq` | 5000 | 49 / 49 | 4,58 | — |
+
+Lo scarto tra i lati è rumore del campione (su 5000 partite `o` e `ocgq` tornano entro 48–52); `q` resta al limite e va riguardato con l'Ariete. Quarti vinti dalle nuove bestie dove sono giocate (`ocgq`, 3000 partite): tra il 41% (Ermellino) e il 58% (Cicogna), dentro la fascia 36–60%. Il Conte gioca poco Picchio (7% delle partite) e Pellicano (9%): da osservare nei test umani, potrebbero essere carte che nessuno sceglie.
+
+### Verifiche
+
+- `node scripts/blasone-check.js`: 182 OK. Nuovo `scripts/blasone-check/lab.js`: Classico, Crepuscolo e Draft, con e senza Rivalità, identici all'engine 0.0.8 (`c485a59`); ogni nuova bestia con abilità attiva e spenta; vantaggio, Ripari, Scommessa (vinta, persa, in parità, rifiutata con l'Editto), Presidio, i tre Obiettivi, Campo mutevole; moduli e codici malformati. Nuovo `labui.js` in Chrome: pulsante Scommessa, cronaca, moduli del menu, coppia vietata. `security.js`: moduli malevoli nelle preferenze ignorati.
+- `node scripts/blasone-prove.js`: 8 prove risolvibili.
+- `CI=true npm run check:responsive`: 240 ok.
+
+### Ancora da fare
+
+- Ondata 3 (due tempi, arena a sei quarti, Arcipelago) dopo il refactor di mappa e turni; ondata 4 (Migrazione, Rondine, poi Richiamo e Spostamento) dopo il modello `at`/`in`.
+- Le varianti di simulazione elencate per Gazza, Picchio, Civetta, Gambero, Ermellino, Cicogna, vantaggio B e C, Presidio a segnali.
+- Le Prove dell'Araldo per modulo e i test umani (10 partite per modulo da solo).

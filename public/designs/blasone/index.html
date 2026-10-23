@@ -70,6 +70,7 @@
           <button class="tool mini-tool" id="cancelBtn" hidden>Annulla scelta</button>
           <button class="tool mini-tool" id="endBtn" hidden>Rivedi il riepilogo</button>
           <button class="tool mini-tool" id="edictBtn" aria-pressed="false" hidden>Editto</button>
+          <button class="tool mini-tool" id="betBtn" aria-pressed="false" hidden>Scommetti sul quarto</button>
           <span id="deckInfo">Mazzo: 12</span>
         </span>
       </div>
@@ -130,6 +131,7 @@
           <h3>Le tinture</h3>
           <p class="small">Una carta prende +1 se è di classe opposta alla tua ultima carta nel quarto.</p>
           <div class="tincts" id="tincts"></div>
+          <div class="lab-info" id="labInfo" hidden></div>
         </section>
         </div>
       </main>
@@ -179,6 +181,12 @@
         <fieldset>
           <legend class="label">Formato</legend>
           <div class="choices" id="formatChoices"></div>
+        </fieldset>
+        <fieldset class="lab-choices" id="labChoices" hidden>
+          <legend class="label">Moduli del Laboratorio · sperimentali</legend>
+          <p class="small">Ogni modulo è una meccanica nuova, da provare prima da sola. Le casate aggiungono quattro bestie al mazzo; gli altri moduli cambiano le regole. I moduli finiscono nel codice partita.</p>
+          <div class="lab-list"></div>
+          <p class="small" id="labMsg" aria-live="polite"></p>
         </fieldset>
         <label class="check">
           <input type="checkbox" id="edictPref" />
@@ -266,6 +274,7 @@
           <fieldset><legend class="label">Il risultato si legge bene?</legend><div class="scale" id="rResult"></div></fieldset>
           <fieldset><legend class="label">Il Conte ti è sembrato</legend><div class="scale" id="rLevel"></div></fieldset>
           <label class="field-in"><span class="label">Abilità o regole decisive</span><input id="rDecisive" maxlength="200" autocomplete="off" /></label>
+          <label class="field-in"><span class="label">Regola nuova che hai dovuto ricontrollare nel bestiario</span><input id="rRecheck" maxlength="200" autocomplete="off" /></label>
           <label class="field-in"><span class="label">Note</span><textarea id="rNotes" maxlength="1000" rows="4"></textarea></label>
           <div class="new-row">
             <button class="tool solid" type="button" id="reportCopy">Copia la scheda</button>
