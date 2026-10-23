@@ -4,14 +4,15 @@
 // cross-hatching in the darks, a heavy contour). ?preview shows the cover.
 // The menu (a native <dialog>) holds the game options, the Prove dell'Araldo,
 // the rules, the bestiary and the display settings; the choices are kept in
-// localStorage. A Draft game opens on the draft sheet before the duel.
+// localStorage. A Draft game opens on the draft sheet before the duel. The
+// Laboratorio's modules are chosen in the Partita tab, under the formats.
 (() => {
   const B = window.Blasone;
   const $ = (id) => document.getElementById(id);
   const params = new URLSearchParams(location.search);
   const preview = params.has("preview");
   const NUM = ["", "I", "II", "III", "IV", "V", "VI"];
-  const VERSION = "0.0.8";
+  const VERSION = "0.0.10-lab";
   const KEYS = Object.keys(B.BEASTS);
 
   // ---------- woodcut engraving ----------
@@ -100,7 +101,7 @@
     variabile: { name: "Variabile", noise: 2, text: "Spesso tenta mosse azzardate: imprevedibile, e più facile da battere." },
   };
   const SIZES = { 1: "Normale", 1.15: "Grande", 1.3: "Molto grande" };
-  const prefs = { format: "classico", editto: false, rivalita: false, conte: "standard", motion: false, size: 1, colors: true, decor: true };
+  const prefs = { format: "classico", editto: false, rivalita: false, conte: "standard", motion: false, size: 1, colors: true, decor: true, lab: "" };
   // stored prefs are untrusted: copy only known keys holding allowed values
   const own = (o, k) => typeof k === "string" && Object.prototype.hasOwnProperty.call(o, k);
   function readPrefs(raw) {
@@ -109,6 +110,8 @@
     if (own(CONTE, raw.conte)) prefs.conte = raw.conte;
     if (own(SIZES, String(raw.size)) && typeof raw.size === "number") prefs.size = raw.size;
     for (const k of ["editto", "rivalita", "motion", "colors", "decor"]) if (typeof raw[k] === "boolean") prefs[k] = raw[k];
+    // the Laboratorio's modules: only a list the engine accepts
+    if (B.validLab(raw.lab) !== null) prefs.lab = raw.lab;
   }
   try {
     const raw = localStorage.getItem("blasone.prefs");
@@ -131,7 +134,7 @@
   // ---------- state ----------
   // ?seed= is untrusted too: a whole number in the rng's range, or ignored
   const seedParam = /^\d{1,10}$/.test(params.get("seed") || "") && +params.get("seed") <= 0xffffffff ? +params.get("seed") : null;
-  let s, picked = null, edictArmed = false, conte = "standard", endTimer = 0, draftSeen = false;
+  let s, picked = null, edictArmed = false, betArmed = false, conte = "standard", endTimer = 0, draftSeen = false;
   // from: a parsed game code (parseCode) to replay, { trial: n }, or nothing
   // for a new game with the menu's options
   function newGame(from) {
@@ -141,6 +144,7 @@
       editto: !preview && prefs.editto,
       rivalita: !preview && prefs.rivalita,
       conte: preview ? "standard" : prefs.conte,
+      lab: prefs.lab,
     };
     // a trial that fails its checks falls back to a plain game
     s = B.create(g.seed, g) || B.create((Math.random() * 1e9) | 0, {});
@@ -148,6 +152,7 @@
     conte = s.trial !== undefined ? "prudente" : own(CONTE, g.conte) ? g.conte : "standard";
     picked = null;
     edictArmed = false;
+    betArmed = false;
     draftSeen = false;
     clearTimeout(endTimer);
     hideVeil($("end"));
@@ -164,12 +169,22 @@
         : "Le mosse dei due lati si rivelano insieme, a fine turno.";
     // the rule is explained before the first move
     if (s.rivalry) $("reveal").textContent += " " + RIVAL_RULE;
+    if (s.lab) $("reveal").textContent += " " + labIntro();
     render();
   }
   const gameCode = () => B.code(s, conte);
   const playing = () => (s.log.length > 0 || (s.draft && s.draft.notes.length > 0)) && !s.over;
   const drafting = () => !!B.draftTurn(s);
-  const formatName = () => (s.trial !== undefined ? `Prova dell'Araldo ${s.trial + 1}` : B.FORMATS[s.format].name);
+  const formatName = () => (s.trial !== undefined ? `Prova dell'Araldo ${s.trial + 1}` : B.FORMATS[s.format].name + (s.lab ? ` · ${s.lab}` : ""));
+  // the Laboratorio in words: the modules on, the Obiettivo, the field that will change
+  const labNames = (t) => [...t].map((k) => B.LAB[k].name).join(", ");
+  const goalOf = () => s.goal && B.GOALS.find((g) => g.id === s.goal.id);
+  function labIntro() {
+    const out = [`Laboratorio: ${labNames(s.lab)}.`];
+    if (goalOf()) out.push(`Obiettivo di torneo, ${goalOf().name}: ${goalOf().text}`);
+    if (s.shift) out.push(`Il quarto ${B.ROMAN[s.shift.q]} diventa ${B.FIELDS.find((f) => f.id === s.shift.to).name} dal turno ${NUM[B.SHIFT_TURN]}.`);
+    return out.join(" ");
+  }
   const names = (ids) => ids.map((id) => B.BEASTS[id].name).join(", ");
   const RIVAL_RULE = "Rivalità di Casata attiva: se in un quarto avete entrambi una carta della stessa casata (il Bestiario non conta), il quarto vale +1 corona per chi lo conquista.";
   const houseNames = (ids) => ids.map((h) => B.HOUSES.find((x) => x.id === h).name).join(", ");
@@ -202,12 +217,23 @@
         const rival = x.rival
           ? `<span class="bonus rival" title="Rivalità di Casata (${esc(houseNames(x.rivalry))}): +1 corona per chi conquista il quarto">+${crown}<span>⚔ Rivalità</span></span>`
           : "";
-        const crowns = crown.repeat(x.crowns) + rival + extra;
+        // the Laboratorio's crowns: the Obiettivo's (to whoever takes the
+        // quarter) and the Presidio's (to whoever led it long enough)
+        const goal = x.goal ? `<span class="bonus" title="${esc(goalOf().name)}: +1 corona per chi conquista il quarto">+${crown}<span>Obiettivo</span></span>` : "";
+        const pres = B.SIDES.filter((side) => x.presidio[side])
+          .map((side) => `<span class="bonus" title="Presidio: +1 corona ${side === "me" ? "per te" : "per il Conte"}, che conduce da ${B.PRESIDIO} turni">+${crown}<span>${side === "me" ? "Tu" : "C"} · Presidio</span></span>`)
+          .join("");
+        const crowns = crown.repeat(x.crowns) + rival + goal + pres + extra;
+        // what the Laboratorio adds under the field: the change to come, the turns led
+        const notes = [
+          x.shift && !x.shift.done ? `Dal turno ${NUM[x.shift.from]}: ${esc(x.shift.to.name)}` : x.shift ? `Era ${esc(s.fields[q].name)} fino al turno ${NUM[x.shift.from - 1]}` : "",
+          s.hold ? `Presidio: tu ${x.hold.me}, Conte ${x.hold.foe} su ${B.PRESIDIO}` : "",
+        ].filter(Boolean);
         return `<article class="plate ${open || s.over || waiting ? "" : "shut"}" aria-label="Quarto ${B.ROMAN[q]}, ${esc(f.name)}">
           ${tinct(f.t, "wm")}
           <header class="plate-head">
             <span class="numeral">${B.ROMAN[q]}</span>
-            <div class="field">${tinct(f.t, "esc")}<div><h3><small>${B.QUARTERS[q]}</small>${esc(f.name)}</h3><p>${esc(f.text)}</p></div></div>
+            <div class="field">${tinct(f.t, "esc")}<div><h3><small>${B.QUARTERS[q]}</small>${esc(f.name)}</h3><p>${esc(f.text)}</p>${notes.map((n) => `<p class="lab-note">${n}</p>`).join("")}</div></div>
             <span class="crowns" title="${x.crowns} ${x.crowns === 1 ? "corona" : "corone"}">${crowns}</span>
           </header>
           <div class="row foe">${x.foe.cards.map((c, k) => mini(c, q, "foe", k, fresh(c, "foe"))).join("") || `<span class="slot"><span class="empty">Il Conte non ha carte qui</span></span>`}</div>
@@ -237,7 +263,7 @@
   function face(id) {
     const b = B.BEASTS[id];
     return `<span class="corners" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
-      <span class="card-top"><b class="pwr"><svg class="pwr-shield" viewBox="0 0 40 46" aria-hidden="true"><use href="#shield"/></svg><span>${b.power}</span></b><span class="label">${plateNo(id)}<br />${B.TINCT[b.t].name}</span></span>
+      <span class="card-top"><b class="pwr"><svg class="pwr-shield" viewBox="0 0 40 46" aria-hidden="true"><use href="#shield"/></svg><span>${b.power}</span></b><span class="label">${plateNo(id)}<br />${B.TINCT[b.t].name} · ${B.FAMILIES[b.fam].name}</span></span>
       <span class="art"><img src="${ART[id]}" alt="" /><span class="ink"></span>${tinct(b.t)}</span>
       <span class="card-body"><h4>${esc(b.name)}</h4><p class="ab"><i>${esc(b.ab)}.</i> ${esc(b.text)}</p></span>
       <span class="house">${esc(B.HOUSE[id].name)}</span>`;
@@ -262,8 +288,15 @@
       ? "Draft: scegli una carta tra le otto scoperte"
       : picked === null
       ? "Scegli una carta, poi un quarto"
-      : `${B.BEASTS[s.hands.me[picked].id].name}: ora scegli un quarto${edictArmed ? ", con l'Editto" : ""}`;
+      : `${B.BEASTS[s.hands.me[picked].id].name}: ora scegli un quarto${edictArmed ? ", con l'Editto" : ""}${betArmed ? ", con la Scommessa" : ""}`;
     $("cancelBtn").hidden = picked === null;
+    // the Ariete's wager: offered while the Ariete is the card chosen; it
+    // can't go with the Editto on the same card
+    const ariete = picked !== null && s.hands.me[picked] && s.hands.me[picked].id === "ariete";
+    if (!ariete) betArmed = false;
+    $("betBtn").hidden = !ariete;
+    $("betBtn").setAttribute("aria-pressed", betArmed);
+    $("betBtn").textContent = betArmed ? "Scommessa dichiarata" : "Scommetti sul quarto";
     $("endBtn").hidden = !s.over;
     // the Editto: shown only when the rule is on
     const eb = $("edictBtn"), used = s.edict && s.edict.me;
@@ -315,7 +348,14 @@
       .map((n, k) => `<li class="${k < done ? "done" : k === done && !s.over && !drafting() ? "now" : ""}" aria-label="Turno ${n}${k < done ? ", giocato" : k === done && !s.over ? ", in corso" : ""}">${n}</li>`)
       .join("");
     const e = B.evaluate(s);
-    const stake = e.quarters.reduce((t, x) => t + x.crowns + (x.rival ? 1 : 0), 0);
+    const stake = e.quarters.reduce((t, x) => t + x.crowns + x.rival + x.goal, 0);
+    // the Laboratorio's reminders: the families' cycle, the Obiettivo, the Presidio
+    const lab = [];
+    if (s.lab && s.lab.includes("g")) lab.push(`<b>Tre Regni.</b> ${Object.entries(B.BEATS).map(([a, z]) => `${B.FAMILIES[a].name} prevale su ${B.FAMILIES[z].name}`).join(", ")}: +1.`);
+    if (goalOf()) lab.push(`<b>${esc(goalOf().name)}.</b> ${esc(goalOf().text)}${s.goal.q !== null ? ` Fissato sul quarto ${B.ROMAN[s.goal.q]}.` : s.goal.sides ? ` Va a ${s.goal.sides.map((x) => (x === "me" ? "te" : "il Conte")).join(" e ")}.` : ""}`);
+    if (s.hold) lab.push(`<b>Presidio.</b> +1 corona a chi conduce un quarto a fine turno ${B.PRESIDIO} volte su 6.`);
+    $("labInfo").hidden = !lab.length;
+    $("labInfo").innerHTML = lab.map((l) => `<p>${l}</p>`).join("");
     $("stake").innerHTML = `<svg class="crown" aria-hidden="true"><use href="#crown"/></svg> <b>${stake}</b> corone in palio sullo scudo. Tu ${e.score.me}, il Conte ${e.score.foe}.`;
   }
   $("tincts").innerHTML = ["Metalli", "Colori"]
@@ -490,6 +530,8 @@
       lines.push(`Torri: +${towers} (${by.map(([side, n]) => `${n} ${OF[side]}`).join(", ")}), a chi conquista il quarto.`);
     }
     if (x.rival) lines.push(`Rivalità di Casata (${houseNames(x.rivalry)}): +1, a chi conquista il quarto, una sola per quarto.`);
+    if (x.goal) lines.push(`Obiettivo di torneo (${goalOf().name}): +1, a chi conquista il quarto.`);
+    for (const side of B.SIDES) if (x.presidio[side]) lines.push(`Presidio ${OF[side]}: +1, condotto ${x.hold[side]} turni su 6, pagato anche senza la conquista.`);
     for (const side of B.SIDES)
       for (const why of x.extra[side])
         lines.push(`${why} ${OF[side]}: +1 solo ${side === "me" ? "per te" : "per il Conte"}, ${x.lead === side ? "assegnata" : "non assegnata, il quarto non è " + OF[side]}.`);
@@ -605,8 +647,9 @@
     if (row && picked !== null && !s.over) {
       const i = picked, q = +row.dataset.q;
       picked = null;
-      B.play(s, i, q, B.choose(s, "foe", CONTE[conte].noise), edictArmed);
+      B.play(s, i, q, B.choose(s, "foe", CONTE[conte].noise), edictArmed && !betArmed, betArmed);
       edictArmed = false;
+      betArmed = false;
       render();
       if (s.over) return scheduleEnd();
       if (e.detail === 0) $("board").querySelector(`.row.me[data-q="${q}"] .mini:last-of-type`)?.focus();
@@ -616,8 +659,14 @@
     if (m) peek(+m.dataset.q, m.dataset.side, +m.dataset.k, m);
   });
   $("cancelBtn").onclick = cancelPick;
+  $("betBtn").onclick = () => {
+    betArmed = !betArmed;
+    if (betArmed) edictArmed = false;
+    renderHand();
+  };
   $("edictBtn").onclick = () => {
     edictArmed = !edictArmed;
+    if (edictArmed) betArmed = false;
     renderHand();
   };
   // a trial is tried again; otherwise a new game with the menu's options
@@ -695,7 +744,32 @@
       save();
     };
   };
-  choices("formatChoices", "format", B.FORMATS, prefs.format, (v) => (prefs.format = v));
+  choices("formatChoices", "format", B.FORMATS, prefs.format, (v) => {
+    prefs.format = v;
+    renderLabChoices();
+  });
+  // the Laboratorio's modules, one box each; a banned pair is refused here
+  // and again by the engine
+  function renderLabChoices() {
+    const box = $("labChoices");
+    box.hidden = prefs.format !== "lab";
+    box.querySelector(".lab-list").innerHTML = Object.entries(B.LAB)
+      .map(([k, o]) => `<label class="check"><input type="checkbox" value="${k}" ${prefs.lab.includes(k) ? "checked" : ""} /><span><b>${esc(o.name)}</b> <i>Ondata ${o.wave}.</i> ${esc(o.text)}</span></label>`)
+      .join("");
+  }
+  $("labChoices").onchange = (e) => {
+    const on = new Set([...$("labChoices").querySelectorAll("input:checked")].map((i) => i.value));
+    const next = B.LAB_ORDER.split("").filter((k) => on.has(k)).join("");
+    if (B.validLab(next) === null) {
+      e.target.checked = false;
+      $("labMsg").textContent = "Presidio e Obiettivo di torneo non si provano insieme: sono due premi per chi tiene il terreno.";
+      return;
+    }
+    prefs.lab = next;
+    $("labMsg").textContent = next.length > 2 ? "Con più di due moduli, una partita dice poco su ciascuno." : "";
+    save();
+  };
+  renderLabChoices();
   choices("conteChoices", "conte", CONTE, prefs.conte, (v) => (prefs.conte = v));
   choices("sizeChoices", "size", SIZES, prefs.size, (v) => {
     prefs.size = +v;
@@ -815,7 +889,7 @@
   function renderReport() {
     $("reportAuto").innerHTML =
       `<span class="label">Compilato da solo</span> Codice <code>${esc(gameCode())}</code> · ${esc(formatName())} · Conte ${esc(CONTE[conte].name.toLowerCase())} · ` +
-      `Editto: ${esc(edictLine())} · Rivalità: ${s.rivalry ? "attiva" : "non attiva"}${s.draft ? ` · Draft: ${esc(draftLine())}` : ""} · Esito: ${esc(outcome())}`;
+      `Editto: ${esc(edictLine())} · Rivalità: ${s.rivalry ? "attiva" : "non attiva"}${s.draft ? ` · Draft: ${esc(draftLine())}` : ""}${s.lab !== undefined ? ` · Laboratorio: ${esc(labNames(s.lab) || "nessun modulo")}` : ""} · Esito: ${esc(outcome())}`;
   }
   function reportText() {
     const clarity = picked1("clarity", { 1: 1, 2: 1, 3: 1, 4: 1, 5: 1 });
@@ -826,12 +900,14 @@
       `Codice partita: ${gameCode()}`,
       `Formato: ${formatName()} · Editto: ${s.edict ? "attivo" : "non attivo"} · Rivalità: ${s.rivalry ? "attiva" : "non attiva"} · Conte: ${CONTE[conte].name}`,
       ...(s.draft ? [`Draft: ${draftLine()}`] : []),
+      ...(s.lab !== undefined ? [`Laboratorio: ${labNames(s.lab) || "nessun modulo"}`] : []),
       `Esito: ${outcome()}`,
       `Editto usato: ${edictLine()}`,
       `Chiarezza delle abilità (1-5): ${clarity || "—"}`,
       `Leggibilità del risultato (1-5): ${result || "—"}`,
       `Difficoltà del Conte: ${level ? LEVEL[level] : "—"}`,
       `Abilità o regole decisive: ${clean($("rDecisive").value, 200) || "—"}`,
+      `Regola ricontrollata nel bestiario: ${clean($("rRecheck").value, 200) || "—"}`,
       `Note:`,
       clean($("rNotes").value, 1000) || "—",
     ].join("\n");
@@ -867,13 +943,14 @@
     const only = $("beastInGame").checked;
     const list = KEYS.filter((id) => {
       const b = B.BEASTS[id];
-      return (!tintOn || b.t === tintOn) && (!q || b.name.toLowerCase().includes(q) || b.ab.toLowerCase().includes(q)) && (!only || s.pool.includes(id));
+      const words = [b.name, b.ab, B.FAMILIES[b.fam].name, B.HOUSE[id].name, B.HOUSE[id].lab ? "Laboratorio" : ""].join(" ").toLowerCase();
+      return (!tintOn || b.t === tintOn) && (!q || words.includes(q)) && (!only || s.pool.includes(id));
     });
     $("beastCount").textContent = `${list.length} ${list.length === 1 ? "bestia" : "bestie"} su ${KEYS.length}`;
     $("bestiary").innerHTML = list
       .map(
         (id) => `<figure class="beast"><div class="card ${skin(id)}">${face(id)}</div>
-        <figcaption class="label"><span class="fig-house">${esc(B.HOUSE[id].name)}${s.pool.includes(id) ? " · " : ""}</span>${s.pool.includes(id) ? `<b>in partita</b>` : ""}</figcaption></figure>`
+        <figcaption class="label"><span class="fig-house">${esc(B.HOUSE[id].name)}${s.pool.includes(id) ? " · " : ""}</span>${s.pool.includes(id) ? `<b>in partita</b>` : ""}${B.HOUSE[id].lab ? " · Laboratorio" : ""}</figcaption></figure>`
       )
       .join("");
   }
