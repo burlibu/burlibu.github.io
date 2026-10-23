@@ -1,0 +1,786 @@
+/* Halden Stories: a field-notes atlas. One 1440x810 frame scaled to fit,
+   the map and the story layer bleeding past it to the screen edges. */
+
+:root {
+  --paper: #f6f3ea;
+  --ink: #1c1a17;
+  --ink-2: #3b3731;
+  --terra: #c35933;
+  --sans: "Source Sans 3", "Source Sans Pro", system-ui, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+  --quint: cubic-bezier(0.83, 0, 0.17, 1);
+  --expo: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  overflow: hidden;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+}
+
+:focus-visible {
+  outline: 2px solid var(--terra);
+  outline-offset: 3px;
+}
+
+#grid {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 2px;
+  height: 2px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* ---------- the map view ---------- */
+
+.stage {
+  position: fixed;
+  inset: 0;
+  transition: transform 1.25s var(--quint);
+}
+
+.stories-open .stage {
+  transform: translateX(var(--slide, -520px));
+}
+
+.frame {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 1440px;
+  height: 810px;
+  transform-origin: 0 0;
+}
+
+.fills {
+  position: absolute;
+  left: -360px;
+  top: -270px;
+  width: 2160px;
+  height: 1350px;
+  pointer-events: none;
+}
+
+.fill {
+  position: absolute;
+  opacity: 0;
+  transition: opacity 450ms ease;
+}
+
+.fill.on {
+  opacity: 1;
+  transition-duration: 650ms;
+}
+
+.map {
+  position: absolute;
+  inset: 0;
+  overflow: visible;
+}
+
+.ink {
+  fill: none;
+  stroke: var(--ink);
+  /* 1.4 screen px at any frame scale (non-scaling-stroke would break the pathLength dashes) */
+  stroke-width: calc(1.4px / var(--s, 1));
+  stroke-linejoin: round;
+  stroke-linecap: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: draw 1.7s cubic-bezier(0.45, 0, 0.2, 1) var(--d, 0s) forwards;
+}
+
+.lakes {
+  fill: none;
+}
+
+/* the lakes, in paper, hide the state and country lines that run through them */
+.lake-cut {
+  fill: var(--paper);
+  stroke: var(--paper);
+}
+
+@keyframes draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.hit {
+  fill: transparent;
+  cursor: pointer;
+}
+
+.marks {
+  pointer-events: none;
+  will-change: transform;
+}
+
+.marks .dot {
+  pointer-events: auto;
+}
+
+.dot circle {
+  fill: var(--terra);
+}
+
+.dot .halo {
+  fill: var(--terra);
+  opacity: 0.35;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: halo 2.4s ease-out infinite;
+}
+
+.dot {
+  cursor: pointer;
+}
+
+@keyframes halo {
+  from {
+    transform: scale(1);
+    opacity: 0.4;
+  }
+  to {
+    transform: scale(2.6);
+    opacity: 0;
+  }
+}
+
+.ring {
+  pointer-events: none;
+}
+
+.ring-in {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: pop 0.7s var(--expo) both;
+}
+
+.ring .disc {
+  fill: var(--paper);
+  stroke: var(--ink);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.ring .plus {
+  stroke: var(--ink);
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.ring text {
+  font-family: var(--mono);
+  font-size: 9.4px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  fill: var(--ink);
+}
+
+.ring .spin {
+  transform-box: view-box;
+  animation: spin 14s linear infinite;
+}
+
+@keyframes pop {
+  from {
+    transform: scale(0.2);
+    opacity: 0;
+  }
+  to {
+    transform: none;
+    opacity: 1;
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ---------- text on the frame ---------- */
+
+.intro {
+  position: absolute;
+  left: 60px;
+  top: 219px;
+}
+
+.eyebrow {
+  margin: 0 0 18px;
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+}
+
+h1 {
+  margin: 0 0 26px;
+  font-size: 54px;
+  font-weight: 700;
+  line-height: 50px;
+  letter-spacing: -0.022em;
+}
+
+h1 em {
+  font-style: normal;
+  color: var(--terra);
+}
+
+.lede {
+  margin: 0;
+  font-family: var(--mono);
+  font-size: 13.2px;
+  line-height: 24px;
+  color: var(--ink-2);
+}
+
+.coords {
+  position: absolute;
+  right: 60px;
+  top: 44px;
+  margin: 0;
+  text-align: right;
+  font-family: var(--mono);
+  font-size: 10.2px;
+  line-height: 18px;
+  letter-spacing: 0.04em;
+  color: var(--ink-2);
+}
+
+.zones {
+  position: absolute;
+  right: 60px;
+  top: 443px;
+  width: 260px;
+}
+
+.zones-h {
+  margin: 0 30px 14px 0;
+  text-align: right;
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+}
+
+.zones ul {
+  margin: 0;
+  padding: 0 30px 0 0;
+  list-style: none;
+  text-align: right;
+}
+
+.zones button {
+  display: inline-block;
+  padding: 0;
+  border: 0;
+  background: none;
+  font-family: var(--mono);
+  font-size: 25px;
+  line-height: 45px;
+  color: var(--ink);
+  cursor: pointer;
+  transition: color 0.3s ease, transform 0.3s var(--expo);
+}
+
+.zones button:hover {
+  transform: translateX(-4px);
+}
+
+.zones button[aria-current="true"] {
+  color: var(--terra);
+}
+
+.ruler {
+  position: absolute;
+  right: 0;
+  top: 18px;
+  width: 14px;
+  height: 230px;
+  background: repeating-linear-gradient(to bottom, var(--ink) 0 1px, transparent 1px 11.5px) right / 6px 100% no-repeat,
+    repeating-linear-gradient(to bottom, var(--ink) 0 1px, transparent 1px 57.5px) right / 14px 100% no-repeat;
+  opacity: 0.85;
+}
+
+.ruler i {
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 22px;
+  height: 3px;
+  background: var(--terra);
+  transform: translateY(var(--y, 0px));
+  transition: transform 0.6s var(--expo);
+}
+
+.chips {
+  display: none;
+}
+
+/* ---------- the story view ---------- */
+
+.stories {
+  position: fixed;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+}
+
+.stories-open .stories {
+  pointer-events: auto;
+}
+
+.strip {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 72px;
+  display: flex;
+  justify-content: center;
+  padding-top: 28px;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.stories-open .strip {
+  opacity: 1;
+  transition-delay: 0.7s;
+}
+
+.back {
+  height: 34px;
+  padding: 0 8px;
+  border: 0;
+  background: var(--paper);
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  height: auto;
+  padding: 12px 6px;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.back:hover {
+  color: var(--terra);
+}
+
+.viewport {
+  position: absolute;
+  left: 72px;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  overflow: hidden;
+  background: var(--ink);
+  transform: translateX(calc(100% + 2px));
+  transition: transform 1.25s var(--quint);
+  touch-action: pan-y;
+}
+
+.stories-open .viewport {
+  transform: none;
+}
+
+.track {
+  display: flex;
+  height: 100%;
+  will-change: transform;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.story {
+  flex: none;
+  display: flex;
+  height: 100%;
+}
+
+.panel {
+  position: relative;
+  width: calc(var(--h) * 0.74);
+  height: 100%;
+  overflow: hidden;
+  background: #2a2723;
+}
+
+.panel canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.card {
+  position: relative;
+  width: calc(var(--h) * 0.69);
+  height: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(14px, 2.4vh, 24px);
+  padding: clamp(24px, 5vh, 48px);
+  background: var(--card);
+  color: var(--card-ink, var(--paper));
+}
+
+.count {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.count b {
+  position: relative;
+  flex: 1;
+  height: 1px;
+  background: color-mix(in srgb, currentColor 30%, transparent);
+}
+
+.count b::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: -1px;
+  height: 3px;
+  width: var(--p);
+  background: currentColor;
+}
+
+.person {
+  position: relative;
+  margin: 0;
+  aspect-ratio: 3 / 2;
+  max-height: 38vh;
+  overflow: hidden;
+  clip-path: inset(100% 0 0 0);
+  transition: clip-path 1s var(--expo);
+}
+
+.person img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scale(1.25);
+  transition: transform 1.4s var(--expo);
+}
+
+.label {
+  margin: 0;
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.city {
+  margin: -6px 0 0;
+  font-family: var(--mono);
+  font-weight: 600;
+  font-size: clamp(30px, 5.2vh, 42px);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+}
+
+.body {
+  margin: 0;
+  max-width: 34ch;
+  font-size: clamp(16px, 2.2vh, 19px);
+  line-height: 1.4;
+}
+
+.rise {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 0.6s ease, transform 0.8s var(--expo);
+}
+
+.story.is-on .person {
+  clip-path: inset(0 0 0 0);
+}
+
+.story.is-on .person img {
+  transform: none;
+}
+
+.story.is-on .rise {
+  opacity: 1;
+  transform: none;
+}
+
+.story.is-on .rise {
+  transition-delay: calc(0.25s + var(--i) * 80ms);
+}
+
+.outline {
+  position: absolute;
+  right: -4%;
+  bottom: -6%;
+  width: 62%;
+  height: 46%;
+  opacity: 0.16;
+  pointer-events: none;
+}
+
+.outline path {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.4;
+  vector-effect: non-scaling-stroke;
+}
+
+.badge {
+  position: absolute;
+  left: clamp(24px, 5vh, 48px);
+  bottom: clamp(24px, 5vh, 48px);
+  width: 92px;
+  height: 92px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  cursor: pointer;
+}
+
+.badge svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.badge .spin {
+  transform-origin: 46px 46px;
+  animation: spin 14s linear infinite;
+}
+
+.badge text {
+  font-family: var(--mono);
+  font-size: 9.6px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  fill: currentColor;
+}
+
+.badge circle {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1;
+  opacity: 0.5;
+}
+
+.badge path {
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+}
+
+.drag {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 80px;
+  height: 80px;
+  margin: -40px 0 0 -40px;
+  border-radius: 50%;
+  background: var(--paper);
+  color: var(--ink);
+  display: none;
+  place-items: center;
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  text-transform: uppercase;
+  pointer-events: none;
+  z-index: 5;
+  transition: scale 0.25s var(--expo), opacity 0.2s ease;
+}
+
+@media (pointer: fine) {
+  .stories-open .viewport {
+    cursor: none;
+  }
+
+  .drag.on {
+    display: grid;
+  }
+
+  .drag.down {
+    scale: 0.78;
+  }
+}
+
+/* ---------- phones and portrait tablets ---------- */
+
+.phone .frame .coords,
+.phone .frame .zones {
+  display: none;
+}
+
+.phone .intro {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  z-index: 2;
+  padding: 22px 20px 48px;
+  background: linear-gradient(var(--paper) 72%, rgb(246 243 234 / 0));
+}
+
+.phone h1 {
+  font-size: 38px;
+  line-height: 37px;
+  margin-bottom: 14px;
+}
+
+.phone .eyebrow {
+  margin-bottom: 10px;
+}
+
+.phone .lede {
+  font-size: 12px;
+  line-height: 19px;
+}
+
+.phone .lede br {
+  display: none;
+}
+
+.phone .chips {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 2;
+  display: flex;
+  gap: 8px;
+  padding: 14px 16px calc(14px + env(safe-area-inset-bottom));
+  overflow-x: auto;
+  scrollbar-width: none;
+  background: linear-gradient(rgb(246 243 234 / 0), var(--paper) 30%);
+}
+
+.chips button {
+  flex: none;
+  min-height: 44px;
+  padding: 0 18px;
+  border: 1px solid var(--ink);
+  border-radius: 999px;
+  background: var(--paper);
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.chips button[aria-current="true"] {
+  background: var(--terra);
+  border-color: var(--terra);
+  color: var(--paper);
+}
+
+.phone .strip {
+  width: auto;
+  right: auto;
+  bottom: auto;
+  z-index: 3;
+  padding: 12px;
+}
+
+.phone .back {
+  writing-mode: horizontal-tb;
+  transform: none;
+  padding: 10px 14px;
+  min-height: 44px;
+}
+
+.phone .viewport {
+  left: 0;
+}
+
+.phone .story {
+  flex-direction: column;
+  width: 100vw;
+}
+
+.phone .panel {
+  width: 100%;
+  height: 42%;
+  flex: none;
+}
+
+.phone .card {
+  width: 100%;
+  height: 58%;
+  padding: 20px;
+  gap: 12px;
+}
+
+.phone .person {
+  max-height: 20vh;
+  width: auto;
+  align-self: flex-start;
+}
+
+.phone .badge {
+  left: auto;
+  right: 20px;
+  bottom: 20px;
+  width: 72px;
+  height: 72px;
+}
+
+.phone .outline {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+  }
+
+  .ink {
+    stroke-dashoffset: 0;
+  }
+}
