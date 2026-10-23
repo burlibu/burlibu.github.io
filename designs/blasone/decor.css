@@ -4,10 +4,11 @@
    frames, the corner fleurs and the wood live in style.css, shared with the
    cover. */
 
-/* the table: walnut planks under a warm lamp */
+/* the table: one walnut top under a warm lamp, a single picture with no seams */
 :root[data-decor="sfarzo"] body {
   background: radial-gradient(ellipse at 45% 0%, rgba(255, 196, 120, 0.16), transparent 55%), radial-gradient(ellipse at 50% 40%, transparent 35%, rgba(0, 0, 0, 0.62)), var(--wood), #2c1b0d;
-  background-size: auto, auto, 700px, auto;
+  background-size: auto, auto, cover, auto;
+  background-repeat: no-repeat;
   background-attachment: fixed;
 }
 
