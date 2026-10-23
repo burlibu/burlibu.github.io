@@ -25,3 +25,4 @@ yarn-error.log*
 # full mirrors of third-party sites (copyrighted): keep local only
 /inspiration/clipo/
 /inspiration/grail/
+.taste-skill/

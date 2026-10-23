@@ -60,6 +60,7 @@ const more = [
   ["/fourier", "Fourier", <Preview name="fourier" />],
   ["/castagne", "Castagne Bacci", <Preview name="castagne" />],
   ["/benchmark", "Benchmark AI", <Preview name="benchmark" />],
+  ["/africa", "Africa", <Preview name="africa" />],
 ];
 
 function Tile({ to, label, preview, ...props }) {
@@ -123,7 +124,7 @@ function DesignFrame({ name, title }) {
   return (
     <>
       <Back />
-      <iframe className="design-frame" src={design(name)} title={title} />
+      <iframe className="design-frame" src={design(name)} title={title} allow="fullscreen" />
     </>
   );
 }
@@ -182,6 +183,7 @@ function App() {
         <Route path="/fourier" element={<DesignFrame name="fourier" title="La trasformata di Fourier" />} />
         <Route path="/castagne" element={<DesignFrame name="castagne" title="Castagne Bacci" />} />
         <Route path="/benchmark" element={<DesignFrame name="benchmark" title="Benchmark dei modelli AI" />} />
+        <Route path="/africa" element={<DesignFrame name="africa" title="Africa" />} />
         <Route path="/contact"element={<Contact />} />
         <Route path="/resources" element={<Resources />} />
         <Route
