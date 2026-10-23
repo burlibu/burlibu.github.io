@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="it">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Halden Stories · Storie dal Nord America</title>
+    <meta name="description" content="Una mappa interattiva del Nord America: cinque regioni, cinque persone che tagliano il carbonio dove vivono e lavorano." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Source+Sans+3:wght@400;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <!-- the grid video every photo is drawn from; hidden, but not display:none, so it keeps decoding -->
+    <video id="grid" muted loop playsinline autoplay preload="auto" src="media/griglia.mp4" aria-hidden="true"></video>
+
+    <div class="stage" id="stage">
+      <div class="frame" id="frame">
+        <div class="fills" id="fills" aria-hidden="true"></div>
+        <svg class="map" id="map" viewBox="0 0 1440 810" width="1440" height="810" role="img" aria-label="Mappa del Nord America divisa in cinque zone: Midwest, Canada, Ovest, Sud e Nordest"></svg>
+        <svg class="map marks" id="marks" viewBox="0 0 1440 810" width="1440" height="810" aria-hidden="true"></svg>
+
+        <section class="intro">
+          <p class="eyebrow">Halden Stories</p>
+          <h1>Scopri <em>storie</em><br />dal Nord<br />America</h1>
+          <p class="lede">Cinque regioni, cinque persone <br />che tagliano il carbonio dove <br />vivono e lavorano. Passa su una <br />zona, poi apri la sua storia.</p>
+        </section>
+
+        <p class="coords" aria-live="polite"><span id="coord-zone"></span><br />48° 21' 36" N, 100° 27' 12" W</p>
+
+        <nav class="zones" aria-label="Zone">
+          <p class="zones-h">Scegli zona</p>
+          <ul id="zone-list"></ul>
+          <div class="ruler" aria-hidden="true"><i id="marker"></i></div>
+        </nav>
+      </div>
+    </div>
+
+    <nav class="chips" id="chips" aria-label="Zone"></nav>
+
+    <section class="stories" id="stories" aria-label="Storie" aria-hidden="true">
+      <div class="strip">
+        <button class="back" id="back" type="button">‹ Indietro</button>
+      </div>
+      <div class="viewport" id="viewport">
+        <div class="track" id="track"></div>
+      </div>
+      <div class="drag" id="drag" aria-hidden="true"><span>‹ Trascina ›</span></div>
+    </section>
+
+    <script src="../preview.js"></script>
+    <script src="geo.js"></script>
+    <script src="script.js"></script>
+  </body>
+</html>
