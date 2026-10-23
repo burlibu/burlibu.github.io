@@ -158,3 +158,177 @@ Non inserire tutte le carte insieme: Gazza/Cavalletta/Cicogna/Lepre coprono già
 Ordine di priorità: **turno pari/dispari**, poi **prima/ultima carta**, infine **movimento sostitutivo**. La parità e il momento della posa si innestano sui dati che il motore già conserva e sono relativamente semplici da spiegare. Il movimento offre più profondità, ma va trattato come prototipo separato perché cambia il flusso delle mosse e ricalcola effetti di posizione.
 
 Per il primo rilascio sceglierei una sola nuova casata di quattro carte: due basate sul tempo/parità, una sulla primogenitura e una Nomade sperimentale. Non introdurrei contemporaneamente spostamenti forzati, campi dinamici e obiettivi pubblici.
+
+---
+
+## Nuove proposte: sinergie di tintura e condizioni sull'avversario
+
+Queste idee ampliano il modo in cui le carte leggono il proprio quarto. Per il calcolo, “stesso colore” dovrebbe significare **stessa tintura esatta** (oro, argento, rosso, azzurro, verde o nero), a meno che una carta non specifichi “stesso colore” escludendo i metalli.
+
+### 18. Compagnia cromatica
+
+**Esempio:** “+2 forza per ogni altra tua carta della stessa tintura in questo quarto.”
+
+È una sinergia forte e facile da capire. Il numero può crescere rapidamente se più carte si potenziano a vicenda: quattro carte dello stesso colore potrebbero guadagnare +6 ciascuna se la regola fosse generale. Meglio introdurla come abilità di una singola carta e provare una di queste versioni:
+
+- +2 per ogni altra carta alleata della stessa tintura, **massimo +4**;
+- +2 se hai almeno un'altra carta della stessa tintura;
+- +1 per ogni altra carta della stessa tintura, senza limite, solo in una modalità sperimentale.
+
+Il bonus va calcolato una volta dal conteggio delle altre carte, senza catene ricorsive. La prima versione è quella più esplosiva e richiede un cap visibile.
+
+### 19. Assenza di un colore avversario
+
+**Esempio:** “+2 se l'avversario non possiede carte verdi in questo quarto.”
+
+La condizione si verifica sul quarto corrente dopo la rivelazione simultanea. Va specificato se il bonus è +2 una sola volta o per ogni carta verde mancante: la proposta consigliata è **+2 una sola volta se il numero è zero**. La condizione si ricalcola quando arrivano nuove carte o quando una carta si sposta.
+
+Varianti possibili:
+
+- +2 se l'avversario non ha carte della tintura indicata;
+- +1 per ogni tintura diversa rappresentata tra le tue carte, massimo +3;
+- −1 alla carta avversaria più forte se in quel quarto non ha alleati della stessa tintura.
+
+Evitare carte che controllano “nessuna carta verde nell'intera partita”: una condizione locale è leggibile e più controllabile.
+
+### 20. Repertorio di carte cromatiche
+
+| Carta candidata | Forza/tintura | Abilità da provare |
+|---|---|---|
+| **Cardellino** | 2, oro | **Stormo:** +2 per ogni altra tua carta d'oro nel quarto, massimo +4. |
+| **Salamandra pallida** | 2, argento | **Campo netto:** +2 se l'avversario non ha carte rosse nel quarto. |
+| **Gambero** | 3, rosso | **Specchio:** +2 se l'avversario non ha carte della sua tintura nel quarto. |
+| **Tessitore** | 2, verde | **Trama:** +1 a ciascuna delle tue carte verdi nel quarto; il modificatore totale per carta è limitato a +2. |
+
+I nomi sono provvisori e vanno controllati contro il catalogo effettivo prima di usarli. Tessitore è un effetto ad area: per non creare loop, il bonus dipende soltanto dal numero di carte verdi, non dalla loro forza.
+
+## Nuove categorie di creature
+
+Oltre alla casata, ogni bestia potrebbe avere una **famiglia** o **ambito**: Volante, Marino, Terrestre, Mitico, Costrutto. La casata risponde a “chi appartiene insieme”; la categoria risponde a “che tipo di creatura è”. Sono due dimensioni diverse e devono essere mostrate separatamente nella carta.
+
+### 21. Famiglie possibili
+
+- **Volante:** aquila, gallo, cigno, gufo e future creature alate.
+- **Marino:** delfino, lontra, balena, foca e altre creature acquatiche.
+- **Terrestre:** leone, cervo, lupo, tasso, orso e quadrupedi.
+- **Draconico:** drago, serpe, salamandra e creature affini; valutare se sia una categoria utile o solo estetica.
+- **Arcano:** unicorno, fenice, chimere e bestie magiche.
+- **Costrutto:** torre e nuove sentinelle artificiali.
+
+Meglio avere una categoria principale per carta nella prima versione. Le etichette multiple creano più combinazioni, ma moltiplicano i casi da spiegare e bilanciare.
+
+### 22. Triade di vantaggi e vulnerabilità
+
+Ispirazione generale ai giochi con affinità elementali e debolezze, adattata al combattimento sul territorio. Possibile ciclo di prova:
+
+**Volante prevale su Terrestre → Terrestre prevale su Marino → Marino prevale su Volante.**
+
+Quando nel quarto è presente almeno una carta avversaria vulnerabile alla famiglia della bestia, la bestia ottiene **+1 forza**. Se invece è la bestia a essere vulnerabile a una famiglia avversaria presente, perde **−1 forza**. L'effetto si applica una sola volta per bestia, anche con più bersagli. Non usare raddoppi, immunità o catene di debolezze nella prima prova.
+
+Varianti più semplici:
+
+- soltanto vantaggi, senza vulnerabilità;
+- +1 al totale del quarto se la tua famiglia prevale sulla famiglia più numerosa avversaria;
+- interazioni simboliche tra due sole famiglie, senza un ciclo universale.
+
+La versione vantaggio **e** vulnerabilità è tematica ma rende una carta più dipendente dalla composizione della mano avversaria. La versione solo vantaggio è la più sicura per un primo prototipo.
+
+### 23. Carte che introducono le famiglie
+
+- **Albatros (Volante):** +1 se nel quarto è presente almeno una carta Terrestre avversaria.
+- **Squalo (Marino):** +1 se una carta Volante avversaria è presente nel quarto.
+- **Bufalo (Terrestre):** +1 se nel quarto è presente una carta Marino avversaria.
+- **Araldo delle Bestie:** non combatte; riduce di uno il bonus di vantaggio dell'avversario nel suo quarto.
+
+Usare prima le icone di famiglia nel bestiario e i testi espliciti; solo dopo un playtest riuscito introdurre una matrice riassuntiva permanente.
+
+## Nuova meccanica: scudo del quarto
+
+### 24. Guardia contro i malus
+
+Una carta protettrice conferisce uno scudo al proprio quarto. Per una prima versione:
+
+- lo scudo annulla **il primo punto di malus da abilità avversaria** applicato a ciascuna carta alleata nel quarto;
+- non annulla malus di campo, regole di vittoria o modifiche al valore delle corone;
+- non si accumula con un secondo scudo: il quarto può avere al massimo un livello di protezione;
+- i malus annullati vengono mostrati nel dettaglio della forza (es. “Gufo −1, annullato dallo Scudo”);
+- lo scudo dura finché la carta protettrice rimane nel quarto; se la carta si muove o viene rimossa, la protezione cessa.
+
+**Rischio:** un'aura permanente può neutralizzare Serpe, Gufo e Scorpione insieme. Variante più contenuta: proteggere solo la carta protettrice, oppure annullare un solo malus complessivo per turno/quarto.
+
+### 25. Carta candidata: Pellicano Custode
+
+**Forza 2, argento — “Riparo”:** le tue carte in questo quarto ignorano il primo malus da abilità avversaria, massimo un punto per carta. Non protegge dal Campo di nero. È una carta di supporto; provarla contro Serpe, Gufo e Scorpione e verificare che la spiegazione dei modificatori resti comprensibile.
+
+## Nuove modalità: durata, geometria e controllo
+
+### 26. Grande torneo in dodici turni
+
+La partita si divide in due tempi di sei turni. Alla fine del primo tempo si assegnano e **si conservano** le corone ottenute; poi il tabellone e i campi vengono azzerati per un secondo tempo, mantenendo il punteggio cumulativo. Vince il totale dei due tempi.
+
+Regole da fissare nel prototipo:
+
+- usare mazzi senza doppioni e non rimescolare nel secondo tempo;
+- dopo il primo tempo distribuire una carta per riportare entrambe le mani allo stesso numero;
+- generare nuovi campi per il secondo tempo;
+- azzerare carte sul tabellone, conteggi di controllo e bonus del tempo precedente;
+- decidere se l'Editto è uno per l'intera partita o uno per tempo. Proposta: uno per partita, così la seconda metà non raddoppia automaticamente gli effetti personali;
+- in parità sulle corone cumulative, confrontare prima la forza totale del secondo tempo, poi la forza totale complessiva.
+
+È una modalità distinta, non un semplice allungamento: il primo tempo costruisce un vantaggio bancato e il secondo offre una nuova arena per inseguire il risultato.
+
+### 27. Presidio: premiare quanto a lungo si controlla
+
+Non limitarsi al controllo finale: ogni volta che un giocatore guida un quarto al termine di un turno, riceve un **segnale di presidio** per quel quarto. A fine tempo:
+
+- 1 segnale per ogni turno controllato;
+- ogni 3 segnali valgono una corona aggiuntiva, massimo 2 corone per quarto;
+- in caso di parità di segnali nessuno riceve il bonus di presidio;
+- sui Campi rovesciati il segnale va a chi conduce secondo la regola invertita.
+
+Versione più leggera da provare per prima: **+1 corona se hai controllato il quarto per almeno 4 turni su 6** (o 8 su 12). La soglia è più facile da leggere e limita il vantaggio valanga. Tenere distinta la corona di Presidio dalle corone per la conquista alla fine.
+
+### 28. Arena a sei quarti
+
+Un tabellone alternativo a **2 righe × 3 colonne**: sei quarti con quattro vicini per quelli centrali e due/tre per quelli sul bordo. La partita resta di sei turni per lato, ma ogni quarto ha limite di due carte per parte e vale una corona.
+
+- Le abilità di capo/punta vanno sostituite da regole per riga o colonna, oppure non usate in questa modalità.
+- Cigno, Gufo e Orso usano una nuova mappa di adiacenza verificata per i sei quarti.
+- I campi vengono distribuiti su sei spazi; ridurre la frequenza dei campi con effetti più forti o ripetuti.
+- Il maggior numero di quarti riduce la possibilità di presidiare tutto, ma può rendere i quarti isolati troppo casuali.
+
+Partire con **sei quarti e sei turni**, non aumentare insieme dimensione e durata.
+
+### 29. Arcipelago: quarti separati
+
+Modalità a quattro o sei quarti con connessioni limitate: ciascun quarto è adiacente a uno o due altri, come isole unite da rotte. I supporti confinanti e le carte mobili dipendono dalla mappa scelta.
+
+- La mappa e i collegamenti sono visibili prima della partita.
+- Un obiettivo comune può premiare una coppia di quarti collegati, non solo un singolo territorio.
+- La vittoria continua a dipendere dalle corone; non introdurre un nuovo obiettivo nascosto.
+
+È un modo per dare peso alle famiglie Volante e Marino, ma non attribuire loro movimento gratuito nella prima versione.
+
+## Ispirazioni da altri generi, tradotte in regole originali
+
+- **Giochi di controllo del territorio:** il Presidio premia mantenere una zona, non soltanto conquistarla all'ultimo istante.
+- **Giochi di corsie e obiettivi:** l'arena a sei quarti crea più fronti e quarti con valori o regole diversi.
+- **Giochi di carte collezionabili:** le affinità tra famiglie creano vantaggi e vulnerabilità; mantenere bonus piccoli, visibili e senza immunità assolute.
+- **Deck-builder e draft:** il Draft delle Casate permette di costruire un piano prima della partita e di leggere le scelte avversarie.
+- **Giochi tattici con unità mobili:** Nomade e Migrazione aprono il riposizionamento, ma ogni spostamento deve consumare una scelta e rispettare adiacenze e capienza.
+- **Giochi con obiettivi a rotazione:** un obiettivo pubblico per tempo può valorizzare una zona; per ora è un modulo separato dal Presidio, così si capisce quale dei due cambia la strategia.
+- **Push-your-luck:** una carta può scommettere su un quarto con ricompensa in corone e rischio di perdere forza. L'Editto esiste già, quindi questa variante deve differenziarsi legandosi alla carta.
+
+Le ispirazioni indicano famiglie di decisioni (controllo, costruzione, movimento, rischio), non regole da copiare da un gioco specifico.
+
+## Ordine di prova aggiornato
+
+1. Provare **una sinergia di tintura** con limite massimo e una condizione “avversario senza tintura X”.
+2. Aggiungere categorie Volante/Marino/Terrestre solo come etichette del bestiario, quindi testare un vantaggio morbido di +1.
+3. Testare **Scudo** contro un solo tipo di malus, quindi contro tutti i malus ammessi.
+4. Provare il **Presidio** nella versione a soglia (4 turni su 6).
+5. Prototipare la partita in due tempi; solo dopo un esito positivo valutare 12 turni con conteggi di Presidio cumulativi.
+6. Testare arena a sei quarti senza cambiare nello stesso prototipo anche la durata.
+7. Provare Nomade e movimento come esperimento indipendente.
+
+Non combinare nella stessa prima prova: arena a sei quarti, dodici turni, vantaggi tra famiglie, scudi cumulativi e movimento. Ognuna cambia abbastanza il valore delle carte da rendere difficile capire quale regola abbia creato un problema.
