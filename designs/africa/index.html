@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="it">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Africa · una presentazione in sette capitoli</title>
+    <meta name="description" content="Una presentazione sull'Africa in sette capitoli: la terra, le persone, i paesaggi, i tessuti, i luoghi, le lingue e un telaio per tessere la propria striscia di kente." />
+    <link rel="preconnect" href="https://api.fontshare.com" />
+    <link rel="preconnect" href="https://cdn.fontshare.com" crossorigin />
+    <link href="https://api.fontshare.com/v2/css?f[]=general-sans@400,500,700&display=swap" rel="stylesheet" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Caveat+Brush&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="style.css" />
+    <script>document.documentElement.classList.add("js");</script>
+  </head>
+  <body>
+    <!-- a simplified mask in thick strokes, after the Baule moon faces and Chokwe masks shown in chapter four -->
+    <svg width="0" height="0" aria-hidden="true" focusable="false" style="position: absolute">
+      <symbol id="maschera" viewBox="0 0 200 300">
+        <path d="M100 12 C152 12 178 62 178 128 C178 205 146 270 100 288 C54 270 22 205 22 128 C22 62 48 12 100 12 Z" fill="currentColor" />
+        <path d="M100 12 C152 12 178 62 178 128 C178 205 146 270 100 288 C54 270 22 205 22 128 C22 62 48 12 100 12 Z" fill="none" stroke="var(--mask-line)" stroke-width="10" />
+        <path d="M44 118 Q70 96 92 118 M108 118 Q130 96 156 118" fill="none" stroke="var(--mask-line)" stroke-width="10" stroke-linecap="round" />
+        <path d="M52 132 Q70 146 88 132 M112 132 Q130 146 148 132" fill="none" stroke="var(--mask-line)" stroke-width="8" stroke-linecap="round" />
+        <path d="M100 110 V196 M84 196 H116" fill="none" stroke="var(--mask-line)" stroke-width="10" stroke-linecap="round" />
+        <rect x="80" y="222" width="40" height="22" rx="11" fill="var(--mask-line)" />
+        <path d="M40 160 h22 M40 176 h18 M160 160 h-22 M160 176 h-18" stroke="var(--mask-line)" stroke-width="8" stroke-linecap="round" />
+        <path d="M70 44 L100 26 L130 44 L100 62 Z" fill="var(--mask-line)" />
+      </symbol>
+    </svg>
+
+    <header class="top" id="top-bar">
+      <a class="mark" href="#inizio">Africa</a>
+      <nav aria-label="Capitoli">
+        <a href="#terra">Terra</a>
+        <a href="#persone">Persone</a>
+        <a href="#tessuti">Tessuti</a>
+        <a href="#luoghi">Luoghi</a>
+        <a class="menu-word" href="#indice">Capitoli</a>
+      </nav>
+      <button class="btn btn-small" type="button" id="presenta" aria-describedby="tasti">Presenta</button>
+    </header>
+
+    <main>
+      <!-- hero: two fields meeting at a seam, the headline changes ink across it -->
+      <section class="hero" id="inizio" data-bg="paper" data-chapter="Inizio" data-ink="dark">
+        <h1 class="seam">
+          <span class="seam-up">Africa<br />54 paesi</span>
+        </h1>
+        <p class="seam seam-down" aria-hidden="true">Africa<br />54 paesi</p>
+        <div class="hero-foot">
+          <p class="hero-lead">Una presentazione in sette capitoli sul continente più giovane del pianeta: la terra, le persone, i tessuti, i luoghi e le lingue.</p>
+          <a class="btn" href="#terra">Inizia la presentazione</a>
+          <p class="hero-keys" id="tasti">Frecce o barra spaziatrice per passare da un capitolo all'altro.</p>
+        </div>
+        <nav class="agenda" id="indice" aria-labelledby="indice-h">
+          <h2 id="indice-h" class="agenda-h">I capitoli</h2>
+          <ol>
+            <li><a href="#terra">La terra</a></li>
+            <li><a href="#persone">Le persone</a></li>
+            <li><a href="#paesaggi">I paesaggi</a></li>
+            <li><a href="#tessuti">Tessuti e maschere</a></li>
+            <li><a href="#luoghi">I luoghi</a></li>
+            <li><a href="#lingue">Le lingue</a></li>
+            <li><a href="#telaio">Il telaio</a></li>
+          </ol>
+        </nav>
+      </section>
+
+      <div class="band" data-band="kente" aria-hidden="true"></div>
+
+      <!-- chapter 1: statement tiles -->
+      <section class="intro" id="terra" data-bg="paper" data-chapter="La terra" data-ink="dark">
+        <div class="board">
+          <div class="tile tile-a reveal">
+            <h2 class="display">Tre volte<br />l'Europa</h2>
+          </div>
+          <div class="tile tile-b reveal">
+            <p class="display" aria-describedby="km">30,3</p>
+            <p class="tile-note" id="km">milioni di km², un quinto delle terre emerse</p>
+          </div>
+          <figure class="tile tile-c reveal">
+            <img src="img/savana.jpg" width="1600" height="900" alt="Alba sulla savana africana, con acacie in controluce" />
+            <figcaption class="hand">Alba sulla savana</figcaption>
+          </figure>
+        </div>
+        <div class="intro-text">
+          <svg class="lozenge" viewBox="0 0 100 100" aria-hidden="true"><path d="M50 0 100 50 50 100 0 50Z" fill="var(--sole)" /><path d="M50 12 88 50 50 88 12 50Z" fill="var(--nero)" /><path d="M50 24 76 50 50 76 24 50Z" fill="var(--ocra)" /><path d="M50 36 64 50 50 64 36 50Z" fill="var(--savana)" /></svg>
+          <p class="lead reveal">L'Africa copre 30,3 milioni di chilometri quadrati, circa un quinto delle terre emerse: dentro i suoi confini starebbero insieme Stati Uniti, Cina, India e buona parte dell'Europa. Le carte di Mercatore, che allargano le regioni vicine ai poli, la disegnano poco più grande della Groenlandia, che in realtà è quattordici volte meno estesa. Da Ras ben Sakka, in Tunisia, al Capo Agulhas, in Sudafrica, corre per circa 8.000 chilometri. È anche la terra più antica della nostra specie: i fossili di Jebel Irhoud, in Marocco, sono di Homo sapiens vissuti circa 300.000 anni fa.</p>
+        </div>
+      </section>
+
+      <div class="band" data-band="bogolan" aria-hidden="true"></div>
+
+      <!-- chapter 2: stepped figure tiles -->
+      <section class="stats" id="persone" data-bg="savana" data-chapter="Le persone" data-ink="light">
+        <div class="stats-grid">
+          <div class="fig fig-1 reveal">
+            <p class="fig-n">1,5 miliardi</p>
+            <svg class="fig-mask" aria-hidden="true"><use href="#maschera" /></svg>
+            <p class="fig-cap">di persone nel 2024, quasi una su cinque al mondo.</p>
+          </div>
+          <h2 class="stats-h reveal">Il continente giovane</h2>
+          <div class="fig fig-2 reveal">
+            <p class="fig-n">19 anni</p>
+            <p class="fig-cap">l'età mediana. In Italia è circa 48.</p>
+          </div>
+          <div class="fig fig-3 reveal">
+            <p class="fig-n">1 su 4</p>
+            <p class="fig-cap">abitanti della Terra sarà africano nel 2050, secondo le proiezioni ONU.</p>
+          </div>
+        </div>
+      </section>
+
+      <div class="band" data-band="ndebele" aria-hidden="true"></div>
+
+      <!-- chapter 3: prints dropped on the headline -->
+      <section class="gallery" id="paesaggi" data-bg="sole" data-chapter="I paesaggi" data-ink="dark">
+        <h2 class="gallery-h">Sabbia<br />e neve</h2>
+        <figure class="print print-1">
+          <img src="img/kilimanjaro.jpg" width="1600" height="1071" alt="Il Kilimanjaro innevato sopra le nuvole, con acacie nella piana di Amboseli" loading="lazy" />
+          <figcaption class="hand">Kilimanjaro</figcaption>
+        </figure>
+        <figure class="print print-2">
+          <img src="img/sahara.jpg" width="1600" height="781" alt="Dune del Sahara increspate dal vento, con un viaggiatore seduto sulla cresta" loading="lazy" />
+          <figcaption class="hand">Sahara</figcaption>
+        </figure>
+        <figure class="print print-3">
+          <img src="img/cascate.jpg" width="1600" height="913" alt="Le cascate Vittoria viste dall'alto, con la nuvola di spruzzi sullo Zambesi" loading="lazy" />
+          <figcaption class="hand">Cascate Vittoria</figcaption>
+        </figure>
+        <p class="gallery-note">Il Sahara copre 9,2 milioni di km²; a 5.895 metri il Kilimanjaro conserva ancora i suoi ghiacciai.</p>
+      </section>
+
+      <div class="band" data-band="kente" aria-hidden="true"></div>
+
+      <!-- chapter 4: cards crossing a held photograph -->
+      <section class="showcase" id="tessuti" data-bg="nero" data-chapter="Tessuti e maschere" data-ink="light">
+        <div class="stage">
+          <img class="stage-bg" src="img/sahara.jpg" width="1600" height="781" alt="" loading="lazy" />
+          <h2 class="stage-h">Tessuti e maschere</h2>
+          <ol class="track" role="list">
+            <li class="card c-ocra">
+              <img src="img/kente.jpg" width="1600" height="1271" alt="Pezze di kente a strisce e motivi geometrici, appese a Tafi, nella regione del Volta" loading="lazy" />
+              <div class="card-panel"><h3>Kente</h3><p>Ghana. Strisce larghe una mano, tessute su telai stretti e cucite fianco a fianco.</p></div>
+            </li>
+            <li class="card c-terra">
+              <img src="img/bogolan.jpg" width="1600" height="1200" alt="Teli di bogolan con segni bianchi su fondo bruno, stesi su un muro di fango" loading="lazy" />
+              <div class="card-panel"><h3>Bogolan</h3><p>Mali. Cotone tinto con foglie bollite e dipinto con fango fermentato.</p></div>
+            </li>
+            <li class="card c-indaco">
+              <img src="img/ndebele.jpg" width="1600" height="1200" alt="Grembiule ndebele ricamato a perline bianche, blu, verdi e viola, con case stilizzate" loading="lazy" />
+              <div class="card-panel"><h3>Perline Ndebele</h3><p>Sudafrica. Gli stessi segni a gradini dipingono le facciate delle case.</p></div>
+            </li>
+            <li class="card c-savana">
+              <img src="img/chihongo.jpg" width="1295" height="1600" alt="Maschera chokwe Chihongo in legno rosso con corona di piume e fibre" loading="lazy" />
+              <div class="card-panel"><h3>Maschera Chihongo</h3><p>Chokwe, Angola, XIX secolo. Lo spirito della ricchezza e del potere.</p></div>
+            </li>
+            <li class="card c-nero">
+              <img src="img/baule.jpg" width="1207" height="1600" alt="Maschera baule in legno scuro a forma di luna piena, con un volto sereno al centro" loading="lazy" />
+              <div class="card-panel"><h3>Maschera della luna</h3><p>Baule, Costa d'Avorio. Danzata nel mblo, la festa della bellezza.</p></div>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <div class="band" data-band="bogolan" aria-hidden="true"></div>
+
+      <!-- chapter 5: two-column list, photo bullets cut to the kente diamond -->
+      <section class="places" id="luoghi" data-bg="ocra" data-chapter="I luoghi" data-ink="dark">
+        <h2 class="places-h reveal">Sette luoghi da conoscere</h2>
+        <div class="cat">
+          <h3 class="cat-h reveal">Natura <span>4 luoghi</span></h3>
+          <ul class="items">
+            <li class="reveal"><img src="img/sahara.jpg" width="1600" height="781" alt="" loading="lazy" /><div><p class="item-top"><b>Sahara</b><span>9,2 mln km²</span></p><p>Il deserto caldo più grande del mondo, dall'Atlantico al Mar Rosso, su una decina di paesi.</p></div></li>
+            <li class="reveal"><img src="img/kilimanjaro.jpg" width="1600" height="1071" alt="" loading="lazy" /><div><p class="item-top"><b>Kilimanjaro</b><span>5.895 m</span></p><p>Vulcano isolato in Tanzania, la cima più alta d'Africa, visto qui dal parco di Amboseli in Kenya.</p></div></li>
+            <li class="reveal"><img src="img/cascate.jpg" width="1600" height="913" alt="" loading="lazy" /><div><p class="item-top"><b>Cascate Vittoria</b><span>108 m</span></p><p>Mosi-oa-Tunya, «il fumo che tuona», dove lo Zambesi precipita tra Zambia e Zimbabwe.</p></div></li>
+            <li class="reveal"><img src="img/baobab.jpg" width="1600" height="1050" alt="" loading="lazy" /><div><p class="item-top"><b>Baobab</b><span>oltre 1.000 anni</span></p><p>Conserva l'acqua nel tronco per la stagione secca e può vivere più di mille anni.</p></div></li>
+          </ul>
+        </div>
+        <div class="cat">
+          <h3 class="cat-h reveal">Storia e città <span>3 luoghi</span></h3>
+          <ul class="items">
+            <li class="reveal"><img src="img/zimbabwe.jpg" width="1600" height="1063" alt="" loading="lazy" /><div><p class="item-top"><b>Grande Zimbabwe</b><span>XI–XV sec.</span></p><p>Capitale shona in pietra a secco, con le mura del Grande Recinto alte fino a 11 metri.</p></div></li>
+            <li class="reveal"><img src="img/timbuctu.jpg" width="1600" height="1033" alt="" loading="lazy" /><div><p class="item-top"><b>Timbuctù</b><span>1327</span></p><p>La moschea Djinguereber, in terra cruda, voluta da Mansa Musa, re del Mali.</p></div></li>
+            <li class="reveal"><img src="img/lagos.jpg" width="1600" height="900" alt="" loading="lazy" /><div><p class="item-top"><b>Lagos</b><span>oltre 15 mln</span></p><p>La più grande città della Nigeria, tra la laguna e l'Atlantico, capitale della musica afrobeats.</p></div></li>
+          </ul>
+        </div>
+      </section>
+
+      <div class="band" data-band="ndebele" aria-hidden="true"></div>
+
+      <!-- chapter 6: two columns, highlighted words -->
+      <section class="tongues" id="lingue" data-bg="nero" data-chapter="Le lingue" data-ink="light">
+        <h2 class="tongues-h reveal">Duemila lingue</h2>
+        <p class="story reveal"><span class="ink">In Africa si parlano oltre 2.000 lingue,</span> quasi un terzo di quelle del mondo. Lo <mark class="m-sole">swahili</mark> unisce l'Africa orientale ed è usato da oltre cento milioni di persone; hausa, yoruba, <mark class="m-savana">amarico</mark>, zulu e oromo contano ciascuna decine di milioni di parlanti. Accanto a loro vivono l'arabo, il francese, l'inglese e il portoghese, eredità di commerci e di colonie. Dallo zulu e dallo xhosa viene una parola che riassume un modo di stare insieme: <mark class="m-terra">ubuntu</mark>, «io sono perché noi siamo». Dal <mark class="m-indaco">2021</mark> l'Area di libero scambio continentale africana lega i suoi 54 paesi firmatari nel mercato comune più grande al mondo per numero di stati. Anche ogni striscia di kente ha un nome, e ogni colore un messaggio. <a class="story-link" href="#telaio"><mark class="m-sole">Tessine una tua sul telaio.</mark></a></p>
+      </section>
+
+      <div class="band" data-band="kente" aria-hidden="true"></div>
+
+      <!-- chapter 7: the loom, the live thing; the strip woven here becomes every kente band on the page -->
+      <section class="loom-row" id="telaio" data-bg="indaco" data-chapter="Il telaio" data-ink="dark">
+        <figure class="flank flank-l"><video src="img/tessitura.webm" poster="img/tessitura-poster.jpg" muted loop playsinline autoplay preload="none" aria-label="Un tessitore lavora una striscia di kente al telaio"></video></figure>
+        <div class="loom">
+          <h2 class="loom-h">Tessi la tua kente</h2>
+          <p>Ogni colore della kente ha un significato. Scegli i fili e il motivo: la striscia diventa la fascia tra un capitolo e l'altro.</p>
+          <fieldset class="threads">
+            <legend>I fili</legend>
+            <div class="swatches" id="fili"></div>
+            <p class="meaning" id="significato" aria-live="polite">Oro: ricchezza e regalità.</p>
+          </fieldset>
+          <fieldset class="motifs">
+            <legend>Il motivo</legend>
+            <label><input type="radio" name="motivo" value="scacchi" checked /> Scacchi</label>
+            <label><input type="radio" name="motivo" value="zigzag" /> Zig-zag</label>
+            <label><input type="radio" name="motivo" value="scala" /> Scala</label>
+          </fieldset>
+          <div class="loom-strip" data-band="kente" aria-hidden="true"></div>
+          <div class="loom-actions">
+            <button class="btn btn-ink" type="button" id="casuale">Tessi a caso</button>
+            <a class="btn btn-ghost" href="#terra">Rivedi le fasce</a>
+          </div>
+        </div>
+        <figure class="flank flank-r"><img src="img/mercato.jpg" width="1067" height="1600" alt="Abiti in tessuti africani a stampa appesi in un negozio di Accra" loading="lazy" /></figure>
+      </section>
+    </main>
+
+    <footer class="foot" data-bg="paper" data-chapter="Fine" data-ink="light">
+      <div class="blocks" aria-label="Africa">
+        <span style="--h: 100%; --c: var(--sole)">A</span><span style="--h: 72%; --c: var(--terra)">F</span><span style="--h: 88%; --c: var(--savana)">R</span><span style="--h: 64%; --c: var(--ocra)">I</span><span style="--h: 94%; --c: var(--indaco)">C</span><span style="--h: 78%; --c: var(--arancio)">A</span>
+      </div>
+      <div class="foot-cols">
+        <div>
+          <h2 class="foot-h">Capitoli</h2>
+          <ul><li><a href="#terra">La terra</a></li><li><a href="#persone">Le persone</a></li><li><a href="#paesaggi">I paesaggi</a></li><li><a href="#tessuti">Tessuti e maschere</a></li></ul>
+        </div>
+        <div>
+          <h2 class="foot-h">E poi</h2>
+          <ul><li><a href="#luoghi">I luoghi</a></li><li><a href="#lingue">Le lingue</a></li><li><a href="#telaio">Il telaio</a></li></ul>
+        </div>
+        <div class="foot-src">
+          <h2 class="foot-h">Fonti dei numeri</h2>
+          <p>Popolazione ed età: ONU, World Population Prospects 2024. Lingue: Ethnologue. Superfici e altezze: enciclopedie geografiche correnti. I valori sono arrotondati.</p>
+        </div>
+      </div>
+      <p class="credits">Immagini: <a href="https://commons.wikimedia.org/wiki/File:Different_Kente_cloth,_Tafi,_Volta_region.jpg">“Different Kente cloth, Tafi, Volta region”</a> di Warmglow, <a href="https://creativecommons.org/publicdomain/zero/1.0/deed.en">CC0</a>; <a href="https://commons.wikimedia.org/wiki/File:BogolanMali4.JPG">“BogolanMali4”</a> di BluesyPete, <a href="https://creativecommons.org/licenses/by-sa/3.0">CC BY-SA 3.0</a>; <a href="https://commons.wikimedia.org/wiki/File:0730_P7316235a_centre_Ndebele_Jacolo_(9404640511).jpg">“Ndebele Jacolo”</a> di Ann Porteus, <a href="https://creativecommons.org/licenses/by/2.0">CC BY 2.0</a>; <a href="https://commons.wikimedia.org/wiki/File:Sand_dunes_in_the_Sahara_Desert_on_the_border_of_Algeria_and_Morocco.tif">“Sand dunes in the Sahara Desert on the border of Algeria and Morocco”</a> di Ondřej Havelka, <a href="https://creativecommons.org/licenses/by/4.0">CC BY 4.0</a>; <a href="https://commons.wikimedia.org/wiki/File:Kilimanjaro_from_Amboseli.jpg">“Kilimanjaro from Amboseli”</a> di Sergey Pesterev, <a href="https://creativecommons.org/licenses/by-sa/4.0">CC BY-SA 4.0</a>; <a href="https://commons.wikimedia.org/wiki/File:Djinguereber_Mosque,_Timbuktu.jpg">“Djinguereber Mosque, Timbuktu”</a> di upyernoz, <a href="https://creativecommons.org/licenses/by/2.0">CC BY 2.0</a>, ritagliata; <a href="https://commons.wikimedia.org/wiki/File:Great-zim-aerial-looking-West.JPG">“Great-zim-aerial-looking-West”</a> di Janice Bell, <a href="https://creativecommons.org/licenses/by-sa/4.0">CC BY-SA 4.0</a>; <a href="https://commons.wikimedia.org/wiki/File:Adansonia_digitata_Baobab.JPG">“Adansonia digitata Baobab”</a> di Yoky, <a href="https://creativecommons.org/licenses/by-sa/3.0">CC BY-SA 3.0</a>; <a href="https://commons.wikimedia.org/wiki/File:Cataratas_Victoria,_Zambia-Zimbabue,_2018-07-27,_DD_05.jpg">“Cataratas Victoria, Zambia-Zimbabue”</a> di Diego Delso, <a href="https://creativecommons.org/licenses/by-sa/4.0">CC BY-SA 4.0</a>; <a href="https://www.artic.edu/artworks/181740">“Male Face Mask (Chihongo)”</a>, Chokwe, XIX secolo, Art Institute of Chicago, CC0; <a href="https://www.metmuseum.org/art/collection/search/643506">“Moon face mask from a mblo performance”</a>, artista baule, The Metropolitan Museum of Art, CC0. Tutte via Wikimedia Commons salvo i musei indicati. Video: <a href="https://commons.wikimedia.org/wiki/File:Kente_weaving.webm">“Kente weaving”</a> di MohammedT10, <a href="https://creativecommons.org/licenses/by-sa/4.0">CC BY-SA 4.0</a>, via Wikimedia Commons. Da Unsplash: <a href="https://unsplash.com/photos/sunrise-over-the-african-savanna-with-acacia-trees-GjVRSz44-fE">alba sulla savana</a> di Antoine Demare, <a href="https://unsplash.com/photos/an-aerial-view-of-a-busy-city-n8DxalbQBic">ponte Lekki-Ikoyi, Lagos</a> di Tunde Buremo, <a href="https://unsplash.com/photos/colorful-textiles-with-intricate-patterns-hanging-on-display-Q43GOm-D06k">tessuti ad Accra</a> di WyteShot (licenza Unsplash).</p>
+      <div class="foot-last">
+        <p>Una presentazione di Burlibu, 2026.</p>
+        <a class="btn btn-small" href="#inizio">Torna all'inizio</a>
+      </div>
+    </footer>
+
+    <script src="../preview.js"></script>
+    <script src="script.js"></script>
+  </body>
+</html>
