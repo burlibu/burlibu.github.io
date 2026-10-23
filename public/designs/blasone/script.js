@@ -1,7 +1,7 @@
 // Blasone UI: lays the engine state (game.js) out as printed sheets. The beasts
 // are engraved at load: each one's emoji is drawn to a canvas and re-inked as
 // woodcut hatching (wavy engraving lines whose weight follows the shading,
-// cross-hatching in the darks, a heavy contour). In ?preview two AIs play.
+// cross-hatching in the darks, a heavy contour). ?preview shows the cover.
 // The menu (a native <dialog>) holds the game options, the Prove dell'Araldo,
 // the rules, the bestiary and the display settings; the choices are kept in
 // localStorage. A Draft game opens on the draft sheet before the duel.
@@ -100,7 +100,7 @@
     variabile: { name: "Variabile", noise: 2, text: "Spesso tenta mosse azzardate: imprevedibile, e più facile da battere." },
   };
   const SIZES = { 1: "Normale", 1.15: "Grande", 1.3: "Molto grande" };
-  const prefs = { format: "classico", editto: false, rivalita: false, conte: "standard", motion: false, size: 1, colors: true };
+  const prefs = { format: "classico", editto: false, rivalita: false, conte: "standard", motion: false, size: 1, colors: true, decor: true };
   // stored prefs are untrusted: copy only known keys holding allowed values
   const own = (o, k) => typeof k === "string" && Object.prototype.hasOwnProperty.call(o, k);
   function readPrefs(raw) {
@@ -108,7 +108,7 @@
     if (own(B.FORMATS, raw.format)) prefs.format = raw.format;
     if (own(CONTE, raw.conte)) prefs.conte = raw.conte;
     if (own(SIZES, String(raw.size)) && typeof raw.size === "number") prefs.size = raw.size;
-    for (const k of ["editto", "rivalita", "motion", "colors"]) if (typeof raw[k] === "boolean") prefs[k] = raw[k];
+    for (const k of ["editto", "rivalita", "motion", "colors", "decor"]) if (typeof raw[k] === "boolean") prefs[k] = raw[k];
   }
   try {
     const raw = localStorage.getItem("blasone.prefs");
@@ -122,7 +122,9 @@
   function applyView() {
     document.documentElement.dataset.motion = prefs.motion ? "ridotto" : "";
     // without it the cards are printed in black ink only, as at first
-    document.documentElement.dataset.cards = prefs.colors ? "colore" : "";
+    document.documentElement.dataset.cards = prefs.colors || preview ? "colore" : "";
+    // the knightly trim of decor.css; off, the table is plain paper again
+    document.documentElement.dataset.decor = prefs.decor || preview ? "sfarzo" : "";
     document.documentElement.style.setProperty("--zoom", SIZES[prefs.size] ? prefs.size : 1);
   }
 
@@ -202,6 +204,7 @@
           : "";
         const crowns = crown.repeat(x.crowns) + rival + extra;
         return `<article class="plate ${open || s.over || waiting ? "" : "shut"}" aria-label="Quarto ${B.ROMAN[q]}, ${esc(f.name)}">
+          ${tinct(f.t, "wm")}
           <header class="plate-head">
             <span class="numeral">${B.ROMAN[q]}</span>
             <div class="field">${tinct(f.t, "esc")}<div><h3><small>${B.QUARTERS[q]}</small>${esc(f.name)}</h3><p>${esc(f.text)}</p></div></div>
@@ -220,7 +223,7 @@
       })
       .join("");
     const board = $("board");
-    board.innerHTML = html + `<i class="fold" aria-hidden="true"></i>`;
+    board.innerHTML = html + `<i class="fold" aria-hidden="true"></i><i class="boss" aria-hidden="true"><svg><use href="#crown"/></svg></i>`;
     board.classList.toggle("picking", picked !== null);
     $("scoreMe").textContent = e.score.me;
     $("scoreFoe").textContent = e.score.foe;
@@ -302,7 +305,27 @@
     $("log").innerHTML =
       s.log.map((l) => `<li><b>Turno ${NUM[l.turn]} · rivelate insieme</b>Tu: ${esc(l.me)}.<br />Il Conte: ${esc(l.foe)}.</li>`).join("") + d ||
       `<li class="empty">${drafting() ? "Il draft è in corso: le carte scelte entrano nei mazzi." : "Il torneo sta per cominciare. Le prime carte si scoprono insieme."}</li>`;
+    renderCodex();
   }
+  // the quick reference under the Conte's sheet: where the tourney stands,
+  // what is at stake, and the hatching that prints each tincture
+  function renderCodex() {
+    const done = s.log.length;
+    $("turns").innerHTML = NUM.slice(1)
+      .map((n, k) => `<li class="${k < done ? "done" : k === done && !s.over && !drafting() ? "now" : ""}" aria-label="Turno ${n}${k < done ? ", giocato" : k === done && !s.over ? ", in corso" : ""}">${n}</li>`)
+      .join("");
+    const e = B.evaluate(s);
+    const stake = e.quarters.reduce((t, x) => t + x.crowns + (x.rival ? 1 : 0), 0);
+    $("stake").innerHTML = `<svg class="crown" aria-hidden="true"><use href="#crown"/></svg> <b>${stake}</b> corone in palio sullo scudo. Tu ${e.score.me}, il Conte ${e.score.foe}.`;
+  }
+  $("tincts").innerHTML = ["Metalli", "Colori"]
+    .map(
+      (cls, m) => `<div><p class="label">${cls}</p><ul>${Object.entries(B.TINCT)
+        .filter(([, o]) => !o.metal === !!m)
+        .map(([t, o]) => `<li>${tinct(t)}<span>${o.name}</span></li>`)
+        .join("")}</ul></div>`
+    )
+    .join("");
 
   // ---------- draft sheet ----------
   function renderDraft() {
@@ -310,6 +333,9 @@
     box.hidden = !d || draftSeen;
     if (box.hidden) return;
     const turn = B.draftTurn(s);
+    // once every pick is made the sheet folds to one strip, so the shield
+    // is the focus again
+    box.classList.toggle("done", !turn);
     const who = (id) => (d.picks.me.includes(id) ? "me" : d.picks.foe.includes(id) ? "foe" : null);
     $("draftOrder").innerHTML = B.DRAFT_ORDER.map((side, k) => {
       const n = d.notes[k];
@@ -325,9 +351,10 @@
       .join("");
     $("draftRecap").hidden = !!turn;
     if (!turn)
-      $("draftRecap").innerHTML = `<p class="label">Le scelte del Conte, spiegate</p>
+      $("draftRecap").innerHTML = `<p><span class="label">Draft concluso</span> Tu: <b>${esc(names(d.picks.me))}</b>. Il Conte: <b>${esc(names(d.picks.foe))}</b>.</p>
+        <details><summary class="label">Le scelte del Conte, spiegate</summary>
         <ul>${d.notes.filter((n) => n.side === "foe").map((n) => `<li><b>${esc(B.BEASTS[n.id].name)}</b> ${esc(n.why)}</li>`).join("")}</ul>
-        <p>Il tuo mazzo: le dodici carte del Bestiario, più ${esc(names(d.picks.me))}. Il Conte ha lo stesso Bestiario, più le sue quattro.</p>
+        <p>Il tuo mazzo: le dodici carte del Bestiario, più le tue quattro. Il Conte ha lo stesso Bestiario, più le sue quattro.</p></details>
         <button class="tool solid" id="duelBtn">Al duello</button>`;
   }
   $("draftOffer").addEventListener("click", (e) => {
@@ -338,6 +365,7 @@
     const foe = s.draft.notes.slice(from + 1).map((n) => B.BEASTS[n.id].name);
     $("draftMsg").textContent =
       `Hai scelto ${B.BEASTS[b.dataset.id].name}.` + (foe.length ? ` Il Conte sceglie ${foe.join(" e ")}.` : "") + (drafting() ? " Tocca a te." : " Draft concluso: i mazzi sono pronti.");
+    if (!drafting()) $("reveal").textContent = "Draft concluso. Le mosse dei due lati si rivelano insieme, a fine turno.";
     render();
     (drafting() ? $("draftOffer").querySelector("button:not(:disabled)") : $("duelBtn"))?.focus();
   });
@@ -689,6 +717,12 @@
     save();
     applyView();
   };
+  $("decorPref").checked = prefs.decor;
+  $("decorPref").onchange = (e) => {
+    prefs.decor = e.target.checked;
+    save();
+    applyView();
+  };
   $("motionPref").checked = prefs.motion;
   $("motionPref").onchange = (e) => {
     prefs.motion = e.target.checked;
@@ -844,22 +878,23 @@
       .join("");
   }
 
-  // ---------- preview: the AI plays your side too ----------
+  // ---------- cover: the home tile shows the game's box art ----------
+  // a quartered shield charged with eagles, two griffins as supporters,
+  // and three cards fanned in front, all engraved by the same hand as the
+  // cards. The cover is drawn on a 1600x1000 stage scaled to the window
   if (preview) {
-    let last = 0;
-    const loop = (t) => {
-      if (!s.over && t - last > 1500) {
-        last = t;
-        const m = B.choose(s, "me", 0.8);
-        if (m) {
-          B.play(s, m.i, m.q);
-          render();
-          if (s.over) scheduleEnd();
-        }
-      }
-      requestAnimationFrame(loop);
-    };
-    requestAnimationFrame(loop);
+    const art = (id, cls) => `<span class="${cls} t-${B.BEASTS[id].t} art-${id}"><span class="ink"></span></span>`;
+    $("crest").innerHTML =
+      art("grifone", "supporter left") +
+      `<svg class="crest-crown" aria-hidden="true"><use href="#crown"/></svg>
+      <div class="crest-shield"><div class="crest-field">${["azzurro", "oro", "oro", "azzurro"].map((t) => `<span class="q-${t}">${art("aquila", "charge")}</span>`).join("")}</div></div>` +
+      art("grifone", "supporter right");
+    $("coverFan").innerHTML = ["basilisco", "grifone", "torre"].map((id) => `<div class="card ${skin(id)}">${face(id)}</div>`).join("");
+    $("cover").hidden = false;
+    desk.hidden = true;
+    const fit = () => $("cover").style.setProperty("--k", Math.min(innerWidth / 1600, innerHeight / 1000));
+    addEventListener("resize", fit);
+    fit();
   }
 
   applyView();

@@ -7,9 +7,12 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link
       rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;0,900;1,500;1,700&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Josefin+Sans:wght@400;600;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;0,900;1,500;1,700&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Josefin+Sans:wght@400;600;700&family=Grenze+Gotisch:wght@700;900&display=swap"
     />
     <link rel="stylesheet" href="style.css" />
+    <!-- the knightly trim (gilt frames, bunting, velvet tray): all of it is in
+         decor.css, under :root[data-decor]; the menu turns it off -->
+    <link rel="stylesheet" href="decor.css" />
   </head>
   <body>
     <svg width="0" height="0" style="position: absolute" aria-hidden="true">
@@ -26,9 +29,24 @@
       </defs>
     </svg>
 
+    <!-- the cover: what the home tile shows (?preview) -->
+    <div class="cover" id="cover" hidden aria-hidden="true">
+      <div class="cover-sheet">
+        <div class="gilt"><i></i><i></i><i></i><i></i></div>
+        <div class="cover-title">
+          <h2>Blasone</h2>
+          <p>Il gioco di carte</p>
+        </div>
+        <div class="crest" id="crest"></div>
+        <div class="cover-fan" id="coverFan"></div>
+      </div>
+    </div>
+
     <div class="desk">
+      <div class="bunting" aria-hidden="true"></div>
       <!-- masthead: a printed title sheet laid over an ochre one -->
       <header class="sheet mast">
+        <div class="gilt" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
         <div class="initial" aria-hidden="true"><span>B</span></div>
         <div class="mast-title">
           <p class="label">Archivio araldico · Vol. I · Tavola 01</p>
@@ -82,9 +100,11 @@
       <main class="table">
         <section class="board-wrap">
           <div class="sheet ochre under" aria-hidden="true"></div>
+          <div class="gilt board-gilt" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
           <div class="sheet board" id="board" aria-label="Lo scudo, diviso in quattro quarti"></div>
         </section>
 
+        <div class="side-col">
         <aside class="sheet ochre side">
           <div class="foe-card">
             <div class="seal" aria-hidden="true"><span>C</span></div>
@@ -98,9 +118,24 @@
           <h3 class="label">Cronaca del torneo</h3>
           <ol class="chron" id="log"></ol>
         </aside>
+
+        <!-- a quick reference: the turns, the crowns at stake, how the
+             engravers print each tincture -->
+        <section class="sheet codex" aria-labelledby="codexTitle">
+          <div class="gilt" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+          <p class="label">Prontuario dell'araldo</p>
+          <h3 id="codexTitle">Il torneo</h3>
+          <ol class="turns" id="turns" aria-label="I sei turni"></ol>
+          <p class="stake" id="stake"></p>
+          <h3>Le tinture</h3>
+          <p class="small">Una carta prende +1 se è di classe opposta alla tua ultima carta nel quarto.</p>
+          <div class="tincts" id="tincts"></div>
+        </section>
+        </div>
       </main>
 
       <section class="hand-wrap">
+        <p class="hand-ribbon label" aria-hidden="true">La tua mano</p>
         <div class="hand" id="hand" role="group" aria-label="La tua mano"></div>
       </section>
     </div>
@@ -201,6 +236,10 @@
         <label class="check">
           <input type="checkbox" id="colorPref" />
           <span><b>Carte a colori</b> Cornici, scudi e inchiostri nel colore della tintura, una cornice per casata. Disattiva per le carte stampate in solo inchiostro nero.</span>
+        </label>
+        <label class="check">
+          <input type="checkbox" id="decorPref" />
+          <span><b>Addobbi cavallereschi</b> Cornici dorate, stendardi, un drappo di velluto sotto la mano e lo stemma del campo dietro ogni quarto. Disattiva per la tavola sobria, di sola carta.</span>
         </label>
         <label class="check">
           <input type="checkbox" id="motionPref" />

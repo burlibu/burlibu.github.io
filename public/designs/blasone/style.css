@@ -559,6 +559,95 @@ code { font: 600 14px/1 ui-monospace, "Cascadia Mono", Consolas, monospace; lett
   :root[data-cards="colore"] .mini .ink { inset: 4px 2px auto; height: 40px; }
 }
 
+/* ---------- shared ornament: gilt frames, the wood of the table ----------
+   used by the cover here and by the trim in decor.css */
+:root {
+  --gold: linear-gradient(135deg, #6f4a10, #d9ac4e 28%, #fbe9a8 44%, #c18b2c 60%, #f0cf78 78%, #6f4a10);
+  --gold-ink: #8a5f17;
+  --corner: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Cpath d='M0 48V0h48v3.5H3.5V48z'/%3E%3Cpath d='M8 48V8h40v1.6H9.6V48z'/%3E%3Ccircle cx='42' cy='15' r='1.8'/%3E%3Ccircle cx='15' cy='42' r='1.8'/%3E%3Cg transform='translate(23 23) rotate(-45) scale(1.4) translate(-12 -12)'%3E%3Cpath d='M12 1c2.6 3 3 6.6 0 10.5C9 7.6 9.4 4 12 1z'/%3E%3Cpath d='M11.4 11.6C9.6 7.4 4 6.6 3.4 10.6c-.3 2.2 1.8 3.6 3.4 2.4-1-1.4.2-3 1.8-2.2 1.1.5 1.8 1.4 2.8.8z'/%3E%3Cpath d='M12.6 11.6c1.8-4.2 7.4-5 8-1 .3 2.2-1.8 3.6-3.4 2.4 1-1.4-.2-3-1.8-2.2-1.1.5-1.8 1.4-2.8.8z'/%3E%3Cpath d='M7.5 12.4h9v1.8h-9z'/%3E%3Cpath d='M12 14.2c-.6 3-1.8 5-3.4 6.4h6.8c-1.6-1.4-2.8-3.4-3.4-6.4z'/%3E%3C/g%3E%3C/svg%3E");
+  --wood: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='700' height='700'%3E%3Cfilter id='w'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.004 .22' numOctaves='3' seed='7' stitchTiles='stitch'/%3E%3CfeColorMatrix values='.34 0 0 0 .1 .2 0 0 0 .055 .1 0 0 0 .025 0 0 0 0 1'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23w)'/%3E%3C/svg%3E");
+}
+.gilt, .wm, .boss, .bunting, .hand-ribbon { display: none; }
+.gilt { position: absolute; inset: -7px; z-index: 4; pointer-events: none; border: 4px solid; border-image: var(--gold) 1; box-shadow: inset 0 0 0 2px rgba(15, 15, 16, 0.55), 0 0 0 1px rgba(15, 15, 16, 0.55); }
+.gilt i { position: absolute; width: 46px; height: 46px; background: var(--gold); -webkit-mask: var(--corner) center / contain no-repeat; mask: var(--corner) center / contain no-repeat; filter: drop-shadow(1px 1px 0 rgba(15, 15, 16, 0.6)); }
+.gilt i:nth-child(1) { top: -8px; left: -8px; }
+.gilt i:nth-child(2) { top: -8px; right: -8px; transform: scaleX(-1); }
+.gilt i:nth-child(3) { bottom: -8px; right: -8px; transform: scale(-1); }
+.gilt i:nth-child(4) { bottom: -8px; left: -8px; transform: scaleY(-1); }
+
+/* ---------- side column: the Conte, then the quick reference ---------- */
+.side-col { display: grid; gap: 30px; align-content: start; }
+.codex { padding: 22px 22px 20px; }
+.codex > .label { color: var(--sepia); }
+.codex h3 { font-size: 20px; margin: 4px 0 10px; }
+.codex h3 + .small { font-size: 14px; line-height: 1.3; margin-bottom: 12px; }
+.turns { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(6, 1fr); gap: 4px; }
+.turns li { display: grid; place-items: center; height: 34px; border: 1px solid rgba(15, 15, 16, 0.35); font: 700 15px var(--serif); color: var(--smoke); }
+.turns li.done { background: var(--ink); border-color: var(--ink); color: var(--paper); }
+.turns li.now { border: 2px solid var(--ochre-2); color: var(--ink); background: rgba(200, 138, 59, 0.16); }
+.stake { margin: 12px 0 18px; padding-bottom: 14px; border-bottom: 1px solid var(--ink); font-size: 15px; line-height: 1.35; color: var(--sepia); }
+.stake .crown { width: 18px; height: 14px; vertical-align: -1px; }
+.stake b { font: 900 18px var(--serif); color: var(--ink); }
+.tincts { display: grid; grid-template-columns: 1fr 2fr; gap: 14px; }
+.tincts .label { font-size: 9px; color: var(--sepia); margin-bottom: 6px; }
+.tincts ul { list-style: none; padding: 0; display: flex; flex-wrap: wrap; gap: 8px 10px; }
+.tincts li { display: grid; justify-items: center; gap: 2px; font-size: 13px; }
+.tincts svg { width: 30px; height: 35px; }
+
+/* ---------- draft, once every pick is made: one strip ---------- */
+.draft.done { padding: 14px 20px; }
+.draft.done > .label, .draft.done h2, .draft.done > .small, .draft.done .draft-order, .draft.done .draft-offer, .draft.done .draft-msg { display: none; }
+.draft.done .draft-recap { margin: 0; padding: 0; border: 0; grid-template-columns: 1fr auto; align-items: center; gap: 6px 18px; }
+.draft.done .draft-recap > p { font-size: 16px; }
+.draft.done .draft-recap > p .label { margin-right: 8px; color: var(--sepia); }
+.draft.done details { grid-column: 1; grid-row: 2; font-size: 15px; }
+.draft.done summary { cursor: pointer; color: var(--sepia); }
+.draft.done details p { margin-top: 4px; }
+.draft.done #duelBtn { grid-column: 2; grid-row: 1 / span 2; }
+
+/* ---------- cover (?preview): the box art of the game ---------- */
+.cover { position: fixed; inset: 0; display: grid; place-items: center; overflow: hidden; background: radial-gradient(ellipse at 50% 40%, rgba(255, 190, 110, 0.12), transparent 60%), radial-gradient(ellipse, transparent 45%, rgba(0, 0, 0, 0.7)), var(--wood), #3a2412; }
+.cover[hidden] { display: none; }
+.cover-sheet {
+  position: relative;
+  flex: none;
+  width: 1520px;
+  height: 940px;
+  transform: scale(var(--k, 1));
+  background: radial-gradient(ellipse at 50% 45%, #f6ead0, #e3cc98 62%, #b98f52);
+  box-shadow: inset 0 0 90px rgba(90, 55, 15, 0.55), 0 30px 60px rgba(0, 0, 0, 0.6);
+}
+.cover .gilt { display: block; inset: 22px; border-width: 9px; }
+.cover .gilt i { width: 120px; height: 120px; }
+.cover .gilt i:nth-child(1) { top: -20px; left: -20px; }
+.cover .gilt i:nth-child(2) { top: -20px; right: -20px; }
+.cover .gilt i:nth-child(3) { bottom: -20px; right: -20px; }
+.cover .gilt i:nth-child(4) { bottom: -20px; left: -20px; }
+.cover-title { position: absolute; top: 50px; left: 0; right: 0; display: grid; justify-items: center; }
+.cover-title h2 { font: 900 210px/0.9 "Grenze Gotisch", var(--serif); color: #2a2a2e; -webkit-text-stroke: 5px #c18b2c; paint-order: stroke fill; text-shadow: 0 6px 0 rgba(60, 35, 8, 0.45); }
+.cover-title p { margin-top: 10px; padding: 10px 80px 8px; background: #ecdcb2; border-top: 3px solid var(--gold-ink); border-bottom: 3px solid var(--gold-ink); font: 700 34px var(--serif); letter-spacing: 0.16em; text-transform: uppercase; clip-path: polygon(0 0, 100% 0, 96% 50%, 100% 100%, 0 100%, 4% 50%); }
+.crest { position: absolute; left: 50%; top: 318px; width: 900px; height: 430px; margin-left: -450px; }
+.crest .ink { position: absolute; inset: 0; -webkit-mask: var(--art) center / contain no-repeat; mask: var(--art) center / contain no-repeat; }
+.supporter { position: absolute; top: 40px; width: 330px; height: 330px; }
+.crest .supporter .ink { background: linear-gradient(160deg, #f3d27a, #a87a24 45%, #5a3c0c); filter: drop-shadow(2px 3px 0 rgba(40, 22, 4, 0.5)); }
+.supporter.left { left: 0; transform: scaleX(-1); }
+.supporter.right { right: 0; }
+.crest-crown { position: absolute; left: 50%; top: -30px; width: 150px; height: 112px; margin-left: -75px; color: #c18b2c; filter: drop-shadow(0 3px 0 rgba(40, 22, 4, 0.5)); }
+.crest-shield { position: absolute; left: 50%; top: 70px; width: 300px; height: 350px; margin-left: -150px; background: var(--gold); clip-path: path("M0 0H300V160C300 262 228 322 150 350C72 322 0 262 0 160Z"); }
+.crest-field { position: absolute; inset: 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; background: var(--gold-ink); clip-path: path("M0 0H276V150C276 244 210 300 138 326C66 300 0 244 0 150Z"); }
+.crest-field > span { position: relative; }
+.q-azzurro { background: radial-gradient(circle at 40% 35%, #3f6d9c, #1b3850); }
+.q-oro { background: radial-gradient(circle at 40% 35%, #f6dd8f, #b9852d); }
+.charge { position: absolute; inset: 22px 14px 10px; }
+.crest .q-azzurro .charge .ink { background: linear-gradient(160deg, #fbe9a8, #c18b2c); }
+.crest .q-oro .charge .ink { background: linear-gradient(160deg, #335f82, #142a3c); }
+.cover-fan { position: absolute; left: 50%; bottom: 96px; width: 0; height: 0; }
+.cover-fan .card { position: absolute; bottom: 0; left: -100px; width: 200px; min-height: 0; height: 310px; transform-origin: 50% 120%; }
+.cover-fan .card:nth-child(1) { transform: translateX(-200px) translateY(30px) rotate(-12deg); }
+.cover-fan .card:nth-child(2) { z-index: 2; transform: translateY(-24px); }
+.cover-fan .card:nth-child(3) { transform: translateX(200px) translateY(30px) rotate(12deg); }
+.cover-fan .card .art { height: 118px; }
+
 /* text size from the menu: the whole page scales, its sizes are in px */
 body { zoom: var(--zoom, 1); }
 :root[data-motion="ridotto"] *, :root[data-motion="ridotto"] *::before, :root[data-motion="ridotto"] *::after { animation: none !important; transition: none !important; }
