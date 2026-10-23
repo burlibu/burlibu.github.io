@@ -560,12 +560,13 @@ code { font: 600 14px/1 ui-monospace, "Cascadia Mono", Consolas, monospace; lett
 }
 
 /* ---------- shared ornament: gilt frames, the wood of the table ----------
+   the wood is one whole picture stretched to cover, never tiled, so it shows no seam
    used by the cover here and by the trim in decor.css */
 :root {
   --gold: linear-gradient(135deg, #6f4a10, #d9ac4e 28%, #fbe9a8 44%, #c18b2c 60%, #f0cf78 78%, #6f4a10);
   --gold-ink: #8a5f17;
   --corner: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Cpath d='M0 48V0h48v3.5H3.5V48z'/%3E%3Cpath d='M8 48V8h40v1.6H9.6V48z'/%3E%3Ccircle cx='42' cy='15' r='1.8'/%3E%3Ccircle cx='15' cy='42' r='1.8'/%3E%3Cg transform='translate(23 23) rotate(-45) scale(1.4) translate(-12 -12)'%3E%3Cpath d='M12 1c2.6 3 3 6.6 0 10.5C9 7.6 9.4 4 12 1z'/%3E%3Cpath d='M11.4 11.6C9.6 7.4 4 6.6 3.4 10.6c-.3 2.2 1.8 3.6 3.4 2.4-1-1.4.2-3 1.8-2.2 1.1.5 1.8 1.4 2.8.8z'/%3E%3Cpath d='M12.6 11.6c1.8-4.2 7.4-5 8-1 .3 2.2-1.8 3.6-3.4 2.4 1-1.4-.2-3-1.8-2.2-1.1.5-1.8 1.4-2.8.8z'/%3E%3Cpath d='M7.5 12.4h9v1.8h-9z'/%3E%3Cpath d='M12 14.2c-.6 3-1.8 5-3.4 6.4h6.8c-1.6-1.4-2.8-3.4-3.4-6.4z'/%3E%3C/g%3E%3C/svg%3E");
-  --wood: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='700' height='700'%3E%3Cfilter id='w'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.004 .22' numOctaves='3' seed='7' stitchTiles='stitch'/%3E%3CfeColorMatrix values='.34 0 0 0 .1 .2 0 0 0 .055 .1 0 0 0 .025 0 0 0 0 1'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23w)'/%3E%3C/svg%3E");
+  --wood: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1600 1000' preserveAspectRatio='xMidYMid slice'%3E%3Cfilter id='w' x='0' y='0' width='100%25' height='100%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.0025 .11' numOctaves='4' seed='7'/%3E%3CfeColorMatrix values='.34 0 0 0 .1 .2 0 0 0 .055 .1 0 0 0 .025 0 0 0 0 1'/%3E%3C/filter%3E%3Crect width='1600' height='1000' filter='url(%23w)'/%3E%3C/svg%3E");
 }
 .gilt, .wm, .boss, .bunting, .hand-ribbon { display: none; }
 .gilt { position: absolute; inset: -7px; z-index: 4; pointer-events: none; border: 4px solid; border-image: var(--gold) 1; box-shadow: inset 0 0 0 2px rgba(15, 15, 16, 0.55), 0 0 0 1px rgba(15, 15, 16, 0.55); }
@@ -606,14 +607,15 @@ code { font: 600 14px/1 ui-monospace, "Cascadia Mono", Consolas, monospace; lett
 .draft.done #duelBtn { grid-column: 2; grid-row: 1 / span 2; }
 
 /* ---------- cover (?preview): the box art of the game ---------- */
-.cover { position: fixed; inset: 0; display: grid; place-items: center; overflow: hidden; background: radial-gradient(ellipse at 50% 40%, rgba(255, 190, 110, 0.12), transparent 60%), radial-gradient(ellipse, transparent 45%, rgba(0, 0, 0, 0.7)), var(--wood), #3a2412; }
+.cover { position: fixed; inset: 0; display: grid; place-items: center; overflow: hidden; background: radial-gradient(ellipse at 50% 40%, rgba(255, 190, 110, 0.12), transparent 60%), radial-gradient(ellipse, transparent 45%, rgba(0, 0, 0, 0.7)), var(--wood) center / cover no-repeat, #3a2412; }
 .cover[hidden] { display: none; }
 .cover-sheet {
-  position: relative;
-  flex: none;
+  position: absolute;
+  left: 50%;
+  top: 50%;
   width: 1520px;
   height: 940px;
-  transform: scale(var(--k, 1));
+  transform: translate(-50%, -50%) scale(var(--k, 1));
   background: radial-gradient(ellipse at 50% 45%, #f6ead0, #e3cc98 62%, #b98f52);
   box-shadow: inset 0 0 90px rgba(90, 55, 15, 0.55), 0 30px 60px rgba(0, 0, 0, 0.6);
 }
