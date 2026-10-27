@@ -1,4 +1,5 @@
 .iso{--fx-paper:#fffef8;--fx-paper-edge:#e9e6d8}
+.iso[data-theme="light"]{--anatomy-page:#ffffff}
 .iso[data-theme="dark"]{--fx-paper:#1a1a17;--fx-paper-edge:#2b2a24}
 .fx-paper{fill:var(--fx-paper);stroke:none}
 .fx-void{fill:var(--anatomy-shade-0);stroke:none}
