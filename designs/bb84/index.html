@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="it">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>BB84 — distribuzione quantistica di chiavi</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap"
+    />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css" />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body class="bb84-exp">
+    <canvas class="bb84-exp-grid" aria-hidden="true"></canvas>
+
+    <header class="bb84-exp-nav">
+      <a class="bb84-exp-brand" href="#top">BB84<span> · QKD</span></a>
+      <nav aria-label="Fasi del protocollo">
+        <a href="#fase-1" data-nav="fase-1">01 Alice</a>
+        <a href="#fase-2" data-nav="fase-2">02 Eve</a>
+        <a href="#fase-3" data-nav="fase-3">03 Bob</a>
+        <a href="#fase-4" data-nav="fase-4">04 Sifting</a>
+        <a href="#fase-5" data-nav="fase-5">05 QBER</a>
+      </nav>
+      <span class="bb84-exp-progress" aria-hidden="true"></span>
+    </header>
+
+    <main id="top">
+      <!-- hero -->
+      <section class="bb84-exp-hero">
+        <p class="bb84-exp-kicker bb84-exp-reveal">Distribuzione quantistica di chiavi · protocollo BB84</p>
+        <h1 class="bb84-exp-title" data-scramble="BB84">BB84</h1>
+        <p class="bb84-exp-lede bb84-exp-reveal">
+          Alice e Bob si accordano su una chiave segreta inviando singoli fotoni. Chi legge un fotone lo altera, e quell'alterazione
+          si vede.
+        </p>
+        <div class="bb84-exp-hero-cta bb84-exp-reveal">
+          <button class="bb84-exp-magnetic bb84-exp-btn" data-go="fase-1">Inizia l'esperimento</button>
+          <span class="bb84-exp-mono">5 fasi · da Alice alla chiave</span>
+        </div>
+        <div class="bb84-exp-fiber bb84-exp-fiber-hero" aria-hidden="true">
+          <svg viewBox="0 0 1000 120" preserveAspectRatio="none">
+            <path class="bb84-exp-wire" d="M0 60 C 200 20, 300 100, 500 60 S 800 20, 1000 60" />
+          </svg>
+          <span class="bb84-exp-photon bb84-exp-photon-hero"></span>
+        </div>
+      </section>
+
+      <!-- phase 1 -->
+      <section class="bb84-exp-stage" id="fase-1" aria-labelledby="t1">
+        <header class="bb84-exp-stage-head bb84-exp-reveal">
+          <p class="bb84-exp-mono">Fase 01 · preparazione di Alice</p>
+          <h2 id="t1">Il bit diventa polarizzazione</h2>
+          <p>
+            Alice sceglie un bit a caso e una base. La base sceglie quali due stati possono rappresentarlo. Il filtro ruota con
+            una molla e il fotone esce con la polarizzazione corrispondente.
+          </p>
+        </header>
+        <div class="bb84-exp-bench bb84-exp-card bb84-exp-reveal">
+          <div class="bb84-exp-controls">
+            <div class="bb84-exp-seg" role="radiogroup" aria-label="Base di polarizzazione">
+              <button role="radio" aria-checked="true" data-basis="rect" class="bb84-exp-basis is-rect">+ Rettilineare</button>
+              <button role="radio" aria-checked="false" data-basis="diag" class="bb84-exp-basis is-diag">× Diagonale</button>
+            </div>
+            <div class="bb84-exp-seg" role="radiogroup" aria-label="Bit da inviare">
+              <button role="radio" aria-checked="true" data-bit="0" class="bb84-exp-bitbtn">Bit 0</button>
+              <button role="radio" aria-checked="false" data-bit="1" class="bb84-exp-bitbtn">Bit 1</button>
+            </div>
+            <button class="bb84-exp-magnetic bb84-exp-btn" id="emit">Emetti fotone</button>
+          </div>
+          <div class="bb84-exp-polar">
+            <svg viewBox="0 0 160 160" aria-hidden="true">
+              <circle cx="80" cy="80" r="70" class="bb84-exp-ring" />
+              <g id="polarizer" class="bb84-exp-needle">
+                <line x1="80" y1="22" x2="80" y2="138" />
+              </g>
+              <circle cx="80" cy="80" r="4" class="bb84-exp-dot" />
+            </svg>
+            <p class="bb84-exp-katex" id="ketOut" data-tex="|0\rangle"></p>
+            <p class="bb84-exp-mono" id="angleOut">0°</p>
+          </div>
+          <div class="bb84-exp-fiber" id="fiber1" aria-hidden="true">
+            <svg viewBox="0 0 1000 120" preserveAspectRatio="none">
+              <path class="bb84-exp-wire" d="M0 60 L1000 60" />
+              <path class="bb84-exp-packet" id="packet1" d="" />
+            </svg>
+          </div>
+          <p class="bb84-exp-note" id="explain1"></p>
+        </div>
+      </section>
+
+      <!-- phase 2 -->
+      <section class="bb84-exp-stage" id="fase-2" aria-labelledby="t2">
+        <header class="bb84-exp-stage-head bb84-exp-reveal">
+          <p class="bb84-exp-mono">Fase 02 · il canale e Eve</p>
+          <h2 id="t2">Non si copia, si misura</h2>
+          <p>
+            Il teorema di non clonazione vieta di copiare uno stato quantistico sconosciuto. Eve può solo misurarlo. Se sceglie la
+            base sbagliata, lo stato collassa su quella di Eve e l'originale non torna più.
+          </p>
+        </header>
+        <div class="bb84-exp-bench bb84-exp-card bb84-exp-reveal" id="chan">
+          <div class="bb84-exp-controls">
+            <button class="bb84-exp-magnetic bb84-exp-btn" id="eveToggle" aria-pressed="false">Attiva Eve</button>
+            <button class="bb84-exp-magnetic bb84-exp-btn is-solid" id="send">Invia 8 fotoni</button>
+            <p class="bb84-exp-mono" id="collapseCount">Collassi: 0 / 0</p>
+          </div>
+          <div class="bb84-exp-fiber bb84-exp-fiber-tall" id="fiber2">
+            <svg viewBox="0 0 1000 120" preserveAspectRatio="none">
+              <path class="bb84-exp-wire" d="M0 60 L1000 60" />
+            </svg>
+            <div class="bb84-exp-eve" id="eve" aria-hidden="true">Eve</div>
+          </div>
+          <ol class="bb84-exp-photons" id="row2" aria-live="polite"></ol>
+          <p class="bb84-exp-note" id="explain2"></p>
+        </div>
+      </section>
+
+      <!-- phase 3 -->
+      <section class="bb84-exp-stage" id="fase-3" aria-labelledby="t3">
+        <header class="bb84-exp-stage-head bb84-exp-reveal">
+          <p class="bb84-exp-mono">Fase 03 · misura di Bob</p>
+          <h2 id="t3">Stessa base, click certo. Base diversa, il caso decide</h2>
+          <p>
+            Bob sceglie a caso la base del rivelatore. Con la base giusta il fotone fa scattare sempre il rivelatore del suo bit.
+            Con la base sbagliata il fotone si biforca e il rivelatore è 0 o 1 con uguale probabilità.
+          </p>
+        </header>
+        <div class="bb84-exp-bench bb84-exp-card bb84-exp-reveal">
+          <div class="bb84-exp-controls">
+            <button class="bb84-exp-magnetic bb84-exp-btn is-solid" id="measure">Bob misura</button>
+            <p class="bb84-exp-mono" id="matchOut">Corrispondenze: 0 / 0</p>
+          </div>
+          <ol class="bb84-exp-photons bb84-exp-detect" id="row3" aria-live="polite"></ol>
+          <p class="bb84-exp-note" id="explain3"></p>
+        </div>
+      </section>
+
+      <!-- phase 4 -->
+      <section class="bb84-exp-stage" id="fase-4" aria-labelledby="t4">
+        <header class="bb84-exp-stage-head bb84-exp-reveal">
+          <p class="bb84-exp-mono">Fase 04 · sifting pubblico</p>
+          <h2 id="t4">Si dicono le basi, non i bit</h2>
+          <p>
+            Alice e Bob annunciano le basi sul canale pubblico, ma non i bit. Dove le basi differiscono il risultato è casuale, quindi
+            quelle colonne vengono scartate. Restano i bit che coincidono nella base.
+          </p>
+        </header>
+        <div class="bb84-exp-bench bb84-exp-card bb84-exp-reveal">
+          <div class="bb84-exp-controls">
+            <button class="bb84-exp-magnetic bb84-exp-btn" id="announce">Annuncia le basi</button>
+            <button class="bb84-exp-magnetic bb84-exp-btn is-solid" id="sift">Scarta le colonne diverse</button>
+          </div>
+          <div class="bb84-exp-table-wrap">
+            <table class="bb84-exp-table">
+              <thead>
+                <tr><th>#</th><th>Base di Alice</th><th>Base di Bob</th><th>Stato</th></tr>
+              </thead>
+              <tbody id="sift-body"></tbody>
+            </table>
+          </div>
+          <p class="bb84-exp-mono bb84-exp-key" id="rawKey" aria-live="polite"></p>
+        </div>
+      </section>
+
+      <!-- phase 5 -->
+      <section class="bb84-exp-stage" id="fase-5" aria-labelledby="t5">
+        <header class="bb84-exp-stage-head bb84-exp-reveal">
+          <p class="bb84-exp-mono">Fase 05 · verifica QBER</p>
+          <h2 id="t5">Un campione rivela il disturbo</h2>
+          <p>
+            Alice e Bob sacrificano una parte della chiave grezza e confrontano i bit. Il tasso di errore (QBER) sopra l'11% indica
+            un intercettatore o un canale troppo rumoroso: la chiave viene scartata.
+          </p>
+        </header>
+        <div class="bb84-exp-bench bb84-exp-card bb84-exp-reveal" id="verify">
+          <div class="bb84-exp-sliders">
+            <label>
+              <span class="bb84-exp-mono">Decoerenza ambientale <b id="noiseOut">0%</b></span>
+              <input type="range" id="noise" min="0" max="20" step="1" value="0" />
+            </label>
+            <label>
+              <span class="bb84-exp-mono">Intercettazione di Eve <b id="eveOut">0%</b></span>
+              <input type="range" id="eveRate" min="0" max="100" step="5" value="0" />
+            </label>
+          </div>
+          <div class="bb84-exp-qber">
+            <div class="bb84-exp-qbar"><span id="qFill"></span><i class="bb84-exp-threshold" aria-hidden="true"></i></div>
+            <p class="bb84-exp-mono" id="qOut">QBER — 0.0%</p>
+          </div>
+          <div class="bb84-exp-controls">
+            <button class="bb84-exp-magnetic bb84-exp-btn is-solid" id="verifyBtn">Esegui la verifica</button>
+          </div>
+          <div class="bb84-exp-result" id="result" aria-live="polite">
+            <div class="bb84-exp-handshake" id="handshake" aria-hidden="true">
+              <span class="bb84-exp-hash" id="hashA">a7f3 · 91c2</span>
+              <span class="bb84-exp-hash" id="hashB">a7f3 · 91c2</span>
+            </div>
+            <p class="bb84-exp-result-text" id="resultText"></p>
+            <p class="bb84-exp-mono" id="otpOut"></p>
+          </div>
+        </div>
+      </section>
+
+      <footer class="bb84-exp-foot">
+        <p class="bb84-exp-mono">BB84 · Bennett e Brassard, 1984. Simulazione didattica, nessun canale reale.</p>
+      </footer>
+    </main>
+
+    <script src="../preview.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.18/dist/lenis.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+    <script src="protocol.js"></script>
+    <script src="script.js"></script>
+  </body>
+</html>

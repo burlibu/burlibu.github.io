@@ -1,0 +1,177 @@
+/* BB84 — "Cleanroom Luminescence". Every selector sits under .bb84-exp so
+   nothing leaks into a parent page. */
+.bb84-exp {
+  --bg: #030712;
+  --ink: #e7ecf3;
+  --mute: #7b8799;
+  --line: rgba(160, 200, 230, 0.14);
+  --cyan: #00f5ff;
+  --magenta: #ff007f;
+  --amber: #ffb703;
+  --glass: rgba(12, 18, 30, 0.55);
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+  background: var(--bg);
+  color: var(--ink);
+  font-family: "Space Grotesk", system-ui, sans-serif;
+  margin: 0;
+  min-height: 100vh;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+.bb84-exp *,
+.bb84-exp *::before,
+.bb84-exp *::after { box-sizing: border-box; }
+.bb84-exp-mono { font-family: "JetBrains Mono", ui-monospace, monospace; font-size: 12px; letter-spacing: 0.06em; color: var(--mute); margin: 0; text-transform: uppercase; }
+.bb84-exp p { margin: 0; }
+.bb84-exp h1, .bb84-exp h2 { margin: 0; font-weight: 500; letter-spacing: -0.02em; }
+
+/* background: reticle grid drawn on a canvas, sits under everything */
+.bb84-exp-grid { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
+.bb84-exp main, .bb84-exp-nav, .bb84-exp-foot { position: relative; z-index: 1; }
+
+/* nav */
+.bb84-exp-nav {
+  position: sticky; top: 0; z-index: 10; display: flex; align-items: center; gap: 24px;
+  padding: 14px 24px; background: rgba(3, 7, 18, 0.7); backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--line);
+}
+.bb84-exp-brand { color: var(--ink); text-decoration: none; font-weight: 700; font-size: 18px; }
+.bb84-exp-brand span { color: var(--mute); font-weight: 400; }
+.bb84-exp-nav nav { display: flex; gap: 18px; flex-wrap: wrap; }
+.bb84-exp-nav nav a { color: var(--mute); text-decoration: none; font: 12px "JetBrains Mono", monospace; letter-spacing: 0.06em; text-transform: uppercase; transition: color 0.4s var(--ease); }
+.bb84-exp-nav nav a.is-on, .bb84-exp-nav nav a:hover { color: var(--cyan); }
+.bb84-exp-progress { position: absolute; left: 0; bottom: -1px; height: 2px; width: 100%; background: linear-gradient(90deg, var(--cyan), var(--magenta), var(--amber)); transform-origin: 0 50%; transform: scaleX(0); }
+
+/* hero */
+.bb84-exp-hero { min-height: 92vh; display: flex; flex-direction: column; justify-content: center; gap: 28px; padding: 96px 24px 48px; max-width: 1120px; margin: 0 auto; }
+.bb84-exp-title { font-size: clamp(88px, 18vw, 220px); line-height: 0.9; font-weight: 700; letter-spacing: -0.05em; background: linear-gradient(100deg, var(--cyan) 0%, #7aa8ff 45%, var(--magenta) 100%); -webkit-background-clip: text; background-clip: text; color: transparent; font-variant-numeric: tabular-nums; }
+.bb84-exp-lede { font-size: clamp(18px, 2.2vw, 24px); line-height: 1.5; max-width: 640px; color: #c3cad6; }
+.bb84-exp-hero-cta { display: flex; gap: 20px; align-items: center; flex-wrap: wrap; }
+
+/* stages */
+.bb84-exp-stage { max-width: 1120px; margin: 0 auto; padding: 120px 24px 40px; display: grid; gap: 32px; scroll-margin-top: 80px; }
+.bb84-exp-stage-head { display: grid; gap: 14px; max-width: 760px; }
+.bb84-exp-stage-head h2 { font-size: clamp(30px, 4.4vw, 52px); line-height: 1.05; }
+.bb84-exp-stage-head > p:last-child { font-size: 17px; line-height: 1.6; color: #aeb7c6; }
+
+/* glass cards with a glowing radial border that follows the pointer */
+.bb84-exp-card {
+  position: relative; background: var(--glass); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+  border-radius: 20px; padding: 28px; border: 1px solid var(--line); display: grid; gap: 22px;
+  --glow: rgba(0, 245, 255, 0.5); --mx: 50%; --my: 50%;
+}
+.bb84-exp-card::before {
+  content: ""; position: absolute; inset: 0; border-radius: inherit; padding: 1px; pointer-events: none;
+  background: radial-gradient(360px circle at var(--mx) var(--my), var(--glow), transparent 60%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor; mask-composite: exclude;
+}
+.bb84-exp-controls { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; }
+.bb84-exp-note { font-size: 15px; line-height: 1.55; color: #aeb7c6; min-height: 3em; }
+
+/* buttons: chamfer-free, thin lines, magnetic via GSAP */
+.bb84-exp-btn, .bb84-exp-seg button, .bb84-exp-bitbtn {
+  appearance: none; font: 500 14px "Space Grotesk", sans-serif; color: var(--ink); cursor: pointer;
+  background: rgba(255, 255, 255, 0.03); border: 1px solid var(--line); border-radius: 999px;
+  padding: 11px 20px; transition: border-color 0.4s var(--ease), background 0.4s var(--ease), color 0.4s var(--ease), box-shadow 0.4s var(--ease);
+}
+.bb84-exp-btn:hover, .bb84-exp-btn:focus-visible { border-color: var(--cyan); box-shadow: 0 0 24px rgba(0, 245, 255, 0.25); outline: none; }
+.bb84-exp-btn.is-solid { background: var(--cyan); color: #02141a; border-color: transparent; font-weight: 700; }
+.bb84-exp-btn.is-solid:hover { box-shadow: 0 0 32px rgba(0, 245, 255, 0.45); }
+.bb84-exp-btn[aria-pressed="true"] { border-color: var(--amber); color: var(--amber); box-shadow: 0 0 22px rgba(255, 183, 3, 0.25); }
+.bb84-exp-btn:disabled { opacity: 0.4; cursor: default; }
+.bb84-exp-seg { display: inline-flex; gap: 6px; padding: 4px; border-radius: 999px; border: 1px solid var(--line); background: rgba(0, 0, 0, 0.25); }
+.bb84-exp-seg button { border: 0; background: transparent; padding: 9px 16px; }
+.bb84-exp-seg button[aria-checked="true"] { background: rgba(255, 255, 255, 0.08); }
+.bb84-exp-basis.is-rect[aria-checked="true"] { color: var(--cyan); }
+.bb84-exp-basis.is-diag[aria-checked="true"] { color: var(--magenta); }
+.bb84-exp-bitbtn[aria-checked="true"] { border-color: var(--cyan); }
+.bb84-exp-btn:focus-visible, .bb84-exp-seg button:focus-visible, .bb84-exp-bitbtn:focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; }
+
+/* fibre and photons */
+.bb84-exp-fiber { position: relative; height: 90px; border-radius: 14px; overflow: hidden; background: rgba(0, 0, 0, 0.35); border: 1px solid var(--line); }
+.bb84-exp-fiber svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.bb84-exp-fiber-tall { height: 140px; }
+.bb84-exp-fiber-hero { max-width: 100%; height: 120px; background: none; border: 0; }
+.bb84-exp-wire { fill: none; stroke: rgba(160, 200, 230, 0.22); stroke-width: 1.5; }
+.bb84-exp-packet { fill: none; stroke: var(--cyan); stroke-width: 2.5; stroke-linecap: round; filter: drop-shadow(0 0 6px currentColor); }
+.bb84-exp-packet.is-magenta { stroke: var(--magenta); }
+.bb84-exp-photon { position: absolute; top: 50%; left: 0; width: 10px; height: 10px; margin: -5px 0 0 -5px; border-radius: 50%; background: #fff; box-shadow: 0 0 14px 4px var(--cyan); opacity: 0; }
+.bb84-exp-photon-hero { opacity: 0.9; }
+.bb84-exp-eve { position: absolute; left: 50%; top: 0; bottom: 0; width: 1px; background: var(--amber); transform: scaleY(0); transform-origin: 50% 0; }
+.bb84-exp-eve::after { content: "Eve"; position: absolute; top: 6px; left: 8px; font: 11px "JetBrains Mono", monospace; color: var(--amber); text-transform: uppercase; opacity: 0; }
+.bb84-exp-eve.is-on { transform: scaleY(1); }
+.bb84-exp-eve.is-on::after { opacity: 1; }
+.bb84-exp-burst { position: absolute; width: 6px; height: 6px; border-radius: 50%; background: var(--amber); pointer-events: none; }
+
+/* polarizer */
+.bb84-exp-polar { display: flex; align-items: center; gap: 24px; flex-wrap: wrap; }
+.bb84-exp-polar svg { width: 140px; height: 140px; flex: none; }
+.bb84-exp-ring { fill: rgba(0, 0, 0, 0.3); stroke: var(--line); stroke-width: 1.5; }
+.bb84-exp-needle line { stroke: var(--cyan); stroke-width: 4; stroke-linecap: round; transform-origin: 80px 80px; filter: drop-shadow(0 0 6px var(--cyan)); }
+.bb84-exp-dot { fill: var(--ink); }
+.bb84-exp-katex { font-size: 30px; color: var(--ink); }
+
+/* photons list (phases 2 and 3) */
+.bb84-exp-photons { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
+.bb84-exp-photons li { position: relative; border: 1px solid var(--line); border-radius: 14px; padding: 14px; background: rgba(0, 0, 0, 0.3); display: grid; gap: 8px; font: 12px "JetBrains Mono", monospace; color: var(--mute); }
+.bb84-exp-photons b { font: 500 22px "Space Grotesk", sans-serif; color: var(--ink); }
+.bb84-exp-photons .tag-r { color: var(--cyan); }
+.bb84-exp-photons .tag-d { color: var(--magenta); }
+.bb84-exp-photons li.is-collapsed { border-color: var(--amber); box-shadow: inset 0 0 22px rgba(255, 183, 3, 0.18); }
+.bb84-exp-detect li .det { display: flex; gap: 8px; }
+.bb84-exp-detect .det-cell { flex: 1; text-align: center; padding: 8px 0; border-radius: 10px; border: 1px solid var(--line); }
+.bb84-exp-detect .det-cell.is-hit { border-color: var(--cyan); color: var(--cyan); box-shadow: 0 0 18px rgba(0, 245, 255, 0.35); }
+.bb84-exp-detect .fork { font-size: 11px; }
+
+/* sifting table */
+.bb84-exp-table-wrap { overflow-x: auto; }
+.bb84-exp-table { width: 100%; border-collapse: collapse; font-size: 15px; }
+.bb84-exp-table th, .bb84-exp-table td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--line); }
+.bb84-exp-table th { font: 11px "JetBrains Mono", monospace; color: var(--mute); text-transform: uppercase; letter-spacing: 0.06em; font-weight: 400; }
+.bb84-exp-table tr.is-dropped td { color: var(--mute); }
+.bb84-exp-table .ok { color: var(--cyan); }
+.bb84-exp-table .no { color: var(--magenta); }
+.bb84-exp-key { font-size: 14px; word-break: break-all; color: #c3cad6; }
+
+/* QBER */
+.bb84-exp-sliders { display: grid; gap: 18px; }
+.bb84-exp-sliders label { display: grid; gap: 10px; }
+.bb84-exp-sliders b { color: var(--ink); font-weight: 500; }
+.bb84-exp input[type="range"] { width: 100%; accent-color: var(--cyan); }
+.bb84-exp-qber { display: grid; gap: 10px; }
+.bb84-exp-qbar { position: relative; height: 10px; border-radius: 999px; background: rgba(255, 255, 255, 0.06); overflow: visible; }
+.bb84-exp-qbar span { position: absolute; left: 0; top: 0; bottom: 0; width: 0; border-radius: 999px; background: linear-gradient(90deg, var(--cyan), var(--magenta)); }
+.bb84-exp-threshold { position: absolute; left: 27.5%; top: -6px; bottom: -6px; width: 2px; background: var(--amber); }
+.bb84-exp-threshold::after { content: "11%"; position: absolute; top: -18px; left: 4px; font: 11px "JetBrains Mono", monospace; color: var(--amber); }
+.bb84-exp-result { display: grid; gap: 16px; }
+.bb84-exp-handshake { display: flex; gap: 14px; justify-content: center; }
+.bb84-exp-hash { font: 14px "JetBrains Mono", monospace; padding: 10px 14px; border: 1px solid var(--line); border-radius: 12px; color: var(--mute); }
+.bb84-exp-result-text { font-size: 18px; line-height: 1.5; }
+.bb84-exp-result.is-ok .bb84-exp-result-text { color: var(--cyan); }
+.bb84-exp-result.is-alert .bb84-exp-result-text { color: var(--amber); }
+
+/* the cleanroom pulses amber when the channel is compromised */
+.bb84-exp-stage.is-alert .bb84-exp-card { border-color: rgba(255, 183, 3, 0.5); animation: bb84-exp-pulse 1.6s var(--ease) infinite; }
+@keyframes bb84-exp-pulse { 0%, 100% { box-shadow: 0 0 0 rgba(255, 183, 3, 0); } 50% { box-shadow: 0 0 60px rgba(255, 183, 3, 0.25); } }
+
+.bb84-exp-reveal { will-change: transform, opacity; }
+.bb84-exp-foot { max-width: 1120px; margin: 0 auto; padding: 60px 24px 80px; }
+
+/* small screens: the comparison table becomes stacked cards */
+@media (max-width: 720px) {
+  .bb84-exp-nav { flex-wrap: wrap; gap: 10px 14px; padding: 12px 16px; }
+  .bb84-exp-nav nav { gap: 12px; }
+  .bb84-exp-stage { padding: 80px 16px 24px; }
+  .bb84-exp-card { padding: 20px; }
+  .bb84-exp-hero { padding: 80px 16px 32px; min-height: 80vh; }
+  .bb84-exp-table thead { display: none; }
+  .bb84-exp-table, .bb84-exp-table tbody, .bb84-exp-table tr, .bb84-exp-table td { display: block; width: 100%; }
+  .bb84-exp-table tr { border: 1px solid var(--line); border-radius: 14px; padding: 8px 12px; margin-bottom: 10px; background: rgba(0, 0, 0, 0.3); }
+  .bb84-exp-table td { border: 0; padding: 4px 0; display: flex; justify-content: space-between; gap: 12px; }
+  .bb84-exp-table td::before { content: attr(data-label); font: 11px "JetBrains Mono", monospace; color: var(--mute); text-transform: uppercase; }
+  .bb84-exp-photons { grid-template-columns: repeat(2, 1fr); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .bb84-exp *, .bb84-exp *::before, .bb84-exp *::after { animation: none !important; transition: none !important; }
+}
