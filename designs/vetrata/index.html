@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Vetrata</title>
+<meta name="description" content="Come funziona il web, dal browser al database: una visualizzazione 3D in otto fasi, con funzioni, header e cosa si rompe.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Goudy+Bookletter+1911&family=Sorts+Mill+Goudy&family=Josefin+Sans:wght@600&display=swap">
+<link rel="stylesheet" href="style.css">
+<script type="importmap">{"imports":{"three":"./vendor/three.module.min.js","three/addons/":"./vendor/addons/"}}</script>
+<script src="../preview.js"></script>
+<script src="story.js"></script>
+</head>
+<body>
+<main class="frame" id="frame">
+  <canvas id="gl" aria-hidden="true"></canvas>
+
+  <svg class="fallback" viewBox="0 0 800 500" role="img" aria-label="Il browser e il server, separati dalla rete">
+    <g fill="none" stroke="#16130e" stroke-width="5" stroke-linejoin="round" stroke-linecap="round">
+      <rect x="50" y="130" width="230" height="170" rx="8" fill="#dd8f2c" fill-opacity=".55"/>
+      <rect x="70" y="150" width="230" height="170" rx="8" fill="#c2553a" fill-opacity=".4"/>
+      <rect x="90" y="170" width="230" height="170" rx="8" fill="#3a8d86" fill-opacity=".4"/>
+      <rect x="520" y="130" width="230" height="62" rx="8" fill="#5f6f7c" fill-opacity=".6"/>
+      <rect x="520" y="204" width="230" height="62" rx="8" fill="#7d4f6b" fill-opacity=".6"/>
+      <rect x="520" y="278" width="230" height="62" rx="8" fill="#6f8f4e" fill-opacity=".6"/>
+      <path stroke-dasharray="14 12" d="M325 180C400 80 460 80 515 160"/>
+      <path stroke-dasharray="14 12" d="M515 300C460 380 400 380 325 310"/>
+      <path d="M0 420c70-24 130-24 200 0s130 24 200 0 130-24 200 0 130 24 200 0M0 460c70-24 130-24 200 0s130 24 200 0 130-24 200 0 130 24 200 0"/>
+    </g>
+  </svg>
+
+  <canvas class="shade" id="shade" width="64" height="36" aria-hidden="true"></canvas>
+
+  <header class="title">
+    <p class="eb" id="eb"></p>
+    <h1 id="heading"></h1>
+  </header>
+
+  <nav class="strip" id="strip" aria-label="Fasi"></nav>
+
+  <aside class="panel" id="panel" aria-labelledby="heading">
+    <button class="grip" id="grip" type="button" aria-label="Allarga o riduci il pannello"></button>
+    <div class="panel-body" id="body"></div>
+  </aside>
+</main>
+<script type="module" src="script.js"></script>
+</body>
+</html>
