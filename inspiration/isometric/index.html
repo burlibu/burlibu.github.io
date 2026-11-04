@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="./style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#e0e9e2">
+    <title>Terrarium — an endless little world</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Figtree:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+  </head>
+  <body>
+    <main class="experience">
+      <div id="landscape" aria-label="Interactive, procedurally generated landscape"></div>
+      <header class="header">
+        <div class="identity">
+          <div class="brand"><svg viewBox="0 0 32 36" fill="none" aria-hidden="true"><path d="m16 2 14 8v16l-14 8L2 26V10L16 2Z"/><path d="m2 10 14 8 14-8M16 18v16M9 6l14 8M9 14l14-8"/></svg><h1>terrarium<span>.</span></h1></div>
+          <p>An endless little world.</p>
+        </div>
+        <div class="header-actions">
+          <button id="regenerate" class="new-world"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 7v5h-5M4 17v-5h5"/><path d="M6.2 7a7 7 0 0 1 11.5-1L20 9M4 15l2.3 3A7 7 0 0 0 17.8 17"/></svg><span>New world</span></button>
+          <details class="help">
+            <summary aria-label="About this world">?</summary>
+            <div class="help-panel"><h2>A window into the wild.</h2><p>Only a 58 × 58 m slice is rendered. The Perlin-noise landscape continues beyond every edge.</p><p>Drag to discover new ground. Scroll or pinch to zoom. Switch to orbit to look around.</p><p>Focus the landscape and use arrow keys to explore, + / − to zoom, or Home to return.</p><p>Every seed creates a different ecosystem. Nothing is saved or sent anywhere.</p></div>
+          </details>
+        </div>
+      </header>
+      <aside class="world-note" aria-label="World information">
+        <span class="overline">A SMALL SLICE OF INFINITY</span>
+        <p>Go a little further.<br>There’s always more.</p>
+        <div class="seed-line"><span class="seed-symbol" aria-hidden="true">#</span> SEED <span id="seed">02418</span></div>
+      </aside>
+      <div class="compass" aria-hidden="true"><span>N</span><svg viewBox="0 0 60 60"><circle cx="30" cy="30" r="25"/><path class="compass-needle" d="m30 10 6 20-6-3-6 3Z"/><path d="m30 50-6-20 6 3 6-3Z"/></svg></div>
+      <footer class="footer">
+        <div class="ecosystem"><span class="status-mark" aria-hidden="true"></span><div><span id="status" role="status">Growing your landscape…</span><small id="population">A world taking root</small></div></div>
+        <div class="navigation">
+          <p class="hint" id="hint">Drag to explore <span>·</span> Scroll to zoom</p>
+          <div class="toolbar" role="toolbar" aria-label="Landscape controls">
+            <div class="tool-group">
+              <button id="pan" class="tool selected" aria-label="Pan to explore" aria-pressed="true" title="Pan to explore"><svg viewBox="0 0 24 24"><path d="M8 12V6a1.5 1.5 0 0 1 3 0v5-7a1.5 1.5 0 0 1 3 0v7-5a1.5 1.5 0 0 1 3 0v6-3a1.5 1.5 0 0 1 3 0v6c0 4-2 6-6 6h-1c-2 0-3-1-4-2l-5-6a1.5 1.5 0 0 1 2-2l2 2Z"/></svg></button>
+              <button id="orbit" class="tool" aria-label="Orbit the landscape" aria-pressed="false" title="Orbit the landscape"><svg viewBox="0 0 24 24"><ellipse cx="12" cy="12" rx="10" ry="4.5" transform="rotate(-30 12 12)"/><path d="M15 5c-3-3-5-2-6 1s0 8 2 11 5 5 6 1"/><circle cx="12" cy="12" r="1"/></svg></button>
+            </div>
+            <span class="divider"></span>
+            <div class="tool-group zoom-group"><button id="zoom-out" class="tool" aria-label="Zoom out" title="Zoom out"><svg viewBox="0 0 24 24"><path d="M6 12h12"/></svg></button><output id="zoom" aria-label="Zoom level">100%</output><button id="zoom-in" class="tool" aria-label="Zoom in" title="Zoom in"><svg viewBox="0 0 24 24"><path d="M6 12h12M12 6v12"/></svg></button></div>
+            <span class="divider"></span>
+            <div class="tool-group"><button id="reset" class="tool" aria-label="Return to the starting view" title="Reset view"><svg viewBox="0 0 24 24"><path d="M4 10a8 8 0 1 1 1 7M4 4v6h6"/></svg></button><button id="pause" class="tool" aria-label="Pause wildlife and clouds" aria-pressed="false" title="Pause wildlife and clouds"><svg viewBox="0 0 24 24"><path d="M9 5v14M15 5v14"/></svg></button></div>
+            <span class="divider"></span>
+            <div class="tool-group">
+              <button id="terrain-resolution-toggle" class="tool" aria-label="Terrain resolution" title="Terrain resolution" aria-expanded="false" aria-controls="terrain-resolution-panel"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/><circle cx="9" cy="6" r="2"/><circle cx="15" cy="12" r="2"/><circle cx="8" cy="18" r="2"/></svg></button>
+              <button id="cloud-resolution-toggle" class="tool" aria-label="Cloud grid resolution" title="Cloud grid resolution" aria-expanded="false" aria-controls="cloud-resolution-panel"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6h12v12H6zM6 10h12M6 14h12M10 6v12M14 6v12"/></svg></button>
+              <button id="cloud-humidity-toggle" class="tool" aria-label="Cloud humidity threshold" title="Cloud humidity threshold" aria-expanded="false" aria-controls="cloud-humidity-panel"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 18h11a4 4 0 0 0 .4-8A6 6 0 0 0 6 9a4.5 4.5 0 0 0 0 9Z"/></svg></button>
+            </div>
+            <div class="tool-group"><button id="terrain-ceiling-toggle" class="tool" aria-label="Cloud simulation ceiling" title="Cloud simulation ceiling" aria-expanded="false" aria-controls="terrain-ceiling-panel"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h16M4 16h16M7 8v8M17 8v8"/></svg></button><button id="rain-threshold-toggle" class="tool" aria-label="Rain cloud density threshold" title="Rain cloud density threshold" aria-expanded="false" aria-controls="rain-threshold-panel"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 13h11a4 4 0 0 0 .4-8A6 6 0 0 0 6 4a4.5 4.5 0 0 0 0 9ZM8 16l-1 3m6-3-1 3m6-3-1 3"/></svg></button></div>
+          </div>
+          <div id="terrain-ceiling-panel" hidden>
+            <label for="terrain-ceiling">Cloud simulation ceiling height</label>
+            <input id="terrain-ceiling" type="range" min="16" max="64" step="1" value="22" aria-describedby="terrain-ceiling-value">
+            <output id="terrain-ceiling-value" for="terrain-ceiling">22 m</output>
+          </div>
+          <div id="terrain-resolution-panel" hidden>
+            <label for="terrain-resolution">Terrain grid resolution</label>
+            <input id="terrain-resolution" type="range" min="16" max="128" step="8" value="64" aria-describedby="terrain-resolution-value">
+            <output id="terrain-resolution-value" for="terrain-resolution">64 × 64</output>
+          </div>
+          <div id="cloud-resolution-panel" hidden>
+            <label for="cloud-resolution">Cloud grid resolution</label>
+            <input id="cloud-resolution" type="range" min="16" max="96" step="2" value="16" aria-describedby="cloud-resolution-value">
+            <output id="cloud-resolution-value" for="cloud-resolution">16 × 16</output>
+          </div>
+          <div id="cloud-humidity-panel" hidden>
+            <label for="cloud-humidity">Cloud humidity cutoff</label>
+            <input id="cloud-humidity" type="range" min="0" max="100" step="1" value="52" aria-describedby="cloud-humidity-value">
+            <output id="cloud-humidity-value" for="cloud-humidity">52%</output>
+          </div>
+          <div id="rain-threshold-panel" hidden>
+            <label for="rain-threshold">Rain cloud density threshold</label>
+            <input id="rain-threshold" type="range" min="0" max="100" step="1" value="45" aria-describedby="rain-threshold-value">
+            <output id="rain-threshold-value" for="rain-threshold">45%</output>
+          </div>
+        </div>
+        <div class="coordinates"><span id="coordinates">X 0000 <i>/</i> Z 0000</span><div class="performance-metrics"><span>World init <output id="world-init-time">— ms</output></span><span>Real-time FPS <output id="frame-rate">—</output></span><span>Frame generation <output id="frame-time">— ms</output></span></div><small>PERLIN NOISE · REAL-TIME 3D</small></div>
+      </footer>
+    </main>
+    <script type="module" src="./script.js"></script>
+  </body>
+</html>

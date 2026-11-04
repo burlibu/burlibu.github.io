@@ -1,0 +1,116 @@
+@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700&display=swap');
+
+@property --number {
+  syntax: '<integer>';
+  inherits: false;
+  initial-value: 9;
+}
+
+@property --zoom {
+  syntax: '<number>';
+  inherits: false;
+  initial-value: 0;
+}
+
+:root {
+  --size: 60vmin;
+  --columns: 5;
+  --cell-size: calc(var(--size) / var(--columns));
+
+  --speed: 1000ms;
+  --stagger: 50ms;
+
+  --scale-from: .2;
+  --scale-to: 1;
+  --scale-size: .7;
+}
+
+body {
+  display: grid;
+  place-items: center;
+  height: 100vh;
+  
+  margin: 0;
+  
+  background: #101010;
+  color: #e0e0e0;
+}
+
+div {
+  display: grid;
+  grid-template-columns: repeat(var(--columns), 1fr);
+  grid-template-rows: repeat(var(--columns), 1fr);
+
+  width: var(--size);
+  height: var(--size);
+}
+
+span {
+  --x: 0;
+  --y: 0;
+  --dx: calc(var(--x) - (var(--columns) - 1) / 2);
+  --dy: calc(var(--y) - (var(--columns) - 1) / 2);
+  
+  position: relative;
+  display: block;
+  overflow: hidden;
+}
+
+span:nth-of-type(5n + 1) { --x: 0; }
+span:nth-of-type(5n + 2) { --x: 1; }
+span:nth-of-type(5n + 3) { --x: 2; }
+span:nth-of-type(5n + 4) { --x: 3; }
+span:nth-of-type(5n + 5) { --x: 4; }
+
+span:nth-of-type(n + 6) { --y: 1; }
+span:nth-of-type(n + 11) { --y: 2; }
+span:nth-of-type(n + 16) { --y: 3; }
+span:nth-of-type(n + 21) { --y: 4; }
+
+span:before {
+  --delay: calc((max(var(--dx), -1 * var(--dx)) + max(var(--dy), -1 * var(--dy))) * var(--stagger));
+  --scale-t: calc(var(--scale-from) + (var(--scale-to) - var(--scale-from)) * var(--zoom));
+  --scale-min: calc(var(--scale-size) / var(--columns));
+  --scale: calc(var(--scale-min) + (1 - var(--scale-min)) * var(--scale-t));
+  
+  counter-reset: number var(--number);
+  content: counter(number);
+
+  position: absolute;
+  top: 50%;
+  left: 50%;
+
+  font-family: "Bricolage Grotesque", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 700;
+  font-variation-settings: "wdth" 100;
+  font-style: normal;
+  font-size: calc(var(--size) / .73);
+  line-height: 1;
+  text-box: trim-both cap alphabetic;
+
+  transform:
+    translate(-50%, -50%)
+    translate(
+      calc(var(--dx) * var(--cell-size) * var(--scale-t) * -1),
+      calc(var(--dy) * var(--cell-size) * var(--scale-t) * -1)
+    )
+    scale(var(--scale))
+  ;
+
+  animation:
+    countdown calc(var(--speed) * 10) steps(10, jump-none) infinite both,
+    grow calc(var(--speed) / 2) cubic-bezier(0.65, 0, 0.35, 1) infinite alternate both
+  ;
+  
+  animation-delay: 0s, var(--delay);
+}
+
+@keyframes countdown {
+  from { --number: 9; }
+  to { --number: 0; }
+}
+
+@keyframes grow {
+  to { --zoom: 1; }
+}
