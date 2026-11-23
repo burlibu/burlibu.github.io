@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="it">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Protocol Lab — come viaggia una richiesta</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <main class="pl">
+      <header class="pl-head">
+        <p class="pl-label">Fondamenti · Lezione 1 di 1</p>
+        <h1>Come viaggia una richiesta</h1>
+        <p class="pl-lede">Segui una richiesta web passo per passo, e scopri dove si perde il tempo.</p>
+        <dl class="pl-meta">
+          <div><dt>LAYER</dt><dd>Application (7)</dd></div>
+          <div><dt>DEFAULT PORT</dt><dd class="pl-wire">80 (HTTPS: 443)</dd></div>
+          <div><dt>TRANSPORT</dt><dd>TCP</dd></div>
+          <div><dt>DURATA</dt><dd><span id="total">0.000 s</span></dd></div>
+        </dl>
+      </header>
+
+      <section class="pl-card" aria-label="Diagramma di rete">
+        <svg class="pl-net" viewBox="0 0 640 220" role="img" aria-labelledby="netTitle">
+          <title id="netTitle">Client, resolver DNS e server web con i pacchetti in viaggio</title>
+          <line class="pl-link" id="l-dns" x1="120" y1="110" x2="320" y2="50" />
+          <line class="pl-link" id="l-web" x1="120" y1="110" x2="520" y2="110" />
+          <g class="pl-node"><rect x="60" y="86" width="120" height="48" rx="2" /><text x="120" y="106">Client</text><text class="pl-wire" x="120" y="122">192.168.1.10</text></g>
+          <g class="pl-node"><rect x="260" y="26" width="120" height="48" rx="2" /><text x="320" y="46">DNS</text><text class="pl-wire" x="320" y="62">8.8.8.8</text></g>
+          <g class="pl-node"><rect x="460" y="86" width="120" height="48" rx="2" /><text x="520" y="106">Web</text><text class="pl-wire" x="520" y="122">203.0.113.10</text></g>
+          <circle class="pl-packet" id="pk" r="5" cx="120" cy="110" />
+        </svg>
+        <div class="pl-ctrl">
+          <button class="pl-primary" id="play" aria-pressed="false">Play</button>
+          <button class="pl-btn" id="reset">Reset</button>
+          <div class="pl-speed" role="group" aria-label="Velocità">
+            <button class="pl-btn" data-speed="0.5">0.5×</button>
+            <button class="pl-btn is-on" data-speed="1" aria-pressed="true">1×</button>
+            <button class="pl-btn" data-speed="2">2×</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="pl-card" aria-label="Passi">
+        <p class="pl-label" id="stepLabel">STEP 1 OF 4</p>
+        <ol class="pl-steps" id="steps">
+          <li data-step="0"><b>Hit Enter</b> Il browser deve sapere a quale indirizzo IP mandare la richiesta.</li>
+          <li data-step="1"><b>DNS</b> Il resolver risponde con l'indirizzo del server: 203.0.113.10.</li>
+          <li data-step="2"><b>TCP</b> Tre messaggi aprono la connessione: SYN, SYN-ACK, ACK.</li>
+          <li data-step="3"><b>HTTP</b> Il client chiede la pagina, il server la invia in più segmenti.</li>
+        </ol>
+      </section>
+
+      <section class="pl-card" aria-label="Pacchetti">
+        <p class="pl-label">PACKET FLOW</p>
+        <div class="pl-table-wrap">
+          <table class="pl-table">
+            <thead><tr><th>NO.</th><th>TIME</th><th>SOURCE</th><th>DESTINATION</th><th>PROTOCOL</th><th>INFO</th><th>SIZE</th></tr></thead>
+            <tbody id="rows"></tbody>
+          </table>
+        </div>
+        <p class="pl-note">ACKs non mostrati.</p>
+      </section>
+    </main>
+
+    <script src="../preview.js"></script>
+    <script src="script.js"></script>
+  </body>
+</html>
