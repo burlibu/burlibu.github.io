@@ -1,0 +1,98 @@
+/* Protocol Lab — see docs/styles/protocol-lab.md. Tokens on :root, dark via prefers-color-scheme. */
+:root {
+  --paper: #f4ebe0;
+  --ink: #1d1b18;
+  --ink-soft: #34302b;
+  --sage: #cfe3b2;
+  --sage-hi: #9fd28f;
+  --wire: #0b3aa8;
+  --wire-soft: #b5c8e7;
+  --card: #fbf7f1;
+  --radius: 8px;
+  --font: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #0b1020;
+    --ink: #e7ecf3;
+    --ink-soft: #9aa6bd;
+    --card: #131a2e;
+    --wire: #8fb4ff;
+    --wire-soft: #2a3756;
+    --sage: #2f4a2a;
+    --sage-hi: #6fb55e;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #0b1020;
+  --ink: #e7ecf3;
+  --ink-soft: #9aa6bd;
+  --card: #131a2e;
+  --wire: #8fb4ff;
+  --wire-soft: #2a3756;
+  --sage: #2f4a2a;
+  --sage-hi: #6fb55e;
+}
+
+html, body { margin: 0; background: var(--paper); color: var(--ink); }
+body { font: 14px/1.6 var(--font); min-height: 100vh; }
+.pl { max-width: 880px; margin: 0 auto; padding: 40px 16px 64px; display: grid; gap: 24px; }
+.pl h1 { font-size: 28px; line-height: 1.1; font-weight: 600; margin: 0; }
+.pl-label { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-soft); margin: 0; }
+.pl-lede { margin: 0; color: var(--ink-soft); }
+.pl-wire { color: var(--wire); }
+.pl-note { font-size: 12px; color: var(--ink-soft); margin: 8px 0 0; }
+
+.pl-head { display: grid; gap: 12px; }
+.pl-meta { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 8px; margin: 8px 0 0; }
+.pl-meta div { border: 1px solid var(--wire-soft); border-radius: 2px; padding: 10px; }
+.pl-meta dt { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-soft); }
+.pl-meta dd { margin: 4px 0 0; }
+
+.pl-card { border: 1px solid var(--ink); border-radius: var(--radius); padding: 20px; background: var(--card); display: grid; gap: 16px; }
+
+/* diagram */
+.pl-net { width: 100%; height: auto; display: block; }
+.pl-link { stroke: var(--wire-soft); stroke-width: 1.5; fill: none; }
+.pl-node rect { fill: var(--paper); stroke: var(--ink); stroke-width: 1.2; }
+.pl-node text { font: 12px var(--font); fill: var(--ink); text-anchor: middle; }
+.pl-node text.pl-wire { font-size: 11px; fill: var(--wire); }
+.pl-packet { fill: var(--wire); }
+
+/* controls */
+.pl-ctrl { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.pl-speed { display: inline-flex; gap: 6px; }
+.pl-btn, .pl-primary {
+  font: 500 13px var(--font); color: var(--ink); background: var(--card);
+  border: 1px solid var(--ink-soft); border-radius: var(--radius); padding: 8px 14px; cursor: pointer;
+}
+.pl-btn.is-on { background: var(--sage); border-color: var(--ink); }
+.pl-primary { background: var(--sage); border-color: var(--ink); box-shadow: 1.5px 2.5px 0 var(--ink); }
+.pl-btn:focus-visible, .pl-primary:focus-visible { outline: 2px solid var(--wire); outline-offset: 3px; }
+
+/* steps */
+.pl-steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.pl-steps li { padding: 10px 12px; border: 1px solid var(--wire-soft); border-radius: 2px; color: var(--ink-soft); }
+.pl-steps li b { color: var(--ink); margin-right: 8px; }
+.pl-steps li.is-on { border-color: var(--ink); background: var(--sage); color: var(--ink); }
+
+/* packet table */
+.pl-table-wrap { overflow-x: auto; }
+.pl-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+.pl-table th, .pl-table td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--wire-soft); white-space: nowrap; }
+.pl-table th { font-size: 11px; font-weight: 400; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-soft); }
+.pl-table td.addr { color: var(--wire); }
+.pl-table tr.is-new { animation: pl-in .5s ease both; }
+@keyframes pl-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+@media (max-width: 720px) {
+  .pl { padding: 24px 16px 48px; }
+  .pl h1 { font-size: 24px; }
+  .pl-table thead { display: none; }
+  .pl-table, .pl-table tbody, .pl-table tr, .pl-table td { display: block; width: 100%; }
+  .pl-table tr { border: 1px solid var(--wire-soft); border-radius: 2px; padding: 6px 10px; margin-bottom: 8px; }
+  .pl-table td { border: 0; padding: 3px 0; white-space: normal; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pl-table tr.is-new { animation: none; }
+}
